@@ -13,21 +13,23 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/auth/register", {
+      const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
+        const result: { token: string } = await response.json();
+        localStorage.setItem("jwt", result.token);
         alert("¡Registro exitoso! Ahora inicia sesión.");
         router.push("/login");
       } else {
-        alert("Hubo un problema con el registro.");
+        alert("Credenciales incorrectas o error en el servidor.");
       }
     } catch (err) {
       console.error("Error en la solicitud:", err);
-      alert("Hubo un problema al registrarse.");
+      alert("Hubo un problema al iniciar sesión.");
     }
   };
 
@@ -41,38 +43,42 @@ export default function Register() {
         <span className="cursor-pointer">English</span>
       </div>
       
-      <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-[40px] shadow-lg w-full max-w-md text-center">
-        <img src="/logoblanco.jpg" alt="Logo" className="mb-4 w-32 ml-4" />
-        <h2 className="text-2xl font-bold text-blue-600 mb-6">CREAR CUENTA</h2>
+      <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-12 rounded-[40px] shadow-lg w-full max-w-lg text-center">
+        <img src="/logoblanco.jpg" alt="Logo" className="mb-8 w-32 ml-4" />
+        <h2 className="text-2xl font-bold text-blue-600 mb-8">CREAR CUENTA</h2>
         <input
-          className="w-full p-2 border border-gray-300 rounded-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          type="text"
+          className="w-full p-2 border border-gray-300 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="email"
           placeholder="Nombre"
-          value={name}
+          value={email}
           onChange={(e) => setName(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-gray-300 rounded-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-gray-300 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-gray-300 rounded-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-gray-300 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div className="flex items-center justify-between text-sm mb-8">
+        <div className="flex items-center justify-between text-sm mt-2 mb-8">
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox text-blue-600" />
+            <span className="text-black">Recuérdame</span>
+          </label>
           <label className="flex items-center space-x-2">
             <input type="checkbox" className="form-checkbox text-blue-600" />
             <span className="text-black">Acepto los términos y condiciones</span>
           </label>
         </div>
-        <button className="w-1/2 bg-blue-600 text-white py-2 rounded-full font-semibold hover:bg-blue-700 transition mb-6">
-          Registrarse
+        <button className="w-1/2 bg-blue-600 text-white py-2 rounded-full font-semibold hover:bg-blue-700 transition mb-4">
+          Iniciar sesión
         </button>
       </form>
     </div>
