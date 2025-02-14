@@ -26,7 +26,7 @@ export default function Register() {
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert("¡Registro exitoso! Ahora inicia sesión.");
         router.push("/login");
       } else {
