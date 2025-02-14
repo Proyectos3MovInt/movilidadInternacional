@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const [isClient, setIsClient] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null; // Evita el error de hidratación
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,25 +42,25 @@ export default function Login() {
   return (
     <div className="w-full h-screen bg-cover bg-center bg-no-repeat relative overflow-hidden" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      
+
       <div className="absolute top-8 right-10 text-white text-lg flex space-x-2">
         <span className="font-bold cursor-pointer">Español</span>
         <span>|</span>
         <span className="cursor-pointer">English</span>
       </div>
-      
-      <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-12 rounded-[40px] shadow-lg w-full max-w-lg text-center">
+
+      <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-12 rounded-[40px] shadow-lg w-full max-w-lg text-center" onSubmit={handleSubmit}>
         <img src="/logoblanco.jpg" alt="Logo" className="mb-8 w-32 ml-4" />
         <h2 className="text-2xl font-bold text-blue-600 mb-6">INICIO DE SESIÓN</h2>
         <input
-          className="w-full p-2 border border-gray-300 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-gray-300 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="password"
           placeholder="Contraseña"
           value={password}
