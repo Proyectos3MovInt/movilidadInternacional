@@ -59,14 +59,14 @@ export default function Register() {
           onChange={(e) => setName(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="password"
           placeholder="Contraseña"
           value={password}
