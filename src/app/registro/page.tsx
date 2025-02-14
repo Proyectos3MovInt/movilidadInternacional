@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function Register() {
   const [isClient, setIsClient] = useState(false);
   const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -23,7 +24,8 @@ export default function Register() {
       const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, surname, email, password }),
+        
       });
 
       if (response.status === 201) {
@@ -57,6 +59,13 @@ export default function Register() {
           placeholder="Nombre"
           value={name}
           onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+          type="text"
+          placeholder="Apellido"
+          value={surname}
+          onChange={(e) => setSurname(e.target.value)}
         />
         <input
           className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
