@@ -46,7 +46,7 @@ export default function Login() {
       <div className="absolute top-8 right-10 text-white text-lg flex space-x-2">
         <span className="font-bold cursor-pointer">Español</span>
         <span>|</span>
-        <span className="cursor-pointer">English pitinglish</span>
+        <span className="cursor-pointer">English</span>
       </div>
 
       <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-12 rounded-[40px] shadow-lg w-full max-w-lg text-center" onSubmit={handleSubmit}>
