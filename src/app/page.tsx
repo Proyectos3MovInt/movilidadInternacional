@@ -53,14 +53,14 @@ export default function Login() {
         <img src="/logoblanco.jpg" alt="Logo" className="mb-8 w-32 ml-4" />
         <h2 className="text-2xl font-bold text-blue-600 mb-6">INICIO DE SESIÓN</h2>
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="password"
           placeholder="Contraseña"
           value={password}

@@ -52,7 +52,7 @@ export default function Register() {
         <img src="/logoblanco.jpg" alt="Logo" className="mb-8 w-32 ml-4" />
         <h2 className="text-2xl font-bold text-blue-600 mb-8">CREAR CUENTA</h2>
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="text"
           placeholder="Nombre"
           value={name}
