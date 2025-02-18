@@ -60,7 +60,7 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-bla"
+          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           type="password"
           placeholder="Contraseña"
           value={password}
