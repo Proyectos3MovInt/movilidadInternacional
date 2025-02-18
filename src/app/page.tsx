@@ -14,7 +14,7 @@ export default function Login() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; // Evita el error de hidratación
+  if (!isClient) return null; 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
