@@ -46,7 +46,11 @@ export default function Register() {
   return (
     <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-
+      
+      <div className="absolute top-[20px] right-[40px] text-white text-[18px]">
+        <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
+      </div>
+      
       <form className="relative bg-white rounded-[40px] flex flex-col p-0 w-[540px] h-[550px] shadow-lg font-[Montserrat] items-start" onSubmit={handleSubmit}>
         <div className="absolute top-[40px] left-[40px]">
           <img src="/logoblanco.jpg" alt="Logo" className="w-[186px] h-[55px]" />
