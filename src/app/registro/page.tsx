@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { EyeIcon } from "@components/Icons";
 
 export default function Register() {
   const [isClient, setIsClient] = useState(false);
@@ -9,6 +10,7 @@ export default function Register() {
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,57 +44,67 @@ export default function Register() {
   };
 
   return (
-    <div className="w-full h-screen bg-cover bg-center bg-no-repeat relative overflow-hidden" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
+    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      
-      <div className="absolute top-8 right-10 text-white text-lg flex space-x-2">
-        <span className="font-bold cursor-pointer">Español</span>
-        <span>|</span>
-        <span className="cursor-pointer">English</span>
+      <div className="absolute top-5 right-10 text-white text-lg">
+        <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
       </div>
-      
-      <form className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-12 rounded-[40px] shadow-lg w-full max-w-lg text-center" onSubmit={handleSubmit}>
-        <img src="/logoblanco.jpg" alt="Logo" className="mb-8 w-32 ml-4" />
-        <h2 className="text-2xl font-bold text-blue-600 mb-8">CREAR CUENTA</h2>
-        <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          type="text"
-          placeholder="Apellido"
-          value={surname}
-          onChange={(e) => setSurname(e.target.value)}
-        />
-        <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="w-full p-2 border border-black rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <div className="flex items-center justify-between text-sm mt-2 mb-8">
+      <form className="relative bg-white rounded-[2.5rem] flex flex-col p-0 w-[90%] max-w-[33.75rem] h-[40rem] shadow-lg font-[Montserrat] items-start py-10 px-8" onSubmit={handleSubmit}>
+        <div className="absolute top-14 ml-[1.7rem]">
+          <img src="/logoblanco.jpg" alt="Logo" className="w-[11.675rem] h-[3.438rem]" />
+        </div>
+        <div className="flex flex-col items-center w-full mt-[6.96rem] gap-6">
+          <h2 className="text-[2rem] leading-[2.438rem] font-bold text-[#0065EF] text-center">CREAR CUENTA</h2>
+          <input
+            className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+            type="text"
+            placeholder="Nombre"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+            type="text"
+            placeholder="Apellido"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          />
+          <input
+            className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+            type="email"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <div className="relative max-w-md flex items-center">
+            <input
+              className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+              type={showPassword ? "text" : "password"}
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="absolute right-4 flex items-center justify-center"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <EyeIcon />
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between w-[26.25rem] ml-[1.5rem] mt-[2.2rem] px-1">
           <label className="flex items-center space-x-2">
             <input type="checkbox" className="form-checkbox text-blue-600" />
-            <span className="text-black">Acepto los términos y condiciones</span>
+            <span className="text-black text-lg">Acepto los términos y condiciones</span>
           </label>
         </div>
-        <button className="w-1/2 bg-blue-600 text-white py-2 rounded-full font-semibold hover:bg-blue-700 transition mb-4">
-          Registrarse
-        </button>
+        <div className="flex justify-center w-full mt-6">
+          <button className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
+            Registrarse
+          </button>
+        </div>
       </form>
     </div>
   );
 }
-
