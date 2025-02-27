@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
 import { login } from "@/lib/login.js"
 import Boton from "@/components/BotonAzul";
+import Overlay from "@/components/Overlay";
 
 export default function Login() {
   const [isClient, setIsClient] = useState(false);
@@ -33,8 +34,8 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/images/fondo1.jpg')" }}>
+      <Overlay/>
       <div className="absolute top-5 right-10 text-white text-lg">
         <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
       </div>
