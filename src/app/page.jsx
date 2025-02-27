@@ -2,8 +2,9 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { EyeIcon } from "@/components/Icons";
+import * as Icons from "@/components/Icons";
 import { login } from "@/lib/login.js"
+import Boton from "@/components/BotonAzul";
 
 export default function Login() {
   const [isClient, setIsClient] = useState(false);
@@ -63,7 +64,7 @@ export default function Login() {
               className="absolute right-4 flex items-center justify-center"
               onClick={() => setShowPassword(!showPassword)}
             >
-              <EyeIcon />
+              <Icons.EyeIcon />
             </button>
           </div>
         </div>
@@ -75,9 +76,7 @@ export default function Login() {
           <a href="#" className="text-black underline text-lg">Olvidé mi contraseña</a>
         </div>
         <div className="flex justify-center w-full mt-6">
-          <button className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
-            Iniciar sesión
-          </button>
+          <Boton text={"Iniciar sesión"}/>
         </div>
       </form>
     </div>
