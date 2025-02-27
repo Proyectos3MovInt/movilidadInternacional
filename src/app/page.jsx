@@ -3,12 +3,14 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon } from "@/components/Icons";
+import { login } from "@/lib/login.js"
 
 export default function Login() {
   const [isClient, setIsClient] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,31 +22,17 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.status === 200) {
-        const result = await response.json(); // Tipado del resultado
-        localStorage.setItem("jwt", result.token);
-        alert("¡Inicio de sesión exitoso!");
-        router.push("/dashboard"); // Redirige a la página principal después del login
-      } else if (response.status === 404 || response.status === 401) {
-        alert("Error: Credenciales incorrectas.");
-      } else {
-        alert("Ocurrió un problema. Inténtalo más tarde.");
-      }
-    } catch (err) {
-      console.error("Error en la solicitud:", err);
-      alert("Hubo un problema al iniciar sesión.");
+    const response = await login(email, password);
+    if(response.status === 200) {
+      router.push("/form-outgoing");
+    } else {
+      setError(true); // en el return mostraríamos el error al usuario
     }
+
   };
 
   return (
-    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('../../public/fondo1.jpg')" }}>
+    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/fondo1.jpg')" }}>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       <div className="absolute top-5 right-10 text-white text-lg">
         <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
