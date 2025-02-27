@@ -25,7 +25,7 @@ export default function Formulario() {
     >
       <Overlay />
       <form
-        className="relative bg-white rounded-[2.5rem] flex flex-col p-10 w-[90%] max-w-[70rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
+        className="relative bg-white rounded-[2.5rem] mt-80 flex flex-col p-10 w-[90%] max-w-[70rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h2 className="text-[2.5rem] font-bold text-[#0065EF] text-center w-full mb-6">FORMULARIO MOVILIDAD INTERNACIONAL</h2>
