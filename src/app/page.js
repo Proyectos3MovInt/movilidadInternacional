@@ -1,100 +1,97 @@
+"use client";
 
-export default function Home() {
+import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { EyeIcon } from "@/components/Icons";
+
+export default function Login() {
+  const [isClient, setIsClient] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null; // Evita el error de hidratación
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.status === 200) {
+        const result = await response.json(); // Tipado del resultado
+        localStorage.setItem("jwt", result.token);
+        alert("¡Inicio de sesión exitoso!");
+        router.push("/dashboard"); // Redirige a la página principal después del login
+      } else if (response.status === 404 || response.status === 401) {
+        alert("Error: Credenciales incorrectas.");
+      } else {
+        alert("Ocurrió un problema. Inténtalo más tarde.");
+      }
+    } catch (err) {
+      console.error("Error en la solicitud:", err);
+      alert("Hubo un problema al iniciar sesión.");
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('../../public/fondo1.jpg')" }}>
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="absolute top-5 right-10 text-white text-lg">
+        <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
+      </div>
+      <form className="relative bg-white rounded-[2.5rem] flex flex-col p-0 w-[90%] max-w-[33.75rem] h-[31.875rem] shadow-lg font-[Montserrat] items-start py-10 px-8" onSubmit={handleSubmit}>
+        <div className="absolute top-14 ml-[1.7rem]">
+          <img src="/logoblanco.jpg" alt="Logo" className="w-[11.675rem] h-[3.438rem]" />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div className="flex flex-col items-center w-full mt-[6.96rem] gap-6">
+        <h2 className="text-[2rem] leading-[2.438rem] font-bold text-[#0065EF] text-center">INICIO DE SESIÓN</h2>
+          <input
+            className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+            type="email"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="relative max-w-md flex items-center">
+            <input
+              className="w-[26.25rem] h-[2.75rem] p-3 border-[0.1rem] border-black rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-lg"
+              type={showPassword ? "text" : "password"}
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="absolute right-4 flex items-center justify-center"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <EyeIcon />
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between w-[26.25rem] ml-[1.5rem] mt-[2.2rem] px-1">
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox text-blue-600" />
+            <span className="text-black text-lg">Recuérdame</span>
+          </label>
+          <a href="#" className="text-black underline text-lg">Olvidé mi contraseña</a>
+        </div>
+        <div className="flex justify-center w-full mt-6">
+          <button className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
+            Iniciar sesión
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
