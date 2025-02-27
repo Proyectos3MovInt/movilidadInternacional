@@ -8,6 +8,7 @@ import { FileUpload } from "./FileUpload";
 import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import { Checkbox } from "./Checkbox";
+import Overlay from "../Overlay";
 
 export default function Formulario() {
   const { register, handleSubmit } = useForm();
@@ -20,9 +21,9 @@ export default function Formulario() {
   return (
     <div
       className="w-full min-h-screen bg-cover bg-center bg-no-repeat bg-fixed flex items-center justify-center relative font-[Montserrat]"
-      style={{ backgroundImage: "url('/fondo1.jpg')" }}
+      style={{ backgroundImage: "url('images/fondo1.jpg')" }}
     >
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <Overlay />
       <form
         className="relative bg-white rounded-[2.5rem] flex flex-col p-10 w-[90%] max-w-[70rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
         onSubmit={handleSubmit(onSubmit)}
