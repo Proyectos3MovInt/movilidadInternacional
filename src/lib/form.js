@@ -1,17 +1,12 @@
-"use client";
+'use server';
 
-export async function getFormData() {
+import { cookies } from "next/headers"
+
+export async function getForm() {
   try {
-    // Obtener el token de las cookies del navegador
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('token='))
-      ?.split('=')[1];
-    
-    if (!token) {
-      console.error("No se encontró un token JWT");
-      return null;
-    }
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("jwt-token").value;
+
 
     const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form", {
       method: "GET",
