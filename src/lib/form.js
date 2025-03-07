@@ -31,16 +31,21 @@ export async function updateForm(fieldName, value) {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("jwt-token").value;
 
+    const formData = new FormData();
+    formData.append(fieldName, value);
+
     const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form", {
       method: "PUT",
       headers: {
         "Authorization": `Bearer ${jwt_token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data"
       },
-      body: JSON.stringify({ [fieldName]: value }),
+      body: formData, 
     });
+    console.log(formData);
 
     if (!response.ok) {
+      console.log(response);
       throw new Error("Error al actualizar el campo del formulario");
     }
 

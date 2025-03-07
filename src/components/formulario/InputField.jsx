@@ -12,8 +12,8 @@ export function InputField({
   const handleBlur = async (event) => {
     const value = event.target.value;
     if (value.trim() !== "") {
-      await updateForm(name, value);
-    }
+      console.log(await updateForm(name, value));
+    } 
   };
 
   return (
