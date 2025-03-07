@@ -15,8 +15,8 @@ export async function login(email, password) {
         console.log(response_json);
   
         if(response.status == 200) {
-            cookieStore.set('token', response_json.token);
+          cookieStore.set('jwt-token', response_json.token, { httpOnly: true });
         }
-
+      
         return response.status;
 }
