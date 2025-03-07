@@ -4,56 +4,42 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { InputField } from '@/components/formulario/InputField';
 import { Button } from '@/components/ui/button';
+import Sidebar from '@/components/admin-dashboard/Sidebar';
+import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
+import SearchBar from '@/components/admin-dashboard/SearchBar';
 
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([
     { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente' },
     { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado' },
+    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado' },
   ]);
 
+  const [filtroAño, setFiltroAño] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleSort = (key) => {
-    const sorted = [...solicitudes].sort((a, b) => {
-      if (typeof a[key] === 'string') {
-        return a[key].localeCompare(b[key]);
-      }
-      return a[key] - b[key];
-    });
+    const sorted = [...solicitudes].sort((a, b) => (typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]));
     setSolicitudes(sorted);
   };
 
+  const solicitudesFiltradas = solicitudes.filter(s => 
+    (!filtroAño || s.año === filtroAño) &&
+    (searchTerm === "" || s.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-gray-200 p-6">
-        <div className="mb-6 text-center">
-          <div className="h-16 w-16 bg-gray-400 rounded-full mx-auto"></div>
-          <p className="mt-2 font-semibold">Nombre del Admin</p>
-        </div>
-        <nav>
-          <ul className="space-y-4">
-            <li className="bg-gray-300 p-3 rounded">Solicitudes</li>
-            <li className="p-3">Incidencias</li>
-            <li className="p-3">Universidades</li>
-            <li className="p-3">Histórico</li>
-            <ul className="pl-4 mt-2 space-y-1">
-              <li>2025</li>
-              <li>2024</li>
-              <li>2023</li>
-            </ul>
-          </ul>
-        </nav>
-      </div>
-      
-      {/* Main Content */}
+      <Sidebar setFiltroAño={setFiltroAño} />
       <div className="flex-1 p-6 bg-white">
-        <div className="flex items-center border p-3 rounded mb-4">
-          <InputField
-            label=""
-            name="search"
-            register={register}
-            className="w-full border p-2 rounded"
-          />
+        <div className="relative flex items-center bg-gray-200 p-3 rounded mb-4 shadow-inner">
+          <div className="absolute left-4">
+            <svg width="30" height="30" viewBox="0 0 39 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28.597 25.1655H26.7897L26.1492 24.5478C28.8943 21.3451 30.3127 16.9757 29.5349 12.3318C28.4597 5.97218 23.1524 0.893611 16.747 0.115813C7.07024 -1.07376 -1.07376 7.07024 0.115813 16.747C0.893611 23.1524 5.97218 28.4597 12.3318 29.5349C16.9757 30.3127 21.3451 28.8943 24.5478 26.1492L25.1655 26.7897V28.597L34.888 38.3194C35.8259 39.2574 37.3586 39.2574 38.2966 38.3194C39.2345 37.3815 39.2345 35.8488 38.2966 34.9108L28.597 25.1655ZM14.8711 25.1655C9.17487 25.1655 4.57671 20.5673 4.57671 14.8711C4.57671 9.17487 9.17487 4.57671 14.8711 4.57671C20.5673 4.57671 25.1655 9.17487 25.1655 14.8711C25.1655 20.5673 20.5673 25.1655 14.8711 25.1655Z" fill="black"/>
+            </svg>
+          </div>
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} register={register} className="pl-12 w-full border-none bg-transparent outline-none text-gray-700" />
         </div>
         <div className="flex space-x-2 mb-4">
           <Button onClick={() => handleSort('nombre')} className="p-2 border rounded">Alfabéticamente</Button>
@@ -61,24 +47,7 @@ export default function AdminDashboard() {
           <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
           <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
         </div>
-        <div className="border p-4 rounded">
-          <div className="grid grid-cols-4 font-semibold border-b pb-2 mb-2">
-            <span>Nombre</span>
-            <span>Grado</span>
-            <span>Año de salida</span>
-            <span>Estado</span>
-          </div>
-          <div className="space-y-2">
-            {solicitudes.map((solicitud, index) => (
-              <div key={index} className="grid grid-cols-4 p-2 border rounded">
-                <span>{solicitud.nombre}</span>
-                <span>{solicitud.grado}</span>
-                <span>{solicitud.año}</span>
-                <span className="px-4 py-1 border rounded text-center">{solicitud.estado}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <SolicitudesTable solicitudes={solicitudesFiltradas} />
       </div>
     </div>
   );

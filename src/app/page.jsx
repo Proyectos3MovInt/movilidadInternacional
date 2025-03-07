@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
 import { login } from "@/lib/login.js"
@@ -24,10 +24,11 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await login(email, password);
-    if(response.status === 200) {
+    const response_status = await login(email, password);
+    if(response_status === 200) {
       router.push("/form-outgoing");
     } else {
+      console.log(response.status);
       setError(true); // en el return mostraríamos el error al usuario
     }
 
