@@ -2,6 +2,8 @@
 
 import { cookies } from 'next/headers'
 
+// Envia una petición POST a la API, devuelve el código de respuesta y guarda el token JWT como cookie si todo ha ido bien
+
 export async function login(email, password) {
 
         const cookieStore = await cookies();
@@ -15,8 +17,8 @@ export async function login(email, password) {
         console.log(response_json);
   
         if(response.status == 200) {
-            cookieStore.set('token', response_json.token);
+          cookieStore.set('token', response_json.token, { httpOnly: true });
         }
-
+      
         return response.status;
 }

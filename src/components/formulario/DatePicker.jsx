@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { updateForm } from "@/lib/form.js";
 
 export function DatePicker({ label, name, register, required }) {
-  const [selectedDate, setSelectedDate] = useState("");
+  const handleBlur = async (event) => {
+    const value = event.target.value;
+    if (value) {
+      await updateForm(name, value);
+    }
+  };
 
   return (
     <div>
@@ -9,8 +14,7 @@ export function DatePicker({ label, name, register, required }) {
       <input
         type="date"
         {...register(name, { required })}
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
+        onBlur={handleBlur}
         className="w-full p-2 border rounded"
       />
     </div>
