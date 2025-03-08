@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { InputField } from "./InputField";
 import { RadioGroup } from "./RadioGroup";
 import { FileUpload } from "./FileUpload";
@@ -9,10 +9,23 @@ import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import { Checkbox } from "./Checkbox";
 import Overlay from "../Overlay";
+import { getForm } from "@/lib/form";
 
 export default function Formulario() {
   const { register, handleSubmit } = useForm();
   const [uploadedFiles, setUploadedFiles] = useState({});
+  const [ fields, setFields ] = useState([]);
+
+  // Cuando carga, sacamos los campos que hay rellenos en base de datos
+
+  useEffect(() => {
+    const callForm = async () => {
+      const response_json = await getForm();
+      setFields(response_json);
+      console.log(response_json);
+    }
+    callForm();
+  }, []);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -117,7 +130,7 @@ export default function Formulario() {
 
 
           </div>
-          <RadioGroup label="Acepto la política de datos personales*" name="aceptarPolitica" options={["Sí", "No"]} register={register} />
+          <RadioGroup label="Acepto la política de datos personales*" name="politicaDatos" options={["Sí", "No"]} register={register} />
           <div className="text-center w-full">
             <button type="submit" className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
               Enviar
