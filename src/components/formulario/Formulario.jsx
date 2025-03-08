@@ -12,17 +12,18 @@ import Overlay from "../Overlay";
 import { getForm } from "@/lib/form";
 
 export default function Formulario() {
-  const { register, handleSubmit } = useForm();
-  const [uploadedFiles, setUploadedFiles] = useState({});
-  const [ fields, setFields ] = useState([]);
+  const { register, handleSubmit, reset } = useForm();
+  const [ uploadedFiles, setUploadedFiles ] = useState({});
 
-  // Cuando carga, sacamos los campos que hay rellenos en base de datos
+  // Reset nos permite cargar valores por defecto a un formulario
+  // Los cargamos con GET desde la API y según el usuario los va modificando se van actualizando en base de datos 
 
   useEffect(() => {
     const callForm = async () => {
       const response_json = await getForm();
-      setFields(response_json);
-      console.log(response_json);
+      if(response_json) {
+        reset(response_json);
+      }
     }
     callForm();
   }, []);
@@ -73,26 +74,26 @@ export default function Formulario() {
           PLAZO DE RECEPCIÓN DE SOLICITUDES: HASTA 14 DE FEBRERO A LAS 23:59h
         </p>
         <div className="space-y-6 w-full">
-          <InputField label={<span className="font-bold">Nombre y Apellidos del Alumno*</span>} name="nombre" register={register} required />
-          <InputField label={<span className="font-bold">DNI/NIE*</span>} name="dni" register={register} required />
-          <InputField label={<span className="font-bold">Email de contacto*</span>} name="correo" register={register} required type="email" />
+          <InputField label={<span className="font-bold">Nombre y Apellidos del Alumno*</span>} name="nombreApellidos" register={register} required />
+          <InputField label={<span className="font-bold">DNI/NIE*</span>} name="dniNie" register={register} required />
+          <InputField label={<span className="font-bold">Email de contacto*</span>} name="email" register={register} required type="email" />
           <RadioGroup label={<span className="font-bold">Género*</span>} name="genero" options={["Mujer", "Hombre", "No binario", "Prefiero no decirlo"]} register={register} />
           <InputField label={<span className="font-bold">Nacionalidad*</span>} name="nacionalidad" register={register} required />
           <DatePicker label={<span className="font-bold">Fecha de nacimiento*</span>} name="fechaNacimiento" register={register} required />
           <InputField label={<span className="font-bold">Domicilio (Municipio, Código Postal, Provincia)*</span>} name="domicilio" register={register} required />
-          <InputField label={<span className="font-bold">Número de teléfono de contacto*</span>} name="telefono" register={register} required type="tel" />
+          <InputField label={<span className="font-bold">Número de teléfono de contacto*</span>} name="numeroTelefono" register={register} required type="tel" />
           <RadioGroup label={<span className="font-bold">Titulación del alumno*</span>} name="titulacion" options={["Grado en Animación (Inglés)", "Grado en Animación (Español)", "Grado en Diseño de Productos Interactivos (Inglés)", "Grado en Diseño de Productos Interactivos (Español)", "Grado en Diseño Digital", "Grado en Ingeniería del Software (Español)", "Grado en Ingeniería del Software (Inglés)", "Doble grado en Ingeniería del Software y Matemática Computacional o Física Computacional", "Grado en Efectos Visuales (VFX)"]} register={register} />
-          <RadioGroup label={<span className="font-bold">¿Es esta tu primera movilidad Erasmus?*</span>} name="erasmusPrevio" options={["Sí", "No"]} register={register} />
-          <RadioGroup label={<span className="font-bold">Semestre que solicitas para realizar el intercambio*</span>} name="semestre" options={["Sept-Feb", "Feb-Jun"]} register={register} />
-          <InputField label={<span className="font-bold">Universidad de destino solicitada - 1ª opción*</span>} name="universidad1" register={register} required />
-          <InputField label={<span className="font-bold">Universidad de destino solicitada - 2ª opción</span>} name="universidad2" register={register} />
-          <InputField label={<span className="font-bold">Universidad de destino solicitada - 3ª opción</span>} name="universidad3" register={register} />
+          <RadioGroup label={<span className="font-bold">¿Es esta tu primera movilidad Erasmus?*</span>} name="primeraMovilidad" options={["Sí", "No"]} register={register} />
+          <RadioGroup label={<span className="font-bold">Semestre que solicitas para realizar el intercambio*</span>} name="semestreIntercambio" options={["Sept-Feb", "Feb-Jun"]} register={register} />
+          <InputField label={<span className="font-bold">Universidad de destino solicitada - 1ª opción*</span>} name="universidadDestino1" register={register} required />
+          <InputField label={<span className="font-bold">Universidad de destino solicitada - 2ª opción</span>} name="universidadDestino2" register={register} />
+          <InputField label={<span className="font-bold">Universidad de destino solicitada - 3ª opción</span>} name="universidadDestino3" register={register} />
           <FileUpload label={<span className="font-bold">Foto carnet U-tad*</span>} name="fotoCarnet" register={register} />
           <FileUpload label={<span className="font-bold">Carta de motivación (en inglés)*</span>} name="cartaMotivacion" register={register} />
           <FileUpload label={<span className="font-bold">Borrador de Learning Agreement*</span>} name="learningAgreement" register={register} />
           <FileUpload label={<span className="font-bold">Certificado de idiomas*</span>} name="certificadoIdiomas" register={register} />
-          <RadioGroup label={<span className="font-bold">¿Te interesa hacer un examen de inglés en UCJC?*</span>} name="examenIngles" options={["Sí", "No"]} register={register} />
-          <InputField label={<span className="font-bold">Link a portfolio o demoreel (solo grados de arte)</span>} name="portfolio" register={register} type="url" />
+          <RadioGroup label={<span className="font-bold">¿Te interesa hacer un examen de inglés en UCJC?*</span>} name="examenCertificado" options={["Sí", "No"]} register={register} />
+          <InputField label={<span className="font-bold">Link a portfolio o demoreel (solo grados de arte)</span>} name="linkPortfolio" register={register} type="url" />
           <TextArea label={<span className="font-bold">Algún comentario que quieras trasladar</span>} name="comentarios" register={register} />
           <div className="text-[1rem] text-black mb-6">
             <h3 className="text-[1.2rem] font-semibold mb-2">Política de datos personales</h3>

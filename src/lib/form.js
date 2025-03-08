@@ -2,6 +2,9 @@
 
 import { cookies } from "next/headers";
 
+
+// Saca el formulario asociado al usuario que se mande en el token JWT
+
 export async function getForm() {
   try {
     const cookieStore = await cookies();
@@ -26,10 +29,12 @@ export async function getForm() {
   }
 }
 
+
+// Actualiza el formulario del usuario asociado al token JWT
 export async function updateForm(fieldName, value) {
   try {
     const cookieStore = await cookies();
-    const jwt_token = cookieStore.get("jwt-token").value;
+    const jwt_token = cookieStore.get("token").value;
 
     const formData = new FormData();
     formData.append(fieldName, value);
@@ -38,7 +43,6 @@ export async function updateForm(fieldName, value) {
       method: "PUT",
       headers: {
         "Authorization": `Bearer ${jwt_token}`,
-        "Content-Type": "multipart/form-data"
       },
       body: formData, 
     });
