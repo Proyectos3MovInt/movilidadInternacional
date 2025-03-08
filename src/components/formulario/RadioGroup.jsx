@@ -1,6 +1,12 @@
-import React from 'react';
+import { updateForm } from "@/lib/form.js";
 
 export function RadioGroup({ label, name, options, register }) {
+  
+  const handleChange = async (event) => {
+    const value = event.target.value;
+    await updateForm(name, value);
+  };
+
   return (
     <div>
       <label className="block text-gray-700 mb-2 font-semibold">{label}</label>
@@ -12,6 +18,7 @@ export function RadioGroup({ label, name, options, register }) {
               {...register(name, { required: true })}
               value={option}
               className="mr-2 accent-[#0065EF]"
+              onChange={handleChange}
             />
             {option}
           </label>
