@@ -11,9 +11,9 @@ import SearchBar from '@/components/admin-dashboard/SearchBar';
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([
-    { nombre: 'Juan Pérez', titulacion: 'Licenciatura', idioma: 'Español', semestre: '2', universidadDestino: 'UNAM', observaciones: 'Buen expediente', año: 2025, estado: 'Pendiente', notaMedia: null },
-    { nombre: 'Ana Gómez', titulacion: 'Maestría', idioma: 'Inglés', semestre: '1', universidadDestino: 'Oxford', observaciones: 'Beca parcial', año: 2024, estado: 'Aprobado', notaMedia: null },
-    { nombre: 'Carlos Ruiz', titulacion: 'Doctorado', idioma: 'Francés', semestre: '3', universidadDestino: 'La Sorbona', observaciones: 'Necesita más documentación', año: 2023, estado: 'Rechazado', notaMedia: null },
+    { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente', universidadDestino: 'UNAM', notaMedia: null },
+    { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado', universidadDestino: 'Oxford', notaMedia: null },
+    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado', universidadDestino: 'La Sorbona', notaMedia: null },
   ]);
 
   const [filtroAño, setFiltroAño] = useState(null);
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
         </div>
         <div className="flex space-x-2 mb-4">
           <Button onClick={() => handleSort('nombre')} className="p-2 border rounded">Alfabéticamente</Button>
-          <Button onClick={() => handleSort('titulacion')} className="p-2 border rounded">Por titulación</Button>
+          <Button onClick={() => handleSort('grado')} className="p-2 border rounded">Por grado</Button>
           <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
           <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
           <Button onClick={() => handleSort('notaMedia')} className="p-2 border rounded">Por Nota Media</Button>
