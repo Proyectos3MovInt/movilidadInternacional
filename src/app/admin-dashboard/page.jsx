@@ -11,16 +11,25 @@ import SearchBar from '@/components/admin-dashboard/SearchBar';
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([
-    { nombre: 'Juan Pérez', titulacion: 'Licenciatura', idioma: 'Español', semestre: '2', universidadDestino: 'UNAM', observaciones: 'Buen expediente', año: 2025, estado: 'Pendiente' },
-    { nombre: 'Ana Gómez', titulacion: 'Maestría', idioma: 'Inglés', semestre: '1', universidadDestino: 'Oxford', observaciones: 'Beca parcial', año: 2024, estado: 'Aprobado' },
-    { nombre: 'Carlos Ruiz', titulacion: 'Doctorado', idioma: 'Francés', semestre: '3', universidadDestino: 'La Sorbona', observaciones: 'Necesita más documentación', año: 2023, estado: 'Rechazado' },
+    { nombre: 'Juan Pérez', titulacion: 'Licenciatura', idioma: 'Español', semestre: '2', universidadDestino: 'UNAM', observaciones: 'Buen expediente', año: 2025, estado: 'Pendiente', notaMedia: null },
+    { nombre: 'Ana Gómez', titulacion: 'Maestría', idioma: 'Inglés', semestre: '1', universidadDestino: 'Oxford', observaciones: 'Beca parcial', año: 2024, estado: 'Aprobado', notaMedia: null },
+    { nombre: 'Carlos Ruiz', titulacion: 'Doctorado', idioma: 'Francés', semestre: '3', universidadDestino: 'La Sorbona', observaciones: 'Necesita más documentación', año: 2023, estado: 'Rechazado', notaMedia: null },
   ]);
 
   const [filtroAño, setFiltroAño] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Función para actualizar la nota media
+  const handleNotaChange = (index, value) => {
+    const updatedSolicitudes = [...solicitudes];
+    updatedSolicitudes[index].notaMedia = value ? parseFloat(value) : null;
+    setSolicitudes(updatedSolicitudes);
+  };
+
   const handleSort = (key) => {
-    const sorted = [...solicitudes].sort((a, b) => (typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]));
+    const sorted = [...solicitudes].sort((a, b) => 
+      typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]
+    );
     setSolicitudes(sorted);
   };
 
@@ -44,12 +53,11 @@ export default function AdminDashboard() {
         <div className="flex space-x-2 mb-4">
           <Button onClick={() => handleSort('nombre')} className="p-2 border rounded">Alfabéticamente</Button>
           <Button onClick={() => handleSort('titulacion')} className="p-2 border rounded">Por titulación</Button>
-          <Button onClick={() => handleSort('idioma')} className="p-2 border rounded">Por idioma</Button>
-          <Button onClick={() => handleSort('semestre')} className="p-2 border rounded">Por semestre</Button>
           <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
           <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
+          <Button onClick={() => handleSort('notaMedia')} className="p-2 border rounded">Por Nota Media</Button>
         </div>
-        <SolicitudesTable solicitudes={solicitudesFiltradas} />
+        <SolicitudesTable solicitudes={solicitudesFiltradas} handleNotaChange={handleNotaChange} />
       </div>
     </div>
   );
