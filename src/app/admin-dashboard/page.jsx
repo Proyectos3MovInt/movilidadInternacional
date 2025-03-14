@@ -11,16 +11,25 @@ import SearchBar from '@/components/admin-dashboard/SearchBar';
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([
-    { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente' },
-    { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado' },
-    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado' },
+    { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente', universidadDestino: 'UNAM', notaMedia: null },
+    { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado', universidadDestino: 'Oxford', notaMedia: null },
+    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado', universidadDestino: 'La Sorbona', notaMedia: null },
   ]);
 
   const [filtroAño, setFiltroAño] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Función para actualizar la nota media
+  const handleNotaChange = (index, value) => {
+    const updatedSolicitudes = [...solicitudes];
+    updatedSolicitudes[index].notaMedia = value ? parseFloat(value) : null;
+    setSolicitudes(updatedSolicitudes);
+  };
+
   const handleSort = (key) => {
-    const sorted = [...solicitudes].sort((a, b) => (typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]));
+    const sorted = [...solicitudes].sort((a, b) => 
+      typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]
+    );
     setSolicitudes(sorted);
   };
 
@@ -46,8 +55,9 @@ export default function AdminDashboard() {
           <Button onClick={() => handleSort('grado')} className="p-2 border rounded">Por grado</Button>
           <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
           <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
+          <Button onClick={() => handleSort('notaMedia')} className="p-2 border rounded">Por Nota Media</Button>
         </div>
-        <SolicitudesTable solicitudes={solicitudesFiltradas} />
+        <SolicitudesTable solicitudes={solicitudesFiltradas} handleNotaChange={handleNotaChange} />
       </div>
     </div>
   );
