@@ -24,22 +24,21 @@ export function InputField({
 
   return (
     <div className="w-[678px] px-6 py-7 bg-white rounded-xl shadow-[inset_0px_0px_8px_0px_rgba(0,0,0,0.24)] flex flex-col justify-start items-start gap-2">
-      {/* Título */}
       <div className="w-full flex flex-col justify-start items-start gap-1.5">
         <div className="text-slate-900 text-xl font-semibold font-['Montserrat'] leading-10">
           {label}
         </div>
       </div>
 
-      {/* Campo de entrada */}
+
       <div className="w-full flex flex-col justify-start items-start gap-1">
         <input 
           {...register(name, { required })}
           type={type}
           value={inputValue}
           onChange={handleChange}
-          className="w-full p-2 border-none outline-none" // Se eliminó el borde azul (focus:ring)
-          placeholder="Respuesta" // Placeholder para mostrar texto dentro del campo
+          className="w-full p-2 border-none outline-none"
+          placeholder="Respuesta" // placeholder
           onBlur={handleBlur}
         />
         <div className="w-full h-0 outline outline-[0.75px] outline-offset-[-0.38px] outline-slate-900"></div>

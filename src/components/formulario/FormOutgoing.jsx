@@ -15,9 +15,6 @@ export default function Formulario() {
   const { register, handleSubmit, reset } = useForm();
   const [ uploadedFiles, setUploadedFiles ] = useState({});
 
-  // Reset nos permite cargar valores por defecto a un formulario
-  // Los cargamos con GET desde la API y según el usuario los va modificando se van actualizando en base de datos 
-
   useEffect(() => {
     const callForm = async () => {
       const response_json = await getForm();
