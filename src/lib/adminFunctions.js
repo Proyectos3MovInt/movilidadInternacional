@@ -14,7 +14,6 @@ export async function getStudentsTable(studentType) {
           "Content-Type": "application/json"
         }
       });
-  
       if (!response.ok) {
         throw new Error("Error al obtener los datos de la tabla");
       }
@@ -25,3 +24,24 @@ export async function getStudentsTable(studentType) {
       return null;
     }
   }
+
+  export async function getAdminName() {
+    const cookieStore = cookies();
+    const jwt_token = cookieStore.get("token")?.value;
+  
+    if (!jwt_token) return "Nombre del Admin";
+  
+    try {
+      const base64Payload = jwt_token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(base64Payload));
+  
+      if (decodedPayload.name && decodedPayload.surname) {
+        return `${decodedPayload.name} ${decodedPayload.surname}`;
+      }
+    } catch (error) {
+      console.error("Error al decodificar el token:", error);
+    }
+  
+    return "Nombre del Admin";
+  }
+  
