@@ -13,7 +13,7 @@ const SolicitudesTable = ({ solicitudes }) => {
       </div>
       <div className="divide-y">
         {solicitudes.map((solicitud, index) => (
-          <CajaAlumno key={index} solicitud={solicitud} />
+          <CajaAlumno key={index} solicitud={solicitud} index={index} />
         ))}
       </div>
     </div>

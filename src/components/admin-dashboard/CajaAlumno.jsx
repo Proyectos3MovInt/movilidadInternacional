@@ -1,6 +1,10 @@
-const CajaAlumno = ({ solicitud }) => {
+const CajaAlumno = ({ solicitud, index }) => {
   return (
-    <div className="grid grid-cols-6 p-3 items-center">
+    <div
+      className={`grid grid-cols-6 p-3 items-center ${
+        index % 2 === 0 ? "bg-blue-100" : "bg-white"
+      }`}
+    >
       <span>{solicitud.nombre}</span>
       <span>{solicitud.grado}</span>
       <span>{solicitud.año}</span>
