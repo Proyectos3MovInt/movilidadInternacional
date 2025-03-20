@@ -1,6 +1,6 @@
 const SearchBar = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="relative flex items-center bg-gray-100 p-3 rounded-lg shadow-sm w-80">
+    <div className="relative flex items-center bg-white p-2 rounded-[0.5rem] shadow-md w-80">
       {/* Icono de búsqueda en SVG */}
       <div className="absolute left-4">
         <svg width="20" height="20" viewBox="0 0 39 40" fill="none" xmlns="http://www.w3.org/2000/svg">

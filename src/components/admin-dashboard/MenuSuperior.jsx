@@ -1,19 +1,30 @@
-import { LogoUtad } from "../Icons";
-const MenuSuperior = () => {
+import { LogoUtad, Incidencias } from "../Icons";
+import SearchBar from "@/components/admin-dashboard/SearchBar";
+
+const MenuSuperior = ({ searchTerm, setSearchTerm }) => {
   return (
-    <nav className="w-full bg-gray-100 px-6 py-3 flex justify-between items-center shadow-md">
-      <div className="flex items-center space-x-4">
-        <LogoUtad />
+    <nav className="w-full h-[4.5rem] bg-white flex justify-between items-center px-[2rem]">
+      {/* Logo - Izquierda */}
+      <div className="h-8 flex items-center">
+        <LogoUtad className="h-full w-auto" />
       </div>
-      <div className="flex space-x-6">
-        <a href="#" className="text-blue-600 font-semibold">Incoming</a>
-        <a href="#" className="text-blue-600 font-semibold">Outgoing</a>
-        <a href="#" className="text-blue-600 font-semibold">Universidades</a>
+
+      {/* Navegación Central */}
+      <div className="flex gap-6 text-blue-600 font-semibold">
+        <a href="#" className="hover:text-blue-700 transition-colors">Incoming</a>
+        <a href="#" className="hover:text-blue-700 transition-colors">Outgoing</a>
+        <a href="#" className="hover:text-blue-700 transition-colors">Universidades</a>
       </div>
-      <div className="flex items-center space-x-4">
-        <button className="p-2 border rounded-full">🔍</button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded flex items-center">
-          <span>⚠️</span> Incidencias
+
+      {/* Derecha: Buscador + Incidencias */}
+      <div className="flex items-center gap-4">
+        <div className="w-[300px] mr-2">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+        
+        <button className="bg-[#0065EF] text-white rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-blue-700 transition-colors">
+          <Incidencias className="h-5 w-5" />
+          <span>Incidencias</span>
         </button>
       </div>
     </nav>
