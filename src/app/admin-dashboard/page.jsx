@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { InputField } from '@/components/formulario/InputField';
+import { InputField } from '@/components/formulario/InputFieldES';
 import { Button } from '@/components/ui/button';
 import Sidebar from '@/components/admin-dashboard/Sidebar';
 import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
