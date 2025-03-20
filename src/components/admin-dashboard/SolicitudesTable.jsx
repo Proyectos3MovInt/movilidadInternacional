@@ -1,3 +1,5 @@
+import CajaAlumno from "./CajaAlumno";
+
 const SolicitudesTable = ({ solicitudes }) => {
   return (
     <div className="border rounded-lg overflow-hidden shadow">
@@ -11,24 +13,7 @@ const SolicitudesTable = ({ solicitudes }) => {
       </div>
       <div className="divide-y">
         {solicitudes.map((solicitud, index) => (
-          <div key={index} className="grid grid-cols-6 p-3 items-center">
-            <span>{solicitud.nombre}</span>
-            <span>{solicitud.grado}</span>
-            <span>{solicitud.año}</span>
-            <span>{solicitud.universidadDestino}</span>
-            <span>{solicitud.notaMedia}</span>
-            <span
-              className={`px-3 py-1 rounded-full text-white text-center ${
-                solicitud.estado === "Aprobada"
-                  ? "bg-green-500"
-                  : solicitud.estado === "Rechazada"
-                  ? "bg-red-500"
-                  : "bg-yellow-500"
-              }`}
-            >
-              {solicitud.estado}
-            </span>
-          </div>
+          <CajaAlumno key={index} solicitud={solicitud} />
         ))}
       </div>
     </div>
