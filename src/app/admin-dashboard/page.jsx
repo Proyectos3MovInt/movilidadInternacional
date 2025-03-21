@@ -117,9 +117,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabla de solicitudes */}
-      <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md">
+      <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
         <SolicitudesTable solicitudes={sortedSolicitudes()} />
       </div>
+
+
 
       {/* Paginación */}
       <div className="flex space-x-2 mt-4 justify-center">
