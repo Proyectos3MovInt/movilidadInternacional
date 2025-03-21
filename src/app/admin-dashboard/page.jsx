@@ -36,26 +36,39 @@ export default function AdminDashboard() {
     }
   }, [tableFilled]);
 
-  // Función para ordenar las solicitudes por el campo seleccionado
+  // Función para ordenar y filtrar las solicitudes
   const sortedSolicitudes = () => {
+    let resultados = [...solicitudes];
+
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      resultados = resultados.filter((solicitud) =>
+        solicitud.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        solicitud.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        solicitud.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Ordenar si hay sortOrder
     if (sortOrder) {
-      return [...solicitudes].sort((a, b) => {
+      resultados.sort((a, b) => {
         if (a[sortOrder] < b[sortOrder]) return -1;
         if (a[sortOrder] > b[sortOrder]) return 1;
         return 0;
       });
     }
-    return solicitudes;
+
+    return resultados;
   };
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen">
-      {/* Menú superior */}
+      {/* Menú superior con buscador */}
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       {/* Fila de título y botones */}
       <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
-        {/* Texto de "Solicitudes de alumnos" con el estilo aplicado */}
         <div
           style={{
             color: 'var(--Azul-base-u-tad, #0065EF)',
@@ -70,7 +83,6 @@ export default function AdminDashboard() {
 
         {/* Contenedor de filtros y calendario */}
         <div className="flex items-center gap-4">
-          {/* Desplegable de filtros con el mismo tamaño que el botón del calendario */}
           <select
             className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
             onChange={(e) => {
@@ -83,9 +95,9 @@ export default function AdminDashboard() {
             }}
             defaultValue=""
             style={{
-              marginRight: '1.44rem', // Agregamos un margen a la derecha para espaciarlo del botón del calendario
-              height: '40px', // Aseguramos que el alto del desplegable sea igual al del botón
-              width: 'auto', // Ajuste automático del ancho
+              marginRight: '1.44rem',
+              height: '40px',
+              width: 'auto',
             }}
           >
             <option value="" disabled>Filtros</option>
@@ -95,12 +107,11 @@ export default function AdminDashboard() {
             <option value="estado">Ordenar por Estado</option>
           </select>
 
-          {/* Botón del calendario */}
           <Button
             className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
             disabled
             style={{
-              height: '40px', // Aseguramos que el botón tenga la misma altura que el desplegable
+              height: '40px',
             }}
           >
             <svg
@@ -116,10 +127,14 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tabla de solicitudes */}
-      <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md">
+      
+
+       {/* Tabla de solicitudes */}
+      <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
         <SolicitudesTable solicitudes={sortedSolicitudes()} />
       </div>
+
+
 
       {/* Paginación */}
       <div className="flex space-x-2 mt-4 justify-center">

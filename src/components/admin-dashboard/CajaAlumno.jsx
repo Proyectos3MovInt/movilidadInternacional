@@ -8,7 +8,7 @@ const CajaAlumno = ({ solicitud, index }) => {
       <span>{solicitud.nombre}</span>
       <span>{solicitud.grado}</span>
       <span>{solicitud.año}</span>
-      <span>{solicitud.universidadDestino}</span>
+      <span className="min-w-28">{solicitud.universidadDestino}</span>
       <span>{solicitud.notaMedia}</span>
       <span
         className={`px-3 py-1 rounded-full text-white text-center ${
