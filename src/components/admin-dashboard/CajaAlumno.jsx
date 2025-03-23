@@ -1,9 +1,21 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 const CajaAlumno = ({ solicitud, index }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    // Redirigir a una página estática
+    router.push(`/admin-alumno`);
+  };
+
   return (
     <div
-      className={`grid grid-cols-6 p-3 items-center ${
+      onClick={handleClick}
+      className={`grid grid-cols-6 p-3 items-center cursor-pointer ${
         index % 2 === 0 ? "bg-blue-100" : "bg-white"
-      }`}
+      } hover:bg-gray-200`}
     >
       <span>{solicitud.nombre}</span>
       <span>{solicitud.grado}</span>
