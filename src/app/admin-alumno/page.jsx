@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from 'react';
-import MainSection from '@/components/admin-alumno/MainSection';
-import Calendar from '@/components/admin-alumno/Calendar';
-import Notes from '@/components/admin-alumno/Notes';
-import AccordionSection from '@/components/admin-alumno/AccordionSection';
-import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
+import React, { useState } from "react";
+import Perfil from "@/components/admin-alumno/Perfil";
+import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
+import SeccionDesplegable from "@/components/admin-alumno/SeccionDesplegable"; // Asegúrate de que la ruta sea correcta
+import Anotaciones from "@/components/admin-alumno/Anotaciones";
+import Calendario from "@/components/admin-alumno/Calendario";
 
-// Datos de subsecciones, si quereis añadir otra hay q agregar tambien un campo en el return (linea 43)
+
+// 🧾 Datos temporales simulados
 const DatosPersonales = [
   { label: 'DNI / NIE', value: '66568934K' },
   { label: 'Email de contacto', value: 'lucia.gonzalez@live.u-tad.com' },
@@ -24,7 +25,6 @@ const InfoAcademica = [
   { label: 'Universidad de destino solicitada - 2a opción', value: 'Universidad de Roma' },
   { label: 'Universidad de destino solicitada - 3a opción', value: 'Universidad de Nueva York' },
   { label: '¿Estás interesado en hacer un examen no oficial de nivel de inglés en UCJC a través de U-Tad?', value: 'No' },
-  { label: '1100', value: '' }
 ];
 
 const ArchivosAdjuntos = [
@@ -36,35 +36,37 @@ const ArchivosAdjuntos = [
   { label: 'Link a portfolio o demoreel', value: '' }
 ];
 
-
 export default function Page() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="bg-sky-100 min-h-screen">
+    <div className="bg-[#EAF2FF] min-h-screen">
+      {/* Menú superior */}
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-      {/* contenido de la propia pagina */}
-      <div className="container mx-auto p-4">
-        <MainSection />
-
-        <div className="grid grid-cols-3 gap-4 mt-8">
-          {/* columna principal con los despelgables*/}
-          <div className="col-span-2">
-            <AccordionSection title="Datos Personales" data={DatosPersonales} />
-            <AccordionSection title="Información Académica" data={InfoAcademica} />
-            <AccordionSection title="Archivos Adjuntos" data={ArchivosAdjuntos} />
+  
+      {/* Perfil centrado */}
+      <div className="flex justify-center py-12">
+        <Perfil />
+      </div>
+  
+      {/* Contenedor de columnas alineadas */}
+      <div className="flex justify-center">
+        <div className="flex gap-[4rem] w-[66.875rem] mb-20">
+          {/* Columna izquierda: secciones desplegables */}
+          <div className="flex flex-col gap-5 w-[41.5625rem]">
+            <SeccionDesplegable title="Datos personales" data={DatosPersonales} />
+            <SeccionDesplegable title="Información académica" data={InfoAcademica} />
+            <SeccionDesplegable title="Archivos adjuntos" data={ArchivosAdjuntos} />
           </div>
-
-          {/* columna secundaria (calendario y anotaciones*/}
-          <div>
-            <Calendar />
-            <div className="mt-8">
-              <Notes />
-            </div>
+  
+          {/* Columna derecha: calendario y anotaciones */}
+          <div className="flex flex-col gap-4 w-[21.3125rem] ">
+            <Calendario />
+            <Anotaciones />
           </div>
         </div>
       </div>
     </div>
   );
+  
 }
