@@ -7,7 +7,8 @@ const CajaAlumno = ({ solicitud, index }) => {
 
   const handleClick = () => {
     // Redirigir a una página estática
-    router.push(`/admin-alumno`);
+    console.log(solicitud);
+    router.push(`/admin-alumno/${solicitud.id}`);
   };
 
   return (

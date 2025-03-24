@@ -1,12 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditSquare, ArrowForwardIos } from "../Icons";
 
-const Perfil = () => {
+export default function Perfil({ datos }) {
   const [estado, setEstado] = useState("aprobada");
   const [universidad, setUniversidad] = useState("U-tad");
+  const [datosApi, setDatosApi] = useState({});
+
+  useEffect( () => { setDatosApi(datos) }, [datos]);
 
   const toggleEstado = () => {
+    console.log(datos);
     setEstado((prev) => (prev === "aprobada" ? "denegada" : "aprobada"));
   };
 
@@ -22,19 +26,19 @@ const Perfil = () => {
       {/* Datos del perfil */}
       <div className="flex flex-col w-[22.875rem] items-start gap-[0.5rem] font-montserrat">
         <p className="text-[#0065EF] font-semibold text-[1rem] leading-[1.5rem]">
-          Nombre: <span className="text-[#14192C] font-normal">Lucía González Lobo</span>
+          Nombre: <span className="text-[#14192C] font-normal">{datosApi.nombreApellidos || ""}</span>
         </p>
         <p className="text-[#0065EF] font-semibold text-[1rem] leading-[1.5rem]">
-          Titulación: <span className="text-[#14192C] font-normal">Diseño Digital</span>
+          Titulación: <span className="text-[#14192C] font-normal">{datosApi.titulacion || ""}</span>
         </p>
         <p className="text-[#0065EF] font-semibold text-[1rem] leading-[1.5rem]">
-          Curso de matriculación: <span className="text-[#14192C] font-normal">2022 - 2023</span>
+          Curso de matriculación: <span className="text-[#14192C] font-normal">2025</span> {/* Hardcodeado hasta que metamos este campo en bbdd*/}
         </p>
         <p className="text-[#0065EF] font-semibold text-[1rem] leading-[1.5rem]">
-          Semestre: <span className="text-[#14192C] font-normal">2º</span>
+          Semestre: <span className="text-[#14192C] font-normal">{datosApi.semestreIntercambio || ""}</span>
         </p>
         <p className="text-[#0065EF] font-semibold text-[1rem] leading-[1.5rem]">
-          Nota media: <span className="text-[#14192C] font-normal">8,7</span>
+          Nota media: <span className="text-[#14192C] font-normal">8,7</span> {/* Hardcodeado de momento tambien */}
         </p>
       </div>
 
@@ -74,9 +78,8 @@ const Perfil = () => {
         <div className="flex justify-end pr-[2.5rem] w-full">
           <button
             onClick={toggleEstado}
-            className={`w-[7.25rem] h-[2rem] px-[1rem] py-[0.25rem] flex justify-center items-center gap-[0.5rem] rounded-[0.5rem] text-white font-medium text-sm ${
-              estado === "aprobada" ? "bg-[#48B726]" : "bg-red-500"
-            }`}
+            className={`w-[7.25rem] h-[2rem] px-[1rem] py-[0.25rem] flex justify-center items-center gap-[0.5rem] rounded-[0.5rem] text-white font-medium text-sm ${estado === "aprobada" ? "bg-[#48B726]" : "bg-red-500"
+              }`}
           >
             <span className="w-2 h-2 rounded-full bg-white" />
             {estado === "aprobada" ? "Aprobada" : "Denegada"}
@@ -87,4 +90,3 @@ const Perfil = () => {
   );
 };
 
-export default Perfil;

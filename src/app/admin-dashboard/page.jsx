@@ -21,6 +21,7 @@ export default function AdminDashboard() {
     const fillTable = async () => {
       const response_json = await getStudentsTable("outgoing");
       const solicitudesData = response_json.map((student) => ({
+        id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
         grado: student.titulacion || "No especificado",
         año: "2024-2025",
