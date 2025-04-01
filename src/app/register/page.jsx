@@ -82,7 +82,7 @@ export default function Register() {
               className="p-2"
               onClick={() => setShowPassword(!showPassword)}
             >
-              <Icons.EyeIcon />
+              { showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon /> }
             </button>
           </div>
         </div>

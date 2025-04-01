@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { updateForm } from "@/lib/form.js";
 
 export function InputField({
@@ -7,10 +7,20 @@ export function InputField({
   register,
   type = 'text',
   required = false,
+  lang = 'en'
 }) {
 
   const [inputValue, setInputValue] = useState("");
+  const [text, setText] = useState("");
 
+  useEffect(() => {
+    if(lang == "es") {
+      setText("Respuesta");
+    } else {
+      setText("Text");
+    }
+  })
+  
   const handleBlur = async (event) => {
     const value = event.target.value;
     if (value.trim() !== "") {
@@ -38,7 +48,7 @@ export function InputField({
           value={inputValue}
           onChange={handleChange}
           className="w-full p-2 border-none outline-none"
-          placeholder="Text"
+          placeholder={text}
           onBlur={handleBlur}
         />
         <div className="w-full h-0 outline outline-[0.75px] outline-offset-[-0.38px] outline-slate-900"></div>

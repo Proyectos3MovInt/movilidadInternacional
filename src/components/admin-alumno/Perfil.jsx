@@ -7,7 +7,7 @@ export default function Perfil({ datos }) {
   const [universidad, setUniversidad] = useState("U-tad");
   const [datosApi, setDatosApi] = useState({});
 
-  useEffect( () => { setDatosApi(datos) }, [datos]);
+  useEffect(() => { setDatosApi(datos) }, [datos]);
 
   const toggleEstado = () => {
     console.log(datos);

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ArrowForwardIos } from "../Icons"; // o el nombre del icono que uses
 
-const SeccionDesplegable = ({ title, data = [] }) => {
+export default function SeccionDesplegable ({ title, data = [] }) {
   const [abierto, setAbierto] = useState(true);
 
   return (
@@ -38,10 +38,4 @@ const SeccionDesplegable = ({ title, data = [] }) => {
       )}
     </div>
   );
-  
-  
- 
-  
 };
-
-export default SeccionDesplegable;

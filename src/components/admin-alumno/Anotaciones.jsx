@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
 
-const Anotaciones = () => {
+export default function Anotaciones() {
   return (
     <div className="bg-white rounded-[0.5rem] p-6 w-full">
       <h3 className="text-[#0065EF] font-semibold mb-2 text-sm">Anotaciones</h3>
@@ -13,5 +12,3 @@ const Anotaciones = () => {
     </div>
   );
 };
-
-export default Anotaciones;

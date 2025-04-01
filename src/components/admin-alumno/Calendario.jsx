@@ -1,12 +1,11 @@
 "use client";
-import React from "react";
 import { ArrowForwardIos } from "../Icons"; // Asegúrate de tenerlo
 
 const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
 const diasMes = Array.from({ length: 31 }, (_, i) => i + 1);
 const diaActual = 1; // Simulamos que hoy es día 1 para resaltarlo
 
-const Calendario = () => {
+export default function Calendario() {
   return (
     <div className="flex flex-col items-center bg-white rounded-[0.5rem] py-[1.5rem] w-full gap-[1.125rem]">
       {/* Encabezado */}
@@ -41,5 +40,3 @@ const Calendario = () => {
     </div>
   );
 };
-
-export default Calendario;

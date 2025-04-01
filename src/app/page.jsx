@@ -1,5 +1,5 @@
 "use client";
-//Esto funciona por MISCO
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
@@ -66,7 +66,7 @@ export default function Login() {
               className="absolute right-4 flex items-center justify-center"
               onClick={() => setShowPassword(!showPassword)}
             >
-              <Icons.EyeIcon />
+              { showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon /> }
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function Login() {
           <a href="#" className="text-black underline text-lg">Olvidé mi contraseña</a>
         </div>
         <div className="flex justify-center w-full mt-6">
-          <Boton text={"Iniciar sesión"}/>
+          <Boton text="Iniciar sesión" />
         </div>
       </form>
     </div>

@@ -2,9 +2,9 @@
 
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { InputField } from "./InputFieldEN";
+import { InputField } from "./InputField";
 import { RadioGroup } from "./RadioGroup";
-import { FileUpload } from "./FileUploadEN";
+import { FileUpload } from "./FileUpload";
 import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import { Checkbox } from "./Checkbox";

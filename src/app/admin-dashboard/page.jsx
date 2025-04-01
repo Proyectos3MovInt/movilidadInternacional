@@ -7,13 +7,14 @@ import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
 import { getStudentsTable } from '@/lib/adminFunctions';
 import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
 import SearchBar from '@/components/admin-dashboard/SearchBar';
+import * as Icons from '@/components/Icons';
 
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([]);
   const [tableFilled, setTableFilled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroAño, setFiltroAño] = useState(null);
+  const [filtroAno, setFiltroAno] = useState(null);
   const [sortOrder, setSortOrder] = useState(null); // Estado para ordenar solicitudes
   const [isFilterOpen, setIsFilterOpen] = useState(false); // Controla la visibilidad del desplegable de filtros
 
@@ -24,7 +25,7 @@ export default function AdminDashboard() {
         id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
         grado: student.titulacion || "No especificado",
-        año: "2024-2025",
+        ano: "2024-2025",
         estado: student.processStatus || "Pendiente",
         universidadDestino: student.universidadDestino1 || "No especificada",
         notaMedia: 7.6,
@@ -91,7 +92,7 @@ export default function AdminDashboard() {
               setIsFilterOpen(false);
               if (selectedFilter === "nombre") setSortOrder("nombre");
               if (selectedFilter === "grado") setSortOrder("grado");
-              if (selectedFilter === "año") setSortOrder("año");
+              if (selectedFilter === "ano") setSortOrder("ano");
               if (selectedFilter === "estado") setSortOrder("estado");
             }}
             defaultValue=""
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
             <option value="" disabled>Filtros</option>
             <option value="nombre">Ordenar por Nombre</option>
             <option value="grado">Ordenar por Grado</option>
-            <option value="año">Ordenar por Año</option>
+            <option value="ano">Ordenar por Año</option>
             <option value="estado">Ordenar por Estado</option>
           </select>
 
@@ -115,27 +116,16 @@ export default function AdminDashboard() {
               height: '40px',
             }}
           >
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path d="M3 4H5V2H7V4H17V2H19V4H21V6H3V4ZM19 8H5V18H19V8Z" fill="#1C1B1F" />
-            </svg>
+            <Icons.Calendar />
             <span>Febrero 2025</span>
           </Button>
         </div>
       </div>
 
-      
-
-       {/* Tabla de solicitudes */}
+      {/* Tabla de solicitudes */}
       <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
         <SolicitudesTable solicitudes={sortedSolicitudes()} />
       </div>
-
-
 
       {/* Paginación */}
       <div className="flex space-x-2 mt-4 justify-center">
