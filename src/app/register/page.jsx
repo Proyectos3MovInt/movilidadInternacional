@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
 import Overlay from "@/components/Overlay";
+import { register } from "@/lib/auth";
 
 export default function Register() {
   const [isClient, setIsClient] = useState(false);
@@ -21,9 +22,16 @@ export default function Register() {
 
   if (!isClient) return null; // Evita error de hidratación
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulario enviado", { firstName, lastName, email, password, isStudent });
+
+    const response_status = await register(email, password, firstName, lastName);
+    if(response_status === 201) {
+      router.push("/form-outgoing");
+    } else {
+      console.log(response_status);
+      //setError(true); // en el return mostraríamos el error al usuario
+    }
   };
 
   return (
