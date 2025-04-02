@@ -1,4 +1,4 @@
-import Formulario from "@/components/formulario/FormOutgoing";
+import Formulario from "@/components/formulario/FormIncoming";
 
 export default function Page() {
   return (

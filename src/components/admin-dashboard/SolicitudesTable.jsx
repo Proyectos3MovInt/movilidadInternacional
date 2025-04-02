@@ -1,23 +1,23 @@
-const SolicitudesTable = ({ solicitudes }) => (
-    <div className="border p-4 rounded">
-      <div className="grid grid-cols-4 font-semibold border-b pb-2 mb-2">
+import CajaAlumno from "./CajaAlumno";
+
+const SolicitudesTable = ({ solicitudes }) => {
+  return (
+    <div className="border rounded-lg overflow-hidden shadow">
+      <div className="grid grid-cols-6 font-semibold bg-gray-100 border-b p-3">
         <span>Nombre</span>
-        <span>Grado</span>
+        <span>Titulación</span>
         <span>Año de salida</span>
-        <span>Estado</span>
+        <span>Universidad de destino</span>
+        <span>Nota media</span>
+        <span>Estado de solicitud</span>
       </div>
-      <div className="space-y-2">
+      <div className="divide-y">
         {solicitudes.map((solicitud, index) => (
-          <div key={index} className="grid grid-cols-4 p-2 border rounded">
-            <span>{solicitud.nombre}</span>
-            <span>{solicitud.grado}</span>
-            <span>{solicitud.año}</span>
-            <span className="px-4 py-1 border rounded text-center">{solicitud.estado}</span>
-          </div>
+          <CajaAlumno key={index} solicitud={solicitud} index={index} />
         ))}
       </div>
     </div>
   );
-  
-  export default SolicitudesTable;
-  
+};
+
+export default SolicitudesTable;
