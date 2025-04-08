@@ -3,27 +3,27 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import UniversidadesTable from '@/components/universidades/UniversidadesTable';
+import UniversidadesTable from '@/components/universidades/UniversidadesTable'; 
 import { getUniversidades } from '@/lib/universidadesFunctions'; 
 import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
 import SearchBar from '@/components/admin-dashboard/SearchBar';
 
 export default function UniversidadesPage() {
-  const { register } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [universidades, setUniversidades] = useState([]);
   const [tableFilled, setTableFilled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroAño, setFiltroAño] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null); // Estado para ordenar universidades
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Controla la visibilidad del desplegable de filtros
+  const [isFormVisible, setIsFormVisible] = useState(false); // Controlar visibilidad del formulario
+  const [newUniversidad, setNewUniversidad] = useState(null); // Nuevo estado para la universidad creada
 
+  // Obtener universidades desde la API
   useEffect(() => {
     const fillTable = async () => {
       const response_json = await getUniversidades(); 
       const universidadesData = response_json.map((uni) => ({
         nombre: uni.nombre || "Desconocida",
-        ubicacion: uni.ubicacion || "No especificada",
-        programa: uni.programa || "No especificado",
+        pais: uni.pais || "No especificada",
+        contacto: uni.contacto || "No especificado",
       }));
       setUniversidades(universidadesData);
       setTableFilled(true); 
@@ -31,30 +31,36 @@ export default function UniversidadesPage() {
     if (!tableFilled) {
       fillTable();
     }
-  }, [tableFilled]);
+  }, [tableFilled, newUniversidad]); // Se actualiza cuando se crea una nueva universidad
 
+  // Función para ordenar y filtrar universidades
   const sortedUniversidades = () => {
     let resultados = [...universidades];
 
-    // Filtrar por búsqueda
     if (searchTerm) {
       resultados = resultados.filter((universidad) =>
         universidad.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        universidad.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        universidad.programa.toLowerCase().includes(searchTerm.toLowerCase())
+        universidad.pais.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        universidad.contacto.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Ordenar si hay sortOrder
-    if (sortOrder) {
-      resultados.sort((a, b) => {
-        if (a[sortOrder] < b[sortOrder]) return -1;
-        if (a[sortOrder] > b[sortOrder]) return 1;
-        return 0;
-      });
-    }
-
     return resultados;
+  };
+
+  // Función para agregar universidad
+  const onSubmit = (data) => {
+    setUniversidades(prevState => [
+      ...prevState,
+      {
+        nombre: data.nombre,
+        pais: data.pais,
+        contacto: data.contacto
+      }
+    ]);
+    setNewUniversidad(data); // Guarda la nueva universidad
+    reset(); // Resetea el formulario
+    setIsFormVisible(false); // Oculta el formulario después de agregar
   };
 
   return (
@@ -76,49 +82,70 @@ export default function UniversidadesPage() {
           Universidades
         </div>
 
-        {/* Contenedor de filtros y calendario */}
-        <div className="flex items-center gap-4">
-          <select
-            className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
-            onChange={(e) => {
-              const selectedFilter = e.target.value;
-              setIsFilterOpen(false);
-              if (selectedFilter === "nombre") setSortOrder("nombre");
-              if (selectedFilter === "ubicacion") setSortOrder("ubicacion");
-              if (selectedFilter === "programa") setSortOrder("programa");
-            }}
-            defaultValue=""
-            style={{
-              marginRight: '1.44rem',
-              height: '40px',
-              width: 'auto',
-            }}
-          >
-            <option value="" disabled>Filtros</option>
-            <option value="nombre">Ordenar por Nombre</option>
-            <option value="ubicacion">Ordenar por Ubicación</option>
-            <option value="programa">Ordenar por Programa</option>
-          </select>
-
-          <Button
-            className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
-            disabled
-            style={{
-              height: '40px',
-            }}
-          >
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path d="M3 4H5V2H7V4H17V2H19V4H21V6H3V4ZM19 8H5V18H19V8Z" fill="#1C1B1F" />
-            </svg>
-            <span>Febrero 2025</span>
-          </Button>
-        </div>
+        {/* Botón para mostrar el formulario */}
+        <Button
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+          onClick={() => setIsFormVisible(true)} // Muestra el formulario
+        >
+          Crear Universidad
+        </Button>
       </div>
+
+      {/* Formulario para crear universidad */}
+      {isFormVisible && (
+        <div className="bg-white p-6 rounded-lg shadow-md w-[75rem] mt-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
+                Nombre de la universidad
+              </label>
+              <input
+                id="nombre"
+                {...register('nombre', { required: true })}
+                type="text"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                placeholder="Nombre"
+              />
+            </div>
+            <div>
+              <label htmlFor="pais" className="block text-sm font-medium text-gray-700">
+                País
+              </label>
+              <input
+                id="pais"
+                {...register('pais', { required: true })}
+                type="text"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                placeholder="País"
+              />
+            </div>
+            <div>
+              <label htmlFor="contacto" className="block text-sm font-medium text-gray-700">
+                Contacto
+              </label>
+              <input
+                id="contacto"
+                {...register('contacto', { required: true })}
+                type="text"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                placeholder="Contacto"
+              />
+            </div>
+            <div className="flex gap-4">
+              <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                Crear Universidad
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setIsFormVisible(false)}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancelar
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Tabla de universidades */}
       <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">

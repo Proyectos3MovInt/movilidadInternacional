@@ -4,8 +4,8 @@ const UniversidadesTable = ({ universidades }) => {
       {/* Cabecera de la tabla con las columnas actualizadas */}
       <div className="grid grid-cols-3 font-semibold bg-gray-100 border-b p-3">
         <span>Nombre</span>
-        <span>Ubicación</span>
-        <span>Programa de estudios</span>
+        <span>País</span>
+        <span>Contacto</span>
       </div>
 
       {/* Filas de datos */}
@@ -13,8 +13,8 @@ const UniversidadesTable = ({ universidades }) => {
         {universidades.map((universidad, index) => (
           <div key={index} className={`grid grid-cols-3 p-3 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
             <span>{universidad.nombre}</span>
-            <span>{universidad.ubicacion}</span>
-            <span>{universidad.programa}</span>
+            <span>{universidad.pais}</span>
+            <span>{universidad.contacto}</span>
           </div>
         ))}
       </div>
