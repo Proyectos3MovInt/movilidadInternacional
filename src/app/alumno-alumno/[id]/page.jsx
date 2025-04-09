@@ -22,39 +22,19 @@ export default function Page() {
     personales: [
       { label: "DNI / NIE", name: "dniNie", type: "text" },
       { label: "Email de contacto", name: "email", type: "email" },
-      {
-        label: "Género",
-        name: "genero",
-        type: "select",
-        options: ["Mujer", "Hombre", "No binario", "Prefiero no decirlo"]
-      },
+      { label: "Género", name: "genero", type: "select", options: ["Mujer", "Hombre", "No binario", "Prefiero no decirlo"]},
       { label: "Nacionalidad", name: "nacionalidad", type: "text" },
       { label: "Fecha de nacimiento", name: "fechaNacimiento", type: "date" },
       { label: "Domicilio", name: "domicilio", type: "text" },
       { label: "Número de teléfono", name: "numeroTelefono", type: "tel" }
     ],
     academica: [
-      {
-        label: "¿Es esta tu primera movilidad Erasmus?",
-        name: "primeraMovilidad",
-        type: "select",
-        options: ["Sí", "No"]
-      },
-      {
-        label: "Semestre que solicitas para realizar el intercambio",
-        name: "semestreIntercambio",
-        type: "select",
-        options: ["Sept-Feb", "Feb-Jun"]
-      },
+      { label: "¿Es esta tu primera movilidad Erasmus?", name: "primeraMovilidad", type: "select", options: ["Sí", "No"]},
+      { label: "Semestre que solicitas para realizar el intercambio", name: "semestreIntercambio", type: "select", options: ["Sept-Feb", "Feb-Jun"]},
       { label: "Universidad de destino solicitada - 1a opción", name: "universidadDestino1", type: "text" },
       { label: "Universidad de destino solicitada - 2a opción", name: "universidadDestino2", type: "text" },
       { label: "Universidad de destino solicitada - 3a opción", name: "universidadDestino3", type: "text" },
-      {
-        label: "¿Estás interesado en hacer un examen no oficial de inglés?",
-        name: "examenCertificado",
-        type: "select",
-        options: ["Sí", "No"]
-      }
+      { label: "¿Estás interesado en hacer un examen no oficial de inglés?", name: "examenCertificado", type: "select", options: ["Sí", "No"]}
     ],
     archivos: [
       { label: "Expediente académico", name: "expedienteAcademico", type: "file" },
@@ -83,7 +63,9 @@ export default function Page() {
   }, [id]);
 
   const handleBlur = async (e) => {
-    const { name, value } = e.target;
+    const value= e.target.value;
+    const name = e.target.name;
+    console.log(name, value);
     if (value.trim() !== "") {
       await updateForm(name, value);
       setEditando((prev) => ({ ...prev, [name]: false }));
