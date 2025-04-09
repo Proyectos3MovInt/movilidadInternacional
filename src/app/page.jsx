@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
-import { login } from "@/lib/login.js"
+import { login } from "@/lib/auth.js"
 import Boton from "@/components/BotonAzul";
 import Overlay from "@/components/Overlay";
 
