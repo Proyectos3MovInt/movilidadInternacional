@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fillTable = async () => {
             const response_json = await getStudentsTable("outgoing");
-            const solicitudesData = response_json.map((student) => ({
+            const solicitudesData = response_json.data.map((student) => ({
                 id: student._id,
                 nombre: student.nombreApellidos || "Desconocido",
                 grado: student.titulacion || "No especificado",
