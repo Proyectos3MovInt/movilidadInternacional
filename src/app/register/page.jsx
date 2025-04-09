@@ -37,12 +37,6 @@ export default function Register() {
   return (
     <div className="w-full h-screen bg-cover bg-center flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/images/fondo1.jpg')" }}>
       <Overlay />
-      {/* Selector de idioma */}
-      <div className="absolute top-5 right-10 text-[#000000] text-sm font-medium flex gap-2">
-        <span className="font-semibold cursor-pointer">Español</span>
-        <span>|</span>
-        <span className="cursor-pointer">English</span>
-      </div>
 
       {/* Formulario */}
       <form className="relative bg-white rounded-2xl flex flex-col items-center p-12 w-[668px] h-auto shadow-lg" onSubmit={handleSubmit}>
