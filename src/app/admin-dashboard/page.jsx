@@ -1,54 +1,145 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { InputField } from '@/components/formulario/InputField';
 import { Button } from '@/components/ui/button';
-import Sidebar from '@/components/admin-dashboard/Sidebar';
 import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
+import { getStudentsTable } from '@/lib/adminFunctions';
+import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
 import SearchBar from '@/components/admin-dashboard/SearchBar';
+import * as Icons from '@/components/Icons';
+import TableFilter from "@/components/admin-dashboard/TableFilter";
 
 export default function AdminDashboard() {
-  const { register } = useForm();
-  const [solicitudes, setSolicitudes] = useState([
-    { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente' },
-    { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado' },
-    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado' },
-  ]);
+    const { register } = useForm();
+    const [solicitudes, setSolicitudes] = useState([]);
+    const [tableFilled, setTableFilled] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filtroAno, setFiltroAno] = useState(null);
+    const [sortOrder, setSortOrder] = useState(null); // Estado para ordenar solicitudes
+    const [isFilterOpen, setIsFilterOpen] = useState(false); // Controla la visibilidad del desplegable de filtros
+    const [selectedFields, setSelectedFields] = useState({});
+    //open del filter TEST!
+    //const [isOpen, setIsOpen] = useState(false);
 
-  const [filtroAño, setFiltroAño] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+    useEffect(() => {
+        const fillTable = async () => {
+            const response_json = await getStudentsTable("outgoing");
+            const solicitudesData = response_json.data.map((student) => ({
+                id: student._id,
+                nombre: student.nombreApellidos || "Desconocido",
+                grado: student.titulacion || "No especificado",
+                ano: "2024-2025",
+                estado: student.processStatus || "Pendiente",
+                universidadDestino: student.universidadDestino1 || "No especificada",
+                notaMedia: 7.6,
+            }));
+            setSolicitudes(solicitudesData);
+            setTableFilled(true); // Marca como cargada la tabla
+        };
+        if (!tableFilled) {
+            fillTable();
+        }
+    }, [tableFilled]);
 
-  const handleSort = (key) => {
-    const sorted = [...solicitudes].sort((a, b) => (typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]));
-    setSolicitudes(sorted);
-  };
+    // Función para ordenar y filtrar las solicitudes
+    const sortedSolicitudes = () => {
+        let resultados = [...solicitudes];
 
-  const solicitudesFiltradas = solicitudes.filter(s => 
-    (!filtroAño || s.año === filtroAño) &&
-    (searchTerm === "" || s.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+        // Filtrar por búsqueda
+        if (searchTerm) {
+            resultados = resultados.filter((solicitud) =>
+                solicitud.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                solicitud.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                solicitud.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
 
-  return (
-    <div className="flex h-screen">
-      <Sidebar setFiltroAño={setFiltroAño} />
-      <div className="flex-1 p-6 bg-white">
-        <div className="relative flex items-center bg-gray-200 p-3 rounded mb-4 shadow-inner">
-          <div className="absolute left-4">
-            <svg width="30" height="30" viewBox="0 0 39 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M28.597 25.1655H26.7897L26.1492 24.5478C28.8943 21.3451 30.3127 16.9757 29.5349 12.3318C28.4597 5.97218 23.1524 0.893611 16.747 0.115813C7.07024 -1.07376 -1.07376 7.07024 0.115813 16.747C0.893611 23.1524 5.97218 28.4597 12.3318 29.5349C16.9757 30.3127 21.3451 28.8943 24.5478 26.1492L25.1655 26.7897V28.597L34.888 38.3194C35.8259 39.2574 37.3586 39.2574 38.2966 38.3194C39.2345 37.3815 39.2345 35.8488 38.2966 34.9108L28.597 25.1655ZM14.8711 25.1655C9.17487 25.1655 4.57671 20.5673 4.57671 14.8711C4.57671 9.17487 9.17487 4.57671 14.8711 4.57671C20.5673 4.57671 25.1655 9.17487 25.1655 14.8711C25.1655 20.5673 20.5673 25.1655 14.8711 25.1655Z" fill="black"/>
-            </svg>
-          </div>
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} register={register} className="pl-12 w-full border-none bg-transparent outline-none text-gray-700" />
+        // Ordenar si hay sortOrder
+        if (sortOrder) {
+            resultados.sort((a, b) => {
+                if (a[sortOrder] < b[sortOrder]) return -1;
+                if (a[sortOrder] > b[sortOrder]) return 1;
+                return 0;
+            });
+        }
+
+        return resultados;
+    };
+
+    return (
+        <div className="flex flex-col items-center w-full bg-white min-h-screen">
+            {/* Menú superior con buscador */}
+            <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+
+            {/* Fila de título y botones */}
+            <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
+                <div
+                    style={{
+                        color: 'var(--Azul-base-u-tad, #0065EF)',
+                        fontFamily: 'Montserrat',
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        lineHeight: '1.5rem',
+                    }}
+                >
+                    Solicitudes de alumnos
+                </div>
+
+                {/* Contenedor de filtros y calendario */}
+                <div className="flex items-center gap-4">
+                    <TableFilter solicitudesData={solicitudes} selectedFields={selectedFields} setSelectedFields={setSelectedFields}/>
+
+
+                    <select
+                        className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
+                        onChange={(e) => {
+                            const selectedFilter = e.target.value;
+                            setIsFilterOpen(false);
+                            if (selectedFilter === "nombre") setSortOrder("nombre");
+                            if (selectedFilter === "grado") setSortOrder("grado");
+                            if (selectedFilter === "ano") setSortOrder("ano");
+                            if (selectedFilter === "estado") setSortOrder("estado");
+                        }}
+                        defaultValue=""
+                        style={{
+                            marginRight: '1.44rem',
+                            height: '40px',
+                            width: 'auto',
+                        }}
+                    >
+                        <option value="" disabled>Filtros</option>
+                        <option value="nombre">Ordenar por Nombre</option>
+                        <option value="grado">Ordenar por Grado</option>
+                        <option value="ano">Ordenar por Año</option>
+                        <option value="estado">Ordenar por Estado</option>
+                    </select>
+
+                    <Button
+                        className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
+                        disabled
+                        style={{
+                            height: '40px',
+                        }}
+                    >
+                        <Icons.Calendar/>
+                        <span>Febrero 2025</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* Tabla de solicitudes */}
+            <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
+                <SolicitudesTable solicitudes={sortedSolicitudes()} selectedFields={selectedFields}/>
+            </div>
+
+            {/* Paginación */}
+            <div className="flex space-x-2 mt-4 justify-center">
+                <Button className="px-4 py-2 bg-gray-200 rounded">1</Button>
+            </div>
+
+
         </div>
-        <div className="flex space-x-2 mb-4">
-          <Button onClick={() => handleSort('nombre')} className="p-2 border rounded">Alfabéticamente</Button>
-          <Button onClick={() => handleSort('grado')} className="p-2 border rounded">Por grado</Button>
-          <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
-          <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
-        </div>
-        <SolicitudesTable solicitudes={solicitudesFiltradas} />
-      </div>
-    </div>
-  );
+    );
 }

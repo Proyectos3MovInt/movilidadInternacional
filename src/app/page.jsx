@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
-import { login } from "@/lib/login.js"
+import { login } from "@/lib/auth.js"
 import Boton from "@/components/BotonAzul";
 import Overlay from "@/components/Overlay";
 
@@ -37,9 +37,6 @@ export default function Login() {
   return (
     <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/images/fondo1.jpg')" }}>
       <Overlay/>
-      <div className="absolute top-5 right-10 text-white text-lg">
-        <span className="font-semibold">Español</span> <span className="font-medium">| English</span>
-      </div>
       <form className="relative bg-white rounded-[2.5rem] flex flex-col p-0 w-[90%] max-w-[33.75rem] h-[31.875rem] shadow-lg font-[Montserrat] items-start py-10 px-8" onSubmit={handleSubmit}>
         <div className="absolute top-14 ml-[1.7rem]">
           <img src="/logoblanco.jpg" alt="Logo" className="w-[11.675rem] h-[3.438rem]" />
@@ -66,7 +63,7 @@ export default function Login() {
               className="absolute right-4 flex items-center justify-center"
               onClick={() => setShowPassword(!showPassword)}
             >
-              <Icons.EyeIcon />
+              { showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon /> }
             </button>
           </div>
         </div>
@@ -78,7 +75,7 @@ export default function Login() {
           <a href="#" className="text-black underline text-lg">Olvidé mi contraseña</a>
         </div>
         <div className="flex justify-center w-full mt-6">
-          <Boton text={"Iniciar sesión"}/>
+          <Boton text="Iniciar sesión" />
         </div>
       </form>
     </div>
