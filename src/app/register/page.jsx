@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
 import Overlay from "@/components/Overlay";
+import { register } from "@/lib/auth";
 
 export default function Register() {
   const [isClient, setIsClient] = useState(false);
@@ -21,20 +22,21 @@ export default function Register() {
 
   if (!isClient) return null; // Evita error de hidratación
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulario enviado", { firstName, lastName, email, password, isStudent });
+
+    const response_status = await register(email, password, firstName, lastName);
+    if(response_status === 201) {
+      router.push("/form-outgoing");
+    } else {
+      console.log(response_status);
+      //setError(true); // en el return mostraríamos el error al usuario
+    }
   };
 
   return (
     <div className="w-full h-screen bg-cover bg-center flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/images/fondo1.jpg')" }}>
       <Overlay />
-      {/* Selector de idioma */}
-      <div className="absolute top-5 right-10 text-[#000000] text-sm font-medium flex gap-2">
-        <span className="font-semibold cursor-pointer">Español</span>
-        <span>|</span>
-        <span className="cursor-pointer">English</span>
-      </div>
 
       {/* Formulario */}
       <form className="relative bg-white rounded-2xl flex flex-col items-center p-12 w-[668px] h-auto shadow-lg" onSubmit={handleSubmit}>
