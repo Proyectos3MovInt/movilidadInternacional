@@ -25,13 +25,12 @@ export default function Login() {
     e.preventDefault();
 
     const response_status = await login(email, password);
-    if(response_status === 200) {
-      router.push("/form-outgoing");
-    } else {
-      console.log(response.status);
-      setError(true); // en el return mostraríamos el error al usuario
-    }
-
+      if (response_status === 200) {
+        router.push("/form-outgoing");
+      } else {
+        console.log("Error en login. Código de estado:", response_status);
+        setError(true);
+      }
   };
 
   return (
@@ -77,6 +76,16 @@ export default function Login() {
         <div className="flex justify-center w-full mt-6">
           <Boton text="Iniciar sesión" />
         </div>
+
+        {error && (
+          <div className="w-full flex justify-center mt-4">
+            <p className="text-red-600 flex items-center gap-2 text-center">
+              <Icons.Error />
+              Correo o contraseña incorrectos.
+            </p>
+          </div>
+        )}
+        
       </form>
     </div>
   );
