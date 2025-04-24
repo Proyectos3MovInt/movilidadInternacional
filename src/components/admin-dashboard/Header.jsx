@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import * as Icons from "@/components/Icons";
@@ -37,23 +39,75 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab }) => {
         <div className="flex items-center gap-4">
           {/* Botón Filtros */}
           <div className="relative">
-  <button
-    onClick={() => setIsFilterOpen((prev) => !prev)}
-    className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2"
-  >
-    <Icons.Filtros />
-    <span className="text-slate-900 text-xs font-normal font-['Montserrat'] leading-none">Filtros</span>
-    <Icons.FlechaAbajo />
-  </button>
+            <button
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+              className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2"
+            >
+              <Icons.Filtros />
+              <span className="text-slate-900 text-xs font-normal font-['Montserrat'] leading-none">Filtros</span>
+              <Icons.FlechaAbajo />
+            </button>
 
-  {/* Panel desplegable de filtros */}
-  {isFilterOpen && (
-    <div className="absolute top-full mt-2 left-0 z-50 p-4 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-black flex flex-col justify-start items-start gap-4 w-64 shadow-lg">
-      {/* ... aquí el contenido del panel de filtros que ya generamos ... */}
-    </div>
-  )}
-</div>
+            {/* Panel desplegable de filtros */}
+            {isFilterOpen && (
+              <div className="absolute top-full mt-2 left-0 z-50 p-4 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-black flex flex-col justify-start items-start gap-4 w-64 shadow-lg">
+                {/* Alfabéticamente */}
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="text-black text-xs font-semibold font-['Montserrat']">Alfabéticamente:</span>
+                  {["A-Z", "Z-A"].map((label) => (
+                    <label key={label} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
+                      <span>Alfabéticamente {label}</span>
+                      <input type="checkbox" className="w-4 h-4" />
+                    </label>
+                  ))}
+                </div>
 
+                {/* Titulación */}
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="text-black text-xs font-semibold font-['Montserrat']">Titulación</span>
+                  {["DIDI", "INSO", "ANIM", "DIPI", "MAS", "ENTORNOS", "MULTIPLATAFORMA"].map((titulacion) => (
+                    <label key={titulacion} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
+                      <span>{titulacion}</span>
+                      <input type="checkbox" className="w-4 h-4" />
+                    </label>
+                  ))}
+                </div>
+
+                {/* Año de salida */}
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="text-black text-xs font-semibold font-['Montserrat']">Año de salida</span>
+                  {["2024-2025", "2023-2024", "2022-2023", "2021-2022", "2020-2021", "Anterior"].map((ano) => (
+                    <label key={ano} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
+                      <span>{ano}</span>
+                      <input type="checkbox" className="w-4 h-4" />
+                    </label>
+                  ))}
+                </div>
+
+                {/* Nota media */}
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="text-black text-xs font-semibold font-['Montserrat']">Nota media</span>
+                  {["De mayor a menor", "De menor a mayor"].map((op) => (
+                    <label key={op} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
+                      <span>{op}</span>
+                      <input type="checkbox" className="w-4 h-4" />
+                    </label>
+                  ))}
+                </div>
+
+                {/* Estado de la solicitud */}
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="text-black text-xs font-semibold font-['Montserrat']">Estado de la solicitud</span>
+                  {["Pendiente", "Rechazada", "Aprobada"].map((estado) => (
+                    <label key={estado} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
+                      <span>{estado}</span>
+                      <input type="checkbox" className="w-4 h-4" />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Botón Fecha */}
           <Button
@@ -66,67 +120,6 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab }) => {
           </Button>
         </div>
       </div>
-
-      {/* Panel desplegable de filtros */}
-      {isFilterOpen && (
-  <div className="p-4 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-black flex flex-col justify-start items-start gap-4 w-64">
-    {/* Alfabéticamente */}
-    <div className="flex flex-col items-start gap-1 w-full">
-      <span className="text-black text-xs font-semibold font-['Montserrat']">Alfabéticamente:</span>
-      {["A-Z", "Z-A"].map((label) => (
-        <label key={label} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-          <span>Alfabéticamente {label}</span>
-          <input type="checkbox" className="w-4 h-4" />
-        </label>
-      ))}
-    </div>
-
-    {/* Titulación */}
-    <div className="flex flex-col items-start gap-1 w-full">
-      <span className="text-black text-xs font-semibold font-['Montserrat']">Titulación</span>
-      {["DIDI", "INSO", "ANIM", "DIPI", "MAS", "ENTORNOS", "MULTIPLATAFORMA"].map((titulacion) => (
-        <label key={titulacion} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-          <span>{titulacion}</span>
-          <input type="checkbox" className="w-4 h-4" />
-        </label>
-      ))}
-    </div>
-
-    {/* Año de salida */}
-    <div className="flex flex-col items-start gap-1 w-full">
-      <span className="text-black text-xs font-semibold font-['Montserrat']">Año de salida</span>
-      {["2024-2025", "2023-2024", "2022-2023", "2021-2022", "2020-2021", "Anterior"].map((ano) => (
-        <label key={ano} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-          <span>{ano}</span>
-          <input type="checkbox" className="w-4 h-4" />
-        </label>
-      ))}
-    </div>
-
-    {/* Nota media */}
-    <div className="flex flex-col items-start gap-1 w-full">
-      <span className="text-black text-xs font-semibold font-['Montserrat']">Nota media</span>
-      {["De mayor a menor", "De menor a mayor"].map((op) => (
-        <label key={op} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-          <span>{op}</span>
-          <input type="checkbox" className="w-4 h-4" />
-        </label>
-      ))}
-    </div>
-
-    {/* Estado de la solicitud */}
-    <div className="flex flex-col items-start gap-1 w-full">
-      <span className="text-black text-xs font-semibold font-['Montserrat']">Estado de la solicitud</span>
-      {["Pendiente", "Rechazada", "Aprobada"].map((estado) => (
-        <label key={estado} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-          <span>{estado}</span>
-          <input type="checkbox" className="w-4 h-4" />
-        </label>
-      ))}
-    </div>
-  </div>
-)}
-
     </div>
   );
 };

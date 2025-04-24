@@ -1,8 +1,7 @@
 import CajaAlumno from "@/components/admin-dashboard/CajaAlumno";
 import { formatFieldName } from "@/utils/format";
 
-
-const SolicitudesTable = ({ solicitudes, selectedFields }) => {
+const SolicitudesTable = ({ solicitudes, selectedFields = {} }) => {
     const visibleFields = Object.keys(selectedFields).filter(field => selectedFields[field]);
 
     return (

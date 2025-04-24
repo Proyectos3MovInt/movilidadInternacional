@@ -1,27 +1,33 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
-import { getStudentsTable } from '@/lib/adminFunctions';
-import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
-import SearchBar from '@/components/admin-dashboard/SearchBar';
-import * as Icons from '@/components/Icons';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import SolicitudesTable from "@/components/admin-dashboard/SolicitudesTable";
+import { getStudentsTable } from "@/lib/adminFunctions";
+import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
+import Header from "@/components/admin-dashboard/Header";
+import * as Icons from "@/components/Icons";
 
 export default function AdminDashboard() {
   const { register } = useForm();
   const [solicitudes, setSolicitudes] = useState([]);
   const [tableFilled, setTableFilled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroAno, setFiltroAno] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null); // Estado para ordenar solicitudes
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Controla la visibilidad del desplegable de filtros
+  const [sortOrder, setSortOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState("outgoing");
 
   useEffect(() => {
     const fillTable = async () => {
-      const response_json = await getStudentsTable("outgoing");
-      const solicitudesData = response_json.map((student) => ({
+      const response_json = await getStudentsTable(activeTab);
+
+      console.log("Respuesta de getStudentsTable:", response_json);
+
+      const studentsArray = Array.isArray(response_json)
+        ? response_json
+        : response_json?.data || [];
+
+      const solicitudesData = studentsArray.map((student) => ({
         id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
         grado: student.titulacion || "No especificado",
@@ -30,19 +36,18 @@ export default function AdminDashboard() {
         universidadDestino: student.universidadDestino1 || "No especificada",
         notaMedia: 7.6,
       }));
-      setSolicitudes(solicitudesData);
-      setTableFilled(true); // Marca como cargada la tabla
-    };
-    if (!tableFilled) {
-      fillTable();
-    }
-  }, [tableFilled]);
 
-  // Función para ordenar y filtrar las solicitudes
+      setSolicitudes(solicitudesData);
+      setTableFilled(true);
+    };
+
+    fillTable();
+  }, [activeTab]);
+
+  // Filtrado y ordenación
   const sortedSolicitudes = () => {
     let resultados = [...solicitudes];
 
-    // Filtrar por búsqueda
     if (searchTerm) {
       resultados = resultados.filter((solicitud) =>
         solicitud.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,7 +57,6 @@ export default function AdminDashboard() {
       );
     }
 
-    // Ordenar si hay sortOrder
     if (sortOrder) {
       resultados.sort((a, b) => {
         if (a[sortOrder] < b[sortOrder]) return -1;
@@ -61,66 +65,21 @@ export default function AdminDashboard() {
       });
     }
 
-        return resultados;
-    };
+    return resultados;
+  };
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen">
-      {/* Menú superior con buscador */}
+      {/* Menú superior */}
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Fila de título y botones */}
-      <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
-        <div
-          style={{
-            color: 'var(--Azul-base-u-tad, #0065EF)',
-            fontFamily: 'Montserrat',
-            fontSize: '1rem',
-            fontWeight: 600,
-            lineHeight: '1.5rem',
-          }}
-        >
-          Solicitudes de alumnos
-        </div>
-
-        {/* Contenedor de filtros y calendario */}
-        <div className="flex items-center gap-4">
-          <select
-            className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
-            onChange={(e) => {
-              const selectedFilter = e.target.value;
-              setIsFilterOpen(false);
-              if (selectedFilter === "nombre") setSortOrder("nombre");
-              if (selectedFilter === "grado") setSortOrder("grado");
-              if (selectedFilter === "ano") setSortOrder("ano");
-              if (selectedFilter === "estado") setSortOrder("estado");
-            }}
-            defaultValue=""
-            style={{
-              marginRight: '1.44rem',
-              height: '40px',
-              width: 'auto',
-            }}
-          >
-            <option value="" disabled>Filtros</option>
-            <option value="nombre">Ordenar por Nombre</option>
-            <option value="grado">Ordenar por Grado</option>
-            <option value="ano">Ordenar por Año</option>
-            <option value="estado">Ordenar por Estado</option>
-          </select>
-
-          <Button
-            className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
-            disabled
-            style={{
-              height: '40px',
-            }}
-          >
-            <Icons.Calendar />
-            <span>Febrero 2025</span>
-          </Button>
-        </div>
-      </div>
+      {/* Header con tabs y filtros */}
+      <Header
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
       {/* Tabla de solicitudes */}
       <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
