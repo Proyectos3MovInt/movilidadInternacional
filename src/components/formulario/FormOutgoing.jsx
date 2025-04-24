@@ -10,20 +10,31 @@ import { TextArea } from "./TextArea";
 import { Checkbox } from "./Checkbox";
 import Overlay from "../Overlay";
 import { getForm } from "@/lib/form";
+import { useRouter } from "next/navigation";
 
 export default function Formulario() {
   const { register, handleSubmit, reset } = useForm();
+  const [ id, setId ] = useState(null);
   const [ uploadedFiles, setUploadedFiles ] = useState({});
+
+  const router = useRouter();
 
   useEffect(() => {
     const callForm = async () => {
       const response_json = await getForm();
       if(response_json) {
-        reset(response_json);
+        const {_id, ...formData } = response_json;
+        setId(_id);
+        console.log(_id);
+        reset(formData);
       }
     }
     callForm();
   }, []);
+
+  const handleClick = () => {
+    router.push("/alumno-alumno/");
+  }
 
   const onSubmit = (data) => {
     console.log(data);
@@ -130,7 +141,7 @@ export default function Formulario() {
           </div>
           <RadioGroup label="Acepto la política de datos personales*" name="politicaDatos" options={["Sí", "No"]} register={register} />
           <div className="text-center w-full">
-            <button type="submit" className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
+            <button onClick={handleClick} type="submit" className="w-[13.875rem] h-[2.688rem] bg-[#0065EF] text-white text-lg font-medium py-2 rounded-full hover:bg-blue-700 transition">
               Enviar
             </button>
           </div>

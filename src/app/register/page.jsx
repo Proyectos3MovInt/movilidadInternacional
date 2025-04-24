@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "@/components/Icons";
 import Overlay from "@/components/Overlay";
+import { register } from "@/lib/auth";
 
 export default function Register() {
   const [isClient, setIsClient] = useState(false);
@@ -13,38 +14,44 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isStudent, setIsStudent] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; // Evita error de hidratación
+  if (!isClient) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulario enviado", { firstName, lastName, email, password, isStudent });
+
+    const response_status = await register(email, password, firstName, lastName);
+    if (response_status === 201) {
+      router.push("/form-outgoing");
+    } else {
+      console.log("Error en registro. Código de estado:", response_status);
+      setError(true);
+    }
   };
 
   return (
-    <div className="w-full h-screen bg-cover bg-center flex items-center justify-center relative font-[Montserrat]" style={{ backgroundImage: "url('/images/fondo1.jpg')" }}>
+    <div
+      className="w-full h-screen bg-cover bg-center flex items-center justify-center relative font-[Montserrat]"
+      style={{ backgroundImage: "url('/images/fondo1.jpg')" }}
+    >
       <Overlay />
-      {/* Selector de idioma */}
-      <div className="absolute top-5 right-10 text-[#000000] text-sm font-medium flex gap-2">
-        <span className="font-semibold cursor-pointer">Español</span>
-        <span>|</span>
-        <span className="cursor-pointer">English</span>
-      </div>
 
-      {/* Formulario */}
-      <form className="relative bg-white rounded-2xl flex flex-col items-center p-12 w-[668px] h-auto shadow-lg" onSubmit={handleSubmit}>
-        {/* Logo */}
+      <form
+        className="relative bg-white rounded-2xl flex flex-col items-center p-12 w-[668px] h-auto shadow-lg"
+        onSubmit={handleSubmit}
+      >
         <img src="/logoblanco.jpg" alt="Logo" className="w-[180px] h-auto absolute top-6 left-6" />
 
-        {/* Título */}
-        <h2 className="text-2xl font-bold text-[#0065EF] text-center mt-14 leading-9">CREA TU CUENTA</h2>
+        <h2 className="text-2xl font-bold text-[#0065EF] text-center mt-14 leading-9">
+          CREA TU CUENTA
+        </h2>
 
-        {/* Campos */}
         <div className="flex flex-col w-full mt-6 space-y-5">
           <div className="flex gap-4">
             <input
@@ -82,12 +89,11 @@ export default function Register() {
               className="p-2"
               onClick={() => setShowPassword(!showPassword)}
             >
-              { showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon /> }
+              {showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon />}
             </button>
           </div>
         </div>
 
-        {/* Checkbox */}
         <div className="mt-6 flex items-center gap-2">
           <input
             type="checkbox"
@@ -98,13 +104,23 @@ export default function Register() {
           <span className="text-black text-md">Soy estudiante de U-tad</span>
         </div>
 
-
-        {/* Botón */}
         <div className="mt-6 w-full flex justify-center">
-          <button type="submit" className="w-[338px] h-[56px] bg-[#0065EF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all">
+          <button
+            type="submit"
+            className="w-[338px] h-[56px] bg-[#0065EF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all"
+          >
             Registrarme
           </button>
         </div>
+
+        {error && (
+          <div className="w-full flex justify-center mt-4">
+            <p className="text-red-600 flex items-center gap-2 text-center">
+              <Icons.Error />
+              Hubo un problema al registrarse.
+            </p>
+          </div>
+        )}
       </form>
     </div>
   );

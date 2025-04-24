@@ -58,6 +58,7 @@ export async function getStudentData(id) {
       }
     });
     if (!response.ok) {
+      console.log(response);
       throw new Error("Error al obtener los datos del estudiante");
     }
 
