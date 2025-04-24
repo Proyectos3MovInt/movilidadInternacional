@@ -1,20 +1,35 @@
+import { Button } from "@/components/ui/button"; 
+
 const UniversidadesTable = ({ universidades }) => {
   return (
-    <div className="border rounded-lg overflow-hidden shadow">
-      {/* Cabecera de la tabla con las columnas actualizadas */}
-      <div className="grid grid-cols-3 font-semibold bg-gray-100 border-b p-3">
-        <span>Nombre</span>
-        <span>País</span>
-        <span>Contacto</span>
-      </div>
+    <div className="w-[1070px] px-6 py-4 bg-sky-100 inline-flex justify-center items-center gap-36">
+      <div className="w-[1016px] h-6 relative">
+        {/* Títulos de las columnas */}
+        <div className="left-0 top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">Nombre</div>
+        <div className="left-[386px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">País</div>
+        <div className="left-[832px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">Contacto</div>
+        <div className="left-[579px] top-0 absolute inline-flex justify-start items-center gap-2">
+          <div className="w-16 h-6 px-4 py-1 bg-rose-500 rounded flex justify-center items-center gap-2">
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">DIDI</div>
+          </div>
+          <div className="w-16 h-6 px-4 py-1 bg-teal-400 rounded flex justify-center items-center gap-2">
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">INSO</div>
+          </div>
+        </div>
 
-      {/* Filas de datos */}
-      <div className="divide-y">
-        {universidades.map((universidad, index) => (
-          <div key={index} className={`grid grid-cols-3 p-3 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
-            <span>{universidad.nombre}</span>
-            <span>{universidad.pais}</span>
-            <span>{universidad.contacto}</span>
+        {/* Datos de las universidades */}
+        {universidades.map((uni, index) => (
+          <div key={index} className="w-full h-6 relative mt-4">
+            <div className="left-0 top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.nombre}</div>
+            <div className="left-[386px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.pais}</div>
+            <div className="left-[832px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.contacto}</div>
+            <div className="left-[579px] top-0 absolute inline-flex justify-start items-center gap-2">
+              {uni.titulacion.map((titulacion, idx) => (
+                <div key={idx} className={`w-16 h-6 px-4 py-1 ${titulacion === 'DIDI' ? 'bg-rose-500' : 'bg-teal-400'} rounded flex justify-center items-center gap-2`}>
+                  <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">{titulacion}</div>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

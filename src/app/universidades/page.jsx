@@ -1,37 +1,52 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import UniversidadesTable from '@/components/universidades/UniversidadesTable'; 
-import { getUniversidades } from '@/lib/universidadesFunctions'; 
-import MenuSuperior from '@/components/admin-dashboard/MenuSuperior';
-import SearchBar from '@/components/admin-dashboard/SearchBar';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { getUniversidades } from "@/lib/universidadesFunctions"; 
+import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
+import Header from "@/components/admin-dashboard/Header";
+import { Descargar } from "@/components/Icons";
 
 export default function UniversidadesPage() {
   const { register, handleSubmit, reset } = useForm();
   const [universidades, setUniversidades] = useState([]);
-  const [tableFilled, setTableFilled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isFormVisible, setIsFormVisible] = useState(false); // Controlar visibilidad del formulario
-  const [newUniversidad, setNewUniversidad] = useState(null); // Nuevo estado para la universidad creada
+  const [filters, setFilters] = useState({
+    orden: { az: false, za: false },
+    titulacion: {
+      DIDI: false,
+      INSO: false,
+      ANIM: false,
+      DIPI: false,
+      MAS: false,
+      ENTORNOS: false,
+      MULTIPLATAFORMA: false,
+    },
+    ano: {
+      "2024-2025": false,
+      "2023-2024": false,
+      "2022-2023": false,
+      "2021-2022": false,
+      "2020-2021": false,
+      Anterior: false,
+    },
+    estado: { Pendiente: false, Rechazada: false, Aprobada: false },
+  });
 
   // Obtener universidades desde la API
   useEffect(() => {
     const fillTable = async () => {
       const response_json = await getUniversidades(); 
-      const universidadesData = response_json.map((uni) => ({
+      const universidadesData = response_json.map((university) => ({
         nombre: uni.nombre || "Desconocida",
         pais: uni.pais || "No especificada",
         contacto: uni.contacto || "No especificado",
       }));
       setUniversidades(universidadesData);
-      setTableFilled(true); 
     };
-    if (!tableFilled) {
-      fillTable();
-    }
-  }, [tableFilled, newUniversidad]); // Se actualiza cuando se crea una nueva universidad
+    fillTable();
+  }, []);
 
   // Función para ordenar y filtrar universidades
   const sortedUniversidades = () => {
@@ -45,116 +60,87 @@ export default function UniversidadesPage() {
       );
     }
 
-    return resultados;
-  };
+    const { orden, titulacion, ano, estado } = filters;
 
-  // Función para agregar universidad
-  const onSubmit = (data) => {
-    setUniversidades(prevState => [
-      ...prevState,
-      {
-        nombre: data.nombre,
-        pais: data.pais,
-        contacto: data.contacto
-      }
-    ]);
-    setNewUniversidad(data); // Guarda la nueva universidad
-    reset(); // Resetea el formulario
-    setIsFormVisible(false); // Oculta el formulario después de agregar
+    // Filtramos por titulacion, estado, etc.
+    if (Object.values(titulacion).some(Boolean)) {
+      resultados = resultados.filter((uni) =>
+        Object.keys(titulacion).some((key) => titulacion[key] && uni.nombre.includes(key))
+      );
+    }
+
+    if (Object.values(ano).some(Boolean)) {
+      resultados = resultados.filter((uni) => ano[uni.ano]);
+    }
+
+    if (Object.values(estado).some(Boolean)) {
+      resultados = resultados.filter((uni) => estado[uni.estado]);
+    }
+
+    // Orden por nombre
+    if (orden.az) {
+      resultados = resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } else if (orden.za) {
+      resultados = resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+    }
+
+    return resultados;
   };
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen">
-      {/* Menú superior con buscador */}
+      {/* Menu Superior */}
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Fila de título y botones */}
-      <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
-        <div
-          style={{
-            color: 'var(--Azul-base-u-tad, #0065EF)',
-            fontFamily: 'Montserrat',
-            fontSize: '1rem',
-            fontWeight: 600,
-            lineHeight: '1.5rem',
-          }}
-        >
-          Universidades
-        </div>
+      {/* Header con filtros */}
+      <Header
+        filters={filters}
+        setFilters={setFilters}
+      />
 
-        {/* Botón para mostrar el formulario */}
-        <Button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-          onClick={() => setIsFormVisible(true)} // Muestra el formulario
-        >
-          Crear Universidad
-        </Button>
+      <div className="w-full max-w-6xl px-6 py-4 mt-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          {/* Tabla de universidades */}
+          <div className="w-[75rem]">
+            <div className="w-[1070px] px-6 py-4 bg-sky-100 inline-flex justify-center items-center gap-36">
+              <div className="w-[1016px] h-6 relative">
+                {sortedUniversidades().map((uni, index) => (
+                  <div key={index} className="w-full h-6 relative mt-4">
+                    <div className="left-0 top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.nombre}</div>
+                    <div className="left-[386px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.pais}</div>
+                    <div className="left-[832px] top-0 absolute justify-start text-black text-base font-normal font-['Montserrat'] leading-normal">{uni.contacto}</div>
+                    <div className="left-[579px] top-0 absolute inline-flex justify-start items-center gap-2">
+                      <div className="w-16 h-6 px-4 py-1 bg-rose-500 rounded flex justify-center items-center gap-2">
+                        <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">DIDI</div>
+                      </div>
+                      <div className="w-16 h-6 px-4 py-1 bg-teal-400 rounded flex justify-center items-center gap-2">
+                        <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">INSO</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Paginación */}
+          <div className="flex justify-center items-center space-x-2 mt-4">
+            <div className="text-xs font-semibold font-['Montserrat'] leading-none">
+              Página 1 de 1
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      {/* Formulario para crear universidad */}
-      {isFormVisible && (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[75rem] mt-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
-                Nombre de la universidad
-              </label>
-              <input
-                id="nombre"
-                {...register('nombre', { required: true })}
-                type="text"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="Nombre"
-              />
-            </div>
-            <div>
-              <label htmlFor="pais" className="block text-sm font-medium text-gray-700">
-                País
-              </label>
-              <input
-                id="pais"
-                {...register('pais', { required: true })}
-                type="text"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="País"
-              />
-            </div>
-            <div>
-              <label htmlFor="contacto" className="block text-sm font-medium text-gray-700">
-                Contacto
-              </label>
-              <input
-                id="contacto"
-                {...register('contacto', { required: true })}
-                type="text"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="Contacto"
-              />
-            </div>
-            <div className="flex gap-4">
-              <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                Crear Universidad
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setIsFormVisible(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </form>
+      {/* Botón Descargar Excel */}
+      <div className="w-[75rem] flex justify-between items-center mt-4">
+        <div className="flex justify-start">
+          <button className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
+            <Descargar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">Descargar excel</span>
+          </button>
         </div>
-      )}
-
-      {/* Tabla de universidades */}
-      <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
-        <UniversidadesTable universidades={sortedUniversidades()} />
-      </div>
-
-      {/* Paginación */}
-      <div className="flex space-x-2 mt-4 justify-center">
-        <Button className="px-4 py-2 bg-gray-200 rounded">1</Button>
       </div>
     </div>
   );
