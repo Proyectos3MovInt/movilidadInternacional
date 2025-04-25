@@ -9,7 +9,7 @@ export async function getUniversidades() {
     
     if (!jwt_token) throw new Error("Token no encontrado");
 
-    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/ESTO FALTA`, {
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${jwt_token}`,
