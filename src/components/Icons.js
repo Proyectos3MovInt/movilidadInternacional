@@ -183,3 +183,53 @@ export const Error = () => (
   </svg>
 );
 
+export const Person = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <g clipPath="url(#clip0_846_4768)">
+      <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V19C4 19.55 4.45 20 5 20H19C19.55 20 20 19.55 20 19V18C20 15.34 14.67 14 12 14Z" fill="#82B1F4" />
+    </g>
+    <defs>
+      <clipPath id="clip0_846_4768">
+        <rect width="24" height="24" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+export const PersonWhite = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <g clipPath="url(#clip0_846_4768)">
+      <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V19C4 19.55 4.45 20 5 20H19C19.55 20 20 19.55 20 19V18C20 15.34 14.67 14 12 14Z" fill="#FFFFFF" />
+    </g>
+    <defs>
+      <clipPath id="clip0_846_4768">
+        <rect width="24" height="24" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+export const Warning = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <mask id="mask0_846_3265" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect width="32" height="32" fill="#D9D9D9" />
+    </mask>
+    <g mask="url(#mask0_846_3265)">
+      <path d="M16 22.6667C16.3778 22.6667 16.6944 22.5389 16.95 22.2833C17.2056 22.0278 17.3333 21.7111 17.3333 21.3333C17.3333 20.9556 17.2056 20.6389 16.95 20.3833C16.6944 20.1278 16.3778 20 16 20C15.6222 20 15.3056 20.1278 15.05 20.3833C14.7944 20.6389 14.6667 20.9556 14.6667 21.3333C14.6667 21.7111 14.7944 22.0278 15.05 22.2833C15.3056 22.5389 15.6222 22.6667 16 22.6667ZM14.6667 17.3333H17.3333V9.33333H14.6667V17.3333ZM11 28L4 21V11L11 4H21L28 11V21L21 28H11ZM12.1333 25.3333H19.8667L25.3333 19.8667V12.1333L19.8667 6.66667H12.1333L6.66667 12.1333V19.8667L12.1333 25.3333Z" fill="white" />
+    </g>
+  </svg>
+);
+
+export const Send = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <g clipPath="url(#clip0_846_4822)">
+      <path d="M3.4 20.3995L20.85 12.9195C21.66 12.5695 21.66 11.4295 20.85 11.0795L3.4 3.59953C2.74 3.30953 2.01 3.79953 2.01 4.50953L2 9.11953C2 9.61953 2.37 10.0495 2.87 10.1095L17 11.9995L2.87 13.8795C2.37 13.9495 2 14.3795 2 14.8795L2.01 19.4895C2.01 20.1995 2.74 20.6895 3.4 20.3995Z" fill="#0065EF" />
+    </g>
+    <defs>
+      <clipPath id="clip0_846_4822">
+        <rect width="24" height="24" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+)
+
