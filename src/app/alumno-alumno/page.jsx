@@ -5,15 +5,14 @@ import { updateForm } from "@/lib/form";
 import Perfil from "@/components/admin-alumno/PerfilEditable";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Calendario from "@/components/admin-alumno/Calendario";
-import { useParams } from "next/navigation";
-import { getStudentData } from "@/lib/adminFunctions";
+import { getStudentData } from "@/lib/studentFuctions";
 import { EditSquare } from "@/components/Icons";
 
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id } = useParams();
+  const [datosApi, setDatosApi] = useState(null);
 
   const { register, setValue, getValues } = useForm();
   const [editando, setEditando] = useState({});
@@ -49,7 +48,9 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getStudentData(id);
+        const response = await getStudentData();
+        const data = response[0];
+        setDatosApi(data);
         [...campos.personales, ...campos.academica, ...campos.archivos].forEach(({ name }) => {
           if (data[name] !== undefined) setValue(name, data[name]);
         });
@@ -59,8 +60,8 @@ export default function Page() {
         setLoading(false);
       }
     };
-    if (id) fetchData();
-  }, [id]);
+    fetchData();
+  }, []);
 
   const handleBlur = async (e) => {
     const value= e.target.value;
@@ -140,7 +141,7 @@ export default function Page() {
     <div className="bg-[#EAF2FF] min-h-screen">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="flex justify-center py-12">
-        <Perfil datos={{}} />
+        <Perfil datos={datosApi} />
       </div>
       <div className="flex justify-center">
         <div className="flex gap-[4rem] w-[66.875rem] mb-20">
