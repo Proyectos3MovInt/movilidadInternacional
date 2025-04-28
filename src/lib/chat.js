@@ -52,7 +52,8 @@ export async function sendMessageStudent(content) {
 export async function sendMessageAdmin(id, content) {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token").value;
-    console.log(jwt_token)
+    console.log(content);
+    console.log(id);
 
     try {
         const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/chat", {
@@ -67,7 +68,7 @@ export async function sendMessageAdmin(id, content) {
             })
         });
 
-        //console.log(response);
+        console.log(response);
 
     } catch (error) {
         console.error("Error al obtener mensajes:", error);
