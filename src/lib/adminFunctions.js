@@ -58,7 +58,6 @@ export async function getStudentData(id) {
       }
     });
     if (!response.ok) {
-      console.log(response);
       throw new Error("Error al obtener los datos del estudiante");
     }
 
@@ -66,5 +65,35 @@ export async function getStudentData(id) {
   } catch (error) {
     console.error("Error en getStudentData:", error);
     return null;
+  }
+}
+
+
+// Para el calendario
+export async function getCalendarEvents() {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/test_events`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getCalendarEvents:", error);
+    throw error; // Re-lanzamos el error para manejarlo en el componente
   }
 }
