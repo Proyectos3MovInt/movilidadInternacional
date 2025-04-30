@@ -5,6 +5,7 @@ import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import SeccionDesplegable from "@/components/admin-alumno/SeccionDesplegable";
 import Anotaciones from "@/components/admin-alumno/Anotaciones";
 import Calendario from "@/components/admin-alumno/Calendario";
+import Chat from "@/components/chat/Chat";
 import { getStudentData } from "@/lib/adminFunctions";
 import { useParams } from "next/navigation";
 
@@ -79,6 +80,7 @@ export default function Page() {
           <div className="flex flex-col gap-4 w-[21.3125rem]">
             <Calendario />
             <Anotaciones />
+            <Chat admin={true} id={id} />
           </div>
         </div>
       </div>

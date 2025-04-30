@@ -19,6 +19,7 @@ export async function getForm() {
     });
 
     if (!response.ok) {
+      console.log(response);
       throw new Error("Error al obtener los datos del formulario");
     }
 
