@@ -101,6 +101,33 @@ export async function getUniversityById(id) {
   }
 }
 
+export async function getUniversityStudents(id) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    console.log(id);
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/${id}/alumnos`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Error al obtener los alumnos de la universidad");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getUniversityStudents:", error);
+    return null;
+  }
+}
+
 export async function getUniversityFiles(id) {
   try {
     const cookieStore = await cookies();
