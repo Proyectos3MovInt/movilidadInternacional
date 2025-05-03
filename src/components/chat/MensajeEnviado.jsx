@@ -8,7 +8,7 @@ export default function MensajeEnviado({ msg }) {
             </div>
             <div className="p-2 bg-white rounded-3xl outline outline-1 outline-offset-[-1px] outline-blue-300 flex justify-start items-center gap-2">
                 <div className="w-6 h-6 relative overflow-hidden">
-                    <Icons.Person />
+                    <Icons.PersonBlueChat />
                 </div>
             </div>
         </div>
