@@ -10,12 +10,14 @@ import { TextArea } from "./TextArea";
 import Overlay from "../Overlay";
 import { getForm, getUnis } from "@/lib/form";
 import { SelectField } from "./SelectField";
+import ConfirmarFormularioOutgoing from "@/components/formulario/ConfirmarFormularioOutgoing";
 
 export default function Formulario() {
   const { register, handleSubmit, reset } = useForm();
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [page, setPage] = useState(1);
-  const [ unis, setUnis ] = useState([]);
+  const [unis, setUnis] = useState([]);
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
   useEffect(() => {
     const callForm = async () => {
@@ -27,9 +29,8 @@ export default function Formulario() {
 
     const callUnis = async () => {
       const response_json = await getUnis();
-      console.log(response_json);
       setUnis(response_json);
-    }
+    };
 
     callForm();
     callUnis();
@@ -39,7 +40,8 @@ export default function Formulario() {
   const prevPage = () => setPage((prev) => prev - 1);
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Formulario enviado:", data);
+    setShowConfirmPopup(false);
   };
 
   return (
@@ -165,12 +167,23 @@ export default function Formulario() {
             </button>
           )}
           {page === 4 && (
-            <button type="submit" className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto">
+            <button
+              type="button"
+              onClick={() => setShowConfirmPopup(true)}
+              className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto"
+            >
               Enviar
             </button>
           )}
         </div>
       </form>
+
+      {showConfirmPopup && (
+        <ConfirmarFormularioOutgoing
+          onConfirm={handleSubmit(onSubmit)}
+          onCancel={() => setShowConfirmPopup(false)}
+        />
+      )}
     </div>
   );
 }
