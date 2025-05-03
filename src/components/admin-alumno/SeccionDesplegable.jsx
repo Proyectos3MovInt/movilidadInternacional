@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { ArrowForwardIos } from "../Icons"; // o el nombre del icono que uses
+import { ArrowForwardIos } from "../Icons"; 
+import CandadoToggle from "@/components/admin-alumno/CandadoToggle"; 
 
 export default function SeccionDesplegable ({ title, data = [] }) {
   const [abierto, setAbierto] = useState(true);
@@ -11,7 +12,7 @@ export default function SeccionDesplegable ({ title, data = [] }) {
       <div className="flex justify-between items-center px-[1.5rem] py-[0.5rem] bg-[#0065EF] rounded-t-[0.5rem]">
         <h2 className="text-white font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
-          <button className="text-white font-semibold text-sm">Validar</button>
+        <CandadoToggle />
           <button onClick={() => setAbierto(!abierto)}>
             <ArrowForwardIos
               className={`w-5 h-5 text-white transition-transform duration-200 ${
