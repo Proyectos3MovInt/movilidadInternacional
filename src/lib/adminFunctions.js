@@ -1,22 +1,19 @@
-"use server";
+'use server';
 
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers'
 
 export async function getStudentsTable(studentType) {
   try {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token").value;
 
-    const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/${studentType}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/${studentType}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+        "Content-Type": "application/json"
       }
-    );
+    });
     if (!response.ok) {
       throw new Error("Error al obtener los datos de la tabla");
     }
@@ -53,16 +50,13 @@ export async function getStudentData(id) {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token").value;
 
-    const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/student/${id}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/student/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+        "Content-Type": "application/json"
       }
-    );
+    });
     if (!response.ok) {
       throw new Error("Error al obtener los datos del estudiante");
     }
@@ -74,58 +68,6 @@ export async function getStudentData(id) {
   }
 }
 
-export async function getUniversityById(id) {
-  try {
-    const cookieStore = await cookies();
-    const jwt_token = cookieStore.get("token").value;
-
-    console.log(id);
-
-    const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/${id}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Error al obtener los datos de la universidad");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error en getUniversityById:", error);
-    return null;
-  }
-}
-
-export async function getUniversityFiles(id) {
-  try {
-    const cookieStore = await cookies();
-    const jwt_token = cookieStore.get("token").value;
-
-    const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/${id}/archivos`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Error al obtener los archivos de la universidad");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error en getUniversityFiles:", error);
-    return null;
-  }
-}
 
 // Para el calendario
 export async function getCalendarEvents() {
@@ -137,16 +79,13 @@ export async function getCalendarEvents() {
       throw new Error("No hay token de autenticación");
     }
 
-    const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/test_events`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/test_events`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+        "Content-Type": "application/json"
       }
-    );
+    });
 
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
