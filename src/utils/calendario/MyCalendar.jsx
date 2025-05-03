@@ -1,8 +1,10 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { getCalendarEvents } from "@/lib/adminFunctions";
+import {CreateEventBtn} from "@/components/admin-calendar/CreateEventBtn";
 
 function MyCalendar() {
     const [events, setEvents] = useState([]);
@@ -92,6 +94,7 @@ function MyCalendar() {
                         >
                             Actualizar Eventos
                         </button>
+                        <CreateEventBtn></CreateEventBtn>
                     </div>
 
                     <FullCalendar
