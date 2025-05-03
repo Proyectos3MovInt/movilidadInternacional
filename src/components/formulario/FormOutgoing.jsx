@@ -8,14 +8,12 @@ import { FileUpload } from "./FileUpload";
 import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import Overlay from "../Overlay";
-import { getForm, getUnis } from "@/lib/form";
-import { SelectField } from "./SelectField";
+import { getForm } from "@/lib/form";
 
 export default function Formulario() {
   const { register, handleSubmit, reset } = useForm();
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [page, setPage] = useState(1);
-  const [ unis, setUnis ] = useState([]);
 
   useEffect(() => {
     const callForm = async () => {
@@ -24,15 +22,7 @@ export default function Formulario() {
         reset(response_json);
       }
     };
-
-    const callUnis = async () => {
-      const response_json = await getUnis();
-      console.log(response_json);
-      setUnis(response_json);
-    }
-
     callForm();
-    callUnis();
   }, []);
 
   const nextPage = () => setPage((prev) => prev + 1);
@@ -98,9 +88,9 @@ export default function Formulario() {
             <RadioGroup label="Titulación del alumno*" name="titulacion" options={["Grado en Animación (Inglés)", "Grado en Animación (Español)", "Grado en Diseño de Productos Interactivos (Inglés)", "Grado en Diseño de Productos Interactivos (Español)", "Grado en Diseño Digital", "Grado en Ingeniería del Software (Español)", "Grado en Ingeniería del Software (Inglés)", "Doble grado en Ingeniería del Software y Matemática Computacional o Física Computacional", "Grado en Efectos Visuales (VFX)"]} register={register} />
             <RadioGroup label="¿Es esta tu primera movilidad Erasmus?*" name="primeraMovilidad" options={["Sí", "No"]} register={register} />
             <RadioGroup label="Semestre que solicitas para realizar el intercambio*" name="semestreIntercambio" options={["Sept-Feb", "Feb-Jun"]} register={register} />
-            <SelectField label="Universidad de destino solicitada - 1ª opción*" name="universidadDestino1" register={register} required options={unis} lang="es" />
-            <SelectField label="Universidad de destino solicitada - 2ª opción*" name="universidadDestino2" register={register} required options={unis} lang="es" />
-            <SelectField label="Universidad de destino solicitada - 3ª opción*" name="universidadDestino3" register={register} required options={unis} lang="es" />
+            <InputField label="Universidad de destino solicitada - 1ª opción*" name="universidadDestino1" register={register} required lang="es" />
+            <InputField label="Universidad de destino solicitada - 2ª opción" name="universidadDestino2" register={register} lang="es" />
+            <InputField label="Universidad de destino solicitada - 3ª opción" name="universidadDestino3" register={register} lang="es" />
           </div>
         )}
 
