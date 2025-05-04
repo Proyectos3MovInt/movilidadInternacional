@@ -9,11 +9,13 @@ import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import Overlay from "../Overlay";
 import { getForm } from "@/lib/form";
+import ConfirmarFormularioIncoming from "@/components/formulario/ConfirmarFormularioIncoming";
 
 export default function Formulario() {
   const { register, handleSubmit, reset, trigger, formState: { errors } } = useForm();
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [page, setPage] = useState(1);
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
   const fieldsByPage = {
     1: ["nombre", "apellido", "pasaporte", "email", "telefono", "genero", "nacionalidad", "fechaNacimiento"],
@@ -25,10 +27,10 @@ export default function Formulario() {
   useEffect(() => {
     const callForm = async () => {
       const response_json = await getForm();
-      if(response_json) {
+      if (response_json) {
         reset(response_json);
       }
-    }
+    };
     callForm();
   }, []);
 
@@ -39,7 +41,8 @@ export default function Formulario() {
   const prevPage = () => setPage(prev => prev - 1);
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Formulario enviado:", data);
+    setShowConfirmPopup(false); // Oculta el popup tras confirmar
   };
 
   return (
@@ -48,6 +51,7 @@ export default function Formulario() {
       style={{ backgroundImage: "url('images/fondo1.jpg')" }}
     >
       <Overlay />
+
       <form
         className="relative bg-white rounded-[2.5rem] mt-80 flex flex-col p-10 w-[70%] max-w-[50rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
         onSubmit={handleSubmit(onSubmit)}
@@ -95,13 +99,13 @@ export default function Formulario() {
             <div className="text-sm text-black">
               <h3 className="text-lg font-semibold mb-2">Data Protection Policy</h3>
               <p className="mb-4">
-                The personal data provided, as well as those included in the documentation accompanying the application for admission in the exchange programme as well as those generated during the admission process, will be included in a file under the responsibility of U-tad Centro Digital S.L. The purpose of this file is to analyze and evaluate your application, as well as, if necessary, to make the necessary arrangements for the admission process. For this purpose, you expressly accept that your data will be communicated to the corresponding academic centers to which U-tad is associated with.
+                The personal data provided, as well as those included in the documentation accompanying the application for admission in the exchange programme as well as those generated during the admission process, will be included in a file under the responsibility of U-tad Centro Digital S.L.
               </p>
               <p className="mb-4">
-                Your data will be kept for a period of 5 years after the end of your relationship with U-tad in order to meet the company's possible legal obligations. The legal basis for this processing is your consent.
+                The purpose of this file is to analyze and evaluate your application, as well as, if necessary, to make the necessary arrangements for the admission process.
               </p>
               <p className="mb-4">
-                Likewise, you may at any time revoke the consent given, as well as exercise your rights of access, rectification, deletion, opposition, limitation of processing, and portability, where such rights are applicable, by writing to the above address or to the address of our Data Protection Officer.
+                Your data will be kept for a period of 5 years after the end of your relationship with U-tad...
               </p>
             </div>
             <RadioGroup label="I accept the data protection policy*" name="politicaDatos" options={["Yes", "No"]} register={register} required />
@@ -120,12 +124,22 @@ export default function Formulario() {
             </button>
           )}
           {page === 4 && (
-            <button type="submit" className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto">
+            <button
+              type="button"
+              onClick={() => setShowConfirmPopup(true)}
+              className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto"
+            >
               Submit
             </button>
-          )}
-        </div>
+          )}  
+          </div>
       </form>
-    </div>
+      {showConfirmPopup && (
+        <ConfirmarFormularioIncoming
+          onConfirm={handleSubmit(onSubmit)}
+          onCancel={() => setShowConfirmPopup(false)}
+        />
+      )}
+      </div>
   );
 }
