@@ -1,17 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import * as Icons from "@/components/Icons";
 
-const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab, filters, setFilters }) => {
+const Header = ({ filters, setFilters, calendarDate, setCalendarDate }) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const getTabStyle = (tab) =>
-    tab === activeTab ? "text-blue-600 font-semibold" : "text-neutral-500 font-semibold";
+  const getTabStyle = (tabPath) =>
+    pathname.includes(tabPath)
+      ? "text-blue-600 font-semibold"
+      : "text-neutral-500 font-semibold";
 
-  const getIconClass = (tab) =>
-    tab === activeTab ? "text-blue-600" : "text-neutral-500";
+  const getIconClass = (tabPath) =>
+    pathname.includes(tabPath) ? "text-blue-600" : "text-neutral-500";
 
   const handleCheckboxChange = (category, key) => {
     setFilters((prev) => ({
@@ -28,22 +34,22 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab, filters, set
       <div className="w-full flex justify-between items-center">
         <div className="w-[696px] h-10 relative">
           <div className="left-[8px] top-0 absolute inline-flex justify-start items-center gap-26">
-            <div onClick={() => setActiveTab("outgoing")} className="flex cursor-pointer items-center gap-2">
-              <Icons.Person className={`w-5 h-5 ${getIconClass("outgoing")}`} />
-              <div className={`text-base font-['Montserrat'] ${getTabStyle("outgoing")}`}>Outgoing</div>
+            <div onClick={() => router.push("/admin-dashboard")} className="flex cursor-pointer items-center gap-2">
+              <Icons.Person className={`w-5 h-5 ${getIconClass("admin-dashboard")}`} />
+              <div className={`text-base font-['Montserrat'] ${getTabStyle("admin-dashboard")}`}>Outgoing</div>
             </div>
-            <div onClick={() => setActiveTab("incoming")} className="flex cursor-pointer items-center gap-2">
+            <div onClick={() => router.push("/incoming")} className="flex cursor-pointer items-center gap-2">
               <Icons.People className={`w-5 h-5 ${getIconClass("incoming")}`} />
               <div className={`text-base font-['Montserrat'] ${getTabStyle("incoming")}`}>Incoming</div>
             </div>
-            <div onClick={() => setActiveTab("universidades")} className="flex cursor-pointer items-center gap-2">
+            <div onClick={() => router.push("/universidades")} className="flex cursor-pointer items-center gap-2">
               <Icons.Universidad className={`w-5 h-5 ${getIconClass("universidades")}`} />
               <div className={`text-base font-['Montserrat'] ${getTabStyle("universidades")}`}>Universidades</div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-[80px] relative z-50 ">
+        <div className="flex items-center justify-between gap-[80px] relative z-50">
           <div className="relative">
             <button
               onClick={() => {
@@ -105,21 +111,6 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab, filters, set
                 </div>
 
                 <div className="flex flex-col items-start gap-1 w-full">
-                  <span className="text-black text-xs font-semibold font-['Montserrat']">Nota media</span>
-                  {["De mayor a menor", "De menor a mayor"].map((op) => (
-                    <label key={op} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
-                      <span>{op}</span>
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4"
-                        checked={filters.nota[op === "De mayor a menor" ? "mayor" : "menor"]}
-                        onChange={() => handleCheckboxChange("nota", op === "De mayor a menor" ? "mayor" : "menor")}
-                      />
-                    </label>
-                  ))}
-                </div>
-
-                <div className="flex flex-col items-start gap-1 w-full">
                   <span className="text-black text-xs font-semibold font-['Montserrat']">Estado de la solicitud</span>
                   {["Pendiente", "Rechazada", "Aprobada"].map((estado) => (
                     <label key={estado} className="flex justify-between items-center w-full text-xs text-black font-['Montserrat']">
@@ -146,7 +137,7 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab, filters, set
               className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2 bg-white"
             >
               <Icons.Calendar />
-              <span className="text-slate-900 text-xs font-normal font-['Montserrat']">Febrero 2025</span>
+              <span className="text-slate-900 text-xs font-normal font-['Montserrat']">{calendarDate?.mes} {calendarDate?.ano}</span>
               <Icons.FlechaAbajo />
             </button>
 
@@ -157,6 +148,7 @@ const Header = ({ sortOrder, setSortOrder, activeTab, setActiveTab, filters, set
                     <div
                       key={mes}
                       className="w-14 p-2 rounded-lg outline outline-1 outline-zinc-400 flex justify-center items-center hover:bg-zinc-100 cursor-pointer"
+                      onClick={() => setCalendarDate({ ...calendarDate, mes })}
                     >
                       <div className="text-black text-base font-normal font-['Montserrat']">{mes}</div>
                     </div>
