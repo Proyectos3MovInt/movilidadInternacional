@@ -1,7 +1,6 @@
-'use server';
+"use server";
 
 import { cookies } from "next/headers";
-
 
 // Saca el formulario asociado al usuario que se mande en el token JWT
 
@@ -10,13 +9,16 @@ export async function getForm() {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token").value;
 
-    const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${jwt_token}`,
-        "Content-Type": "application/json"
+    const response = await fetch(
+      "https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
 
     if (!response.ok) {
       console.log(response);
@@ -30,7 +32,6 @@ export async function getForm() {
   }
 }
 
-
 // Actualiza el formulario del usuario asociado al token JWT
 export async function updateForm(fieldName, value) {
   try {
@@ -40,13 +41,16 @@ export async function updateForm(fieldName, value) {
     const formData = new FormData();
     formData.append(fieldName, value);
 
-    const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form", {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${jwt_token}`,
-      },
-      body: formData, 
-    });
+    const response = await fetch(
+      "https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form",
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+        },
+        body: formData,
+      }
+    );
     console.log(formData);
 
     if (!response.ok) {
@@ -65,13 +69,16 @@ export async function getUnis() {
   try {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token").value;
-    const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/unis_form", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${jwt_token}`,
-        "Content-Type": "application/json"
+    const response = await fetch(
+      "https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/unis_form",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
 
     if (!response.ok) {
       console.log(response);

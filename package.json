@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.8",
-    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/interaction": "^6.1.8",
     "@fullcalendar/react": "^6.1.8",
     "@radix-ui/react-label": "^2.1.2",
