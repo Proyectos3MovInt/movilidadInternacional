@@ -9,9 +9,9 @@ export function middleware(req) {
       const base64Payload = token.split('.')[1];
       const payload = JSON.parse(atob(base64Payload));
       
-      // Si el rol es admin y no está ya en la ruta admin-dashboard, le redirige a /admin-dashboard.
-      if (payload.role === "admin" && req.nextUrl.pathname !== "/admin-dashboard") {
-        return NextResponse.redirect(new URL("/admin-dashboard", req.nextUrl.origin));
+      // Si el rol es admin y no está ya en la ruta admin-dashboard, le redirige a /home.
+      if (payload.role === "admin" && req.nextUrl.pathname !== "/home") {
+        return NextResponse.redirect(new URL("/home", req.nextUrl.origin));
       }
     } catch (error) {
       console.error("Error al decodificar el token:", error);

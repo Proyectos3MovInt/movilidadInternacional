@@ -12,7 +12,7 @@ const MenuSuperior = ({ searchTerm, setSearchTerm }) => {
       <div className="w-[1069px] h-16 py-4 left-[185px] top-0 absolute bg-white inline-flex justify-between items-center">
         <button
           className="w-48 h-8 relative cursor-pointer"
-          onClick={() => router.push("/admin-dashboard")}
+          onClick={() => router.push("/home")}
         >
           <Icons.LogoUtad />
         </button>
