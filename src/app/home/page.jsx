@@ -24,7 +24,7 @@ const Home = () => {
 
         {/* OUTGOING */}
         <div
-          onClick={() => router.push("/outgoing")}
+          onClick={() => router.push("/admin-dashboard")}
           className="w-[820px] h-[540px] px-20 py-14 bg-gradient-to-l from-blue-600/0 to-blue-600/70 rounded-lg inline-flex justify-start items-start gap-2.5 cursor-pointer transition-transform hover:scale-105"
           style={{
             backgroundImage: "url('/images/outgoing.png')",
