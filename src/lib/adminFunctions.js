@@ -165,13 +165,45 @@ export async function getCalendarEvents() {
     }
 
     const response = await fetch(
-      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/test_events`,
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/events`,
       {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt_token}`,
           "Content-Type": "application/json",
         },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getCalendarEvents:", error);
+    throw error; // Re-lanzamos el error para manejarlo en el componente
+  }
+}
+
+export async function createCalendarEvent(event) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/calendar/event`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(event)
       }
     );
 

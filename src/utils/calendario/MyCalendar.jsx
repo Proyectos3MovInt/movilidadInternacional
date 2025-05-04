@@ -62,6 +62,7 @@ function MyCalendar() {
   };
 
   const handleEventClick = (info) => {
+    console.log(info.event);
     alert(
       `Evento: ${
         info.event.title

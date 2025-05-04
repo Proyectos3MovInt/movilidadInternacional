@@ -1,28 +1,48 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import "./createEventPopup.css";
+import { createCalendarEvent } from "@/lib/adminFunctions";
 
 export const CreateEventPopup = ({ onClose }) => {
   const [title, setTitle] = useState("");
-  const [isAllDay, setIsAllDay] = useState(false);
+  const [date, setDate] = useState("");
+  const [allDay, setAllDay] = useState(false);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [visibleIncoming, setVisibleIncoming] = useState(true);
   const [visibleOutgoing, setVisibleOutgoing] = useState(true);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para guardar el evento
-    console.log({
+  
+    let start, end;
+  
+    if (allDay) {
+      start = `${date}T00:00`;
+      end = `${date}T23:59`;
+    } else {
+      start = `${date}T${startTime}`;
+      end = `${date}T${endTime}`;
+    }
+  
+    // Crear el objeto del evento
+    const newEvent = {
       title,
-      isAllDay,
-      startTime,
-      endTime,
+      date,
+      start,
+      end,
+      allDay,
       visibleIncoming,
       visibleOutgoing,
-    });
+    };
+  
+    // Enviar a la API (aquí solo se imprime)
+    await createCalendarEvent(newEvent);
+  
+    // Cerrar popup
     onClose();
   };
+  
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -40,17 +60,16 @@ export const CreateEventPopup = ({ onClose }) => {
           </div>
 
           <div className="form-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={isAllDay}
-                onChange={(e) => setIsAllDay(e.target.checked)}
-              />
-              Todo el día
-            </label>
+            <label>Fecha del Evento</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
           </div>
 
-          {!isAllDay && (
+          {!allDay && (
             <div className="time-inputs">
               <div className="form-group">
                 <label>Hora de inicio</label>
@@ -58,7 +77,7 @@ export const CreateEventPopup = ({ onClose }) => {
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  required={!isAllDay}
+                  required={!allDay}
                 />
               </div>
               <div className="form-group">
@@ -67,11 +86,22 @@ export const CreateEventPopup = ({ onClose }) => {
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  required={!isAllDay}
+                  required={!allDay}
                 />
               </div>
             </div>
           )}
+
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={allDay}
+                onChange={(e) => setAllDay(e.target.checked)}
+              />
+              Todo el día
+            </label>
+          </div>
 
           <div className="visibility-section">
             <label>Visible para:</label>
