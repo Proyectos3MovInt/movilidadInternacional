@@ -1,90 +1,118 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getUniversidades } from "@/lib/universidadesFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
-import { Descargar } from "@/components/Icons";
+import UniversidadesTable from "@/components/universidades/UniversidadesTable";
+import { Descargar, SimboloMas } from "@/components/Icons";
+import PopupNuevaUniversidad from "@/components/universidades/PopupNuevaUniversidad";
 
 export default function UniversidadesPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    titulacion: "",
+    orden: "",
+  });
   const [activeTab, setActiveTab] = useState("universidades");
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
-
+  const [mostrarPopup, setMostrarPopup] = useState(false);
+  const botonRef = useRef(null);
   const router = useRouter();
 
+  const fillTable = async () => {
+    const data = await getUniversidades();
+    if (!data) return;
+
+    const universidadesData = data.map((uni) => ({
+      id: uni._id,
+      nombre: uni.nombre || "Desconocida",
+      pais: uni.pais || "No especificada",
+      contacto: uni.contactoEmail || "No especificado",
+      titulacion: uni.titulaciones || [],
+    }));
+
+    setUniversidades(universidadesData);
+  };
+
   useEffect(() => {
-    const fillTable = async () => {
-      const data = await getUniversidades();
-      const universidadesData = data.map((uni) => ({
-        id: uni._id, // <-- guardamos el id
-        nombre: uni.nombre || "Desconocida",
-        pais: uni.pais || "No especificada",
-        contacto: uni.contactoEmail || "No especificado",
-        // titulación, año, estado… si vienes en la API puedes añadirlos aquí
-      }));
-      setUniversidades(universidadesData);
-    };
     fillTable();
   }, []);
 
   const sortedUniversidades = () => {
-    // ... tu lógica de filtros y ordenamiento
-    return universidades; // simplified
+    let sorted = [...universidades];
+
+    if (filters.orden === "az") {
+      sorted.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } else if (filters.orden === "za") {
+      sorted.sort((a, b) => b.nombre.localeCompare(a.nombre));
+    }
+
+    if (filters.titulacion) {
+      sorted = sorted.filter((uni) =>
+        uni.titulacion.includes(filters.titulacion)
+      );
+    }
+
+    return sorted;
+  };
+
+  const handlePopupClose = () => {
+    setMostrarPopup(false);
+    fillTable(); // Recarga la tabla al cerrar el popup
   };
 
   return (
-    <div className="flex flex-col items-center w-full bg-white min-h-screen">
+    <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <Header
-        filters={filters}
-        setFilters={setFilters}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        calendarDate={calendarDate}
-        setCalendarDate={setCalendarDate}
-      />
+      {/* Botón para añadir universidad */}
+      <div className="w-full max-w-6xl px-6 mt-2 flex justify-start relative">
+        <div
+          ref={botonRef}
+          onClick={() => setMostrarPopup(!mostrarPopup)}
+          className="h-10 px-4 py-1 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-start items-center gap-2 cursor-pointer"
+        >
+          <SimboloMas className="w-5 h-5 text-blue-600" />
+          <div className="text-blue-600 text-base font-semibold font-['Montserrat'] leading-normal">
+            Añadir universidad
+          </div>
+        </div>
 
+        {mostrarPopup && (
+          <div
+            className="absolute z-50"
+            style={{
+              top: `${botonRef.current?.offsetTop + 50}px`,
+              left: `${botonRef.current?.offsetLeft + 300}px`,
+            }}
+          >
+            <PopupNuevaUniversidad onClose={handlePopupClose} />
+          </div>
+        )}
+      </div>
+
+      {/* Header alineado con tabla */}
+      <div className="w-full max-w-6xl px-6 mt-2 ml-[100px]">
+        <Header
+          filters={filters}
+          setFilters={(newFilters) => {
+            setFilters(newFilters);
+          }}
+        />
+      </div>
+
+      {/* Tabla de universidades */}
       <div className="w-full max-w-6xl px-6 py-4 mt-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="space-y-2">
-            {sortedUniversidades().map((uni) => (
-              <Link
-                key={uni.id}
-                href={`/admin-universidad/${uni.id}`}
-                className="block w-full cursor-pointer"
-              >
-                <div className="w-full px-6 py-4 bg-sky-100 flex justify-between items-center hover:bg-sky-200 rounded-lg">
-                  <span className="text-base font-normal">{uni.nombre}</span>
-                  <span className="text-base font-normal">{uni.pais}</span>
-                  <span className="text-base font-normal">{uni.contacto}</span>
-
-                  {/* Si tienes etiquetas de programa */}
-                  <div className="flex gap-2">
-                    <span className="bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded">
-                      DIDI
-                    </span>
-                    <span className="bg-teal-400 text-white text-xs font-semibold px-3 py-1 rounded">
-                      INSO
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex justify-center items-center space-x-2 mt-4">
-            <div className="text-xs font-semibold">Página 1 de 1</div>
-          </div>
+        <UniversidadesTable universidades={sortedUniversidades()} />
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <div className="text-xs font-semibold">Página 1 de 1</div>
         </div>
       </div>
 
-      {/* Ahora: mismo wrapper que la tabla */}
+      {/* Botón de descarga */}
       <div className="w-full max-w-6xl px-6 mt-4">
         <div className="flex justify-start">
           <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
