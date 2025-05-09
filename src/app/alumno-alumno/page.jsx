@@ -49,8 +49,10 @@ export default function Page() {
     const fetchData = async () => {
       try {
         const response = await getStudentData();
+        console.log(response);
         const data = response[0];
         setDatosApi(data);
+        console.log(data);
         [...campos.personales, ...campos.academica, ...campos.archivos].forEach(({ name }) => {
           if (data[name] !== undefined) setValue(name, data[name]);
         });
