@@ -52,7 +52,7 @@ export default function Formulario() {
 
   const onSubmit = (data) => {
     console.log(data);
-    //router.push(`/alumno-alumno/${data._id}`);
+    router.push('/alumno-alumno/');
   };
 
   return (
@@ -157,7 +157,7 @@ export default function Formulario() {
 
       {showConfirmPopup && (
         <ConfirmarFormularioOutgoing
-          onConfirm={handleSubmit(onSubmit)}
+          onConfirm={() => router.push('/alumno-alumno/')}
           onCancel={() => setShowConfirmPopup(false)}
         />
       )}
