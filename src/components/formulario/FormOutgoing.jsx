@@ -8,23 +8,36 @@ import { FileUpload } from "./FileUpload";
 import { DatePicker } from "./DatePicker";
 import { TextArea } from "./TextArea";
 import Overlay from "../Overlay";
-import { getForm } from "@/lib/form";
+import { getForm, getUnis } from "@/lib/form";
+import { SelectField } from "./SelectField";
+import ConfirmarFormularioOutgoing from "@/components/formulario/ConfirmarFormularioOutgoing";
+import { useRouter } from "next/navigation";
 
 export default function Formulario() {
   const { register, handleSubmit, reset, watch } = useForm();
   const [page, setPage] = useState(1);
+  const [unis, setUnis] = useState([]);
   const [formData, setFormData] = useState({});
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const watchedData = watch();
+  const router = useRouter();
 
   useEffect(() => {
     const callForm = async () => {
       const response_json = await getForm();
       if (response_json) {
         reset(response_json);
-        setFormData(response_json);
+        console.log(response_json);
       }
     };
+
+    const callUnis = async () => {
+      const response_json = await getUnis();
+      setUnis(response_json);
+    };
+
     callForm();
+    callUnis();
   }, []);
 
   const nextPage = () => {
@@ -39,6 +52,7 @@ export default function Formulario() {
 
   const onSubmit = (data) => {
     console.log(data);
+    //router.push(`/alumno-alumno/${data._id}`);
   };
 
   return (
@@ -91,9 +105,9 @@ export default function Formulario() {
             />
             <RadioGroup label="¿Es esta tu primera movilidad Erasmus?*" name="primeraMovilidad" options={["Sí", "No"]} register={register} defaultValue={formData.primeraMovilidad} />
             <RadioGroup label="Semestre que solicitas para realizar el intercambio*" name="semestreIntercambio" options={["Sept-Feb", "Feb-Jun"]} register={register} defaultValue={formData.semestreIntercambio} />
-            <InputField label="Universidad de destino solicitada - 1ª opción*" name="universidadDestino1" register={register} required defaultValue={formData.universidadDestino1 || ""} />
-            <InputField label="Universidad de destino solicitada - 2ª opción" name="universidadDestino2" register={register} defaultValue={formData.universidadDestino2 || ""} />
-            <InputField label="Universidad de destino solicitada - 3ª opción" name="universidadDestino3" register={register} defaultValue={formData.universidadDestino3 || ""} />
+            <SelectField label="Universidad de destino solicitada - 1ª opción*" name="universidadDestino1" register={register} required options={unis} lang="es" />
+            <SelectField label="Universidad de destino solicitada - 2ª opción*" name="universidadDestino2" register={register} required options={unis} lang="es" />
+            <SelectField label="Universidad de destino solicitada - 3ª opción*" name="universidadDestino3" register={register} required options={unis} lang="es" />
           </div>
         )}
 
@@ -130,12 +144,23 @@ export default function Formulario() {
             </button>
           )}
           {page === 4 && (
-            <button type="submit" className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto">
+            <button
+              type="button"
+              onClick={() => setShowConfirmPopup(true)}
+              className="bg-[#0065EF] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition ml-auto"
+            >
               Enviar
             </button>
           )}
         </div>
       </form>
+
+      {showConfirmPopup && (
+        <ConfirmarFormularioOutgoing
+          onConfirm={handleSubmit(onSubmit)}
+          onCancel={() => setShowConfirmPopup(false)}
+        />
+      )}
     </div>
   );
 }
