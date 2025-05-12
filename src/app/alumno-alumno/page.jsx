@@ -7,33 +7,46 @@ import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Calendario from "@/components/admin-alumno/Calendario";
 import { getStudentData } from "@/lib/studentFuctions";
 import { EditSquare } from "@/components/Icons";
+import Chat from "@/components/chat/Chat";
+import { getUnis } from "@/lib/form";
 
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [datosApi, setDatosApi] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [universidades, setUniversidades] = useState([]);
 
   const { register, setValue, getValues } = useForm();
   const [editando, setEditando] = useState({});
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const campos = {
     personales: [
       { label: "DNI / NIE", name: "dniNie", type: "text" },
       { label: "Email de contacto", name: "email", type: "email" },
-      { label: "Género", name: "genero", type: "select", options: ["Mujer", "Hombre", "No binario", "Prefiero no decirlo"]},
+      { label: "Género", name: "genero", type: "select", options: ["Mujer", "Hombre", "No binario", "Prefiero no decirlo"] },
       { label: "Nacionalidad", name: "nacionalidad", type: "text" },
       { label: "Fecha de nacimiento", name: "fechaNacimiento", type: "date" },
       { label: "Domicilio", name: "domicilio", type: "text" },
       { label: "Número de teléfono", name: "numeroTelefono", type: "tel" }
     ],
     academica: [
-      { label: "¿Es esta tu primera movilidad Erasmus?", name: "primeraMovilidad", type: "select", options: ["Sí", "No"]},
-      { label: "Semestre que solicitas para realizar el intercambio", name: "semestreIntercambio", type: "select", options: ["Sept-Feb", "Feb-Jun"]},
-      { label: "Universidad de destino solicitada - 1a opción", name: "universidadDestino1", type: "text" },
-      { label: "Universidad de destino solicitada - 2a opción", name: "universidadDestino2", type: "text" },
-      { label: "Universidad de destino solicitada - 3a opción", name: "universidadDestino3", type: "text" },
-      { label: "¿Estás interesado en hacer un examen no oficial de inglés?", name: "examenCertificado", type: "select", options: ["Sí", "No"]}
+      { label: "¿Es esta tu primera movilidad Erasmus?", name: "primeraMovilidad", type: "select", options: ["Sí", "No"] },
+      { label: "Semestre que solicitas para realizar el intercambio", name: "semestreIntercambio", type: "select", options: ["Sept-Feb", "Feb-Jun"] },
+      { label: "Universidad de destino solicitada - 1a opción", name: "universidadDestino1", type: "selectUni" },
+      { label: "Universidad de destino solicitada - 2a opción", name: "universidadDestino2", type: "selectUni" },
+      { label: "Universidad de destino solicitada - 3a opción", name: "universidadDestino3", type: "selectUni" },
+      { label: "¿Estás interesado en hacer un examen no oficial de inglés?", name: "examenCertificado", type: "select", options: ["Sí", "No"] }
     ],
     archivos: [
       { label: "Expediente académico", name: "expedienteAcademico", type: "file" },
@@ -48,12 +61,25 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getStudentData();
-        const data = response[0];
+        const [studentResponse, unisResponse] = await Promise.all([
+          getStudentData(),
+          getUnis()
+        ]);
+
+        const data = studentResponse[0];
+        if (data.fechaNacimiento) {
+          data.fechaNacimiento = formatDate(data.fechaNacimiento);
+        }
+
+        setUniversidades(unisResponse);
+
         setDatosApi(data);
+        setUserId(data._id);
+
         [...campos.personales, ...campos.academica, ...campos.archivos].forEach(({ name }) => {
           if (data[name] !== undefined) setValue(name, data[name]);
         });
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -63,8 +89,14 @@ export default function Page() {
     fetchData();
   }, []);
 
+  const getNombreUniversidad = (id) => {
+    const uni = universidades.find(u => u._id === id);
+    return uni ? uni.nombre : id; // Muestra nombre o el ID si no se encuentra
+  };
+
+
   const handleBlur = async (e) => {
-    const value= e.target.value;
+    const value = e.target.value;
     const name = e.target.name;
     console.log(name, value);
     if (value.trim() !== "") {
@@ -97,7 +129,7 @@ export default function Page() {
                   />
                 </label>
               ) : editando[name] ? (
-                type === "select" ? (
+                type === "select" || type === "selectUni" ? (
                   <select
                     {...register(name)}
                     onBlur={handleBlur}
@@ -105,8 +137,10 @@ export default function Page() {
                     autoFocus
                   >
                     <option value="">Selecciona una opción</option>
-                    {options.map((opt, i) => (
-                      <option key={i} value={opt}>{opt}</option>
+                    {(type === "selectUni" ? universidades : options)?.map((opt, i) => (
+                      <option key={i} value={type === "selectUni" ? opt._id : opt}>
+                        {type === "selectUni" ? opt.nombre : opt}
+                      </option>
                     ))}
                   </select>
                 ) : (
@@ -120,11 +154,14 @@ export default function Page() {
                 )
               ) : (
                 <>
-                  <span>{getValues(name)}</span>
+                  <span>
+                    {type === "selectUni"
+                      ? getNombreUniversidad(getValues(name))
+                      : getValues(name)}
+                  </span>
                   <button onClick={() => setEditando((prev) => ({ ...prev, [name]: true }))}>
                     <EditSquare className="w-4 h-4 text-gray-500 hover:text-blue-600" />
                   </button>
-
                 </>
               )}
             </span>
@@ -152,6 +189,7 @@ export default function Page() {
           </div>
           <div className="flex flex-col gap-4 w-[21.3125rem]">
             <Calendario />
+            <Chat admin={false} id={userId} />
           </div>
         </div>
       </div>

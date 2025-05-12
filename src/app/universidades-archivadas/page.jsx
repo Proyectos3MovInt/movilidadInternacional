@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";  // Importamos useRouter
-import { getUniversidades } from "@/lib/universidadesFunctions";
+import { useRouter } from "next/navigation";
+// import { getUniversidadesArchivadas } from "@/lib/universidadesFunctions"; // Esta función debe devolver las universidades archivadas
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import UniversidadesTable from "@/components/universidades/UniversidadesTable";
-import { Descargar, SimboloMas, Archivar } from "@/components/Icons";
+import { Descargar, SimboloMas } from "@/components/Icons";
 import PopupNuevaUniversidad from "@/components/universidades/PopupNuevaUniversidad";
-import { exportToExcel } from "@/lib/adminFunctions";
 
-export default function UniversidadesPage() {
+export default function UniversidadesArchivadasPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -23,10 +22,10 @@ export default function UniversidadesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const botonRef = useRef(null);
-  const router = useRouter();  // Usamos el hook useRouter para la navegación
+  const router = useRouter();
 
   const fillTable = async () => {
-    const data = await getUniversidades();
+    const data = await getUniversidadesArchivadas(); // Obtener universidades archivadas
     if (!data) return;
 
     const universidadesData = data.map((uni) => ({
@@ -76,27 +75,6 @@ export default function UniversidadesPage() {
     fillTable(); // Recarga la tabla al cerrar el popup
   };
 
-  // Función para redirigir a la página de universidades archivadas
-  const handleArchivarRedirect = () => {
-    router.push("/universidades-archivadas");  // Redirige a la página de universidades archivadas
-  };
-
-  const handleExcelExport = async (solicitudes) => {
-
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-
-    const blob = await exportToExcel(solicitudes);
-    const downloadUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = `Universidades${formattedDate}.xlsx`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(downloadUrl);
-  }
-
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -137,26 +115,14 @@ export default function UniversidadesPage() {
         />
       </div>
 
-      {/* Tabla de universidades */}
+      {/* Tabla de universidades archivadas */}
       <div className="w-full max-w-6xl px-6 py-4 mt-6">
         <UniversidadesTable universidades={paginatedUniversidades()} />
       </div>
 
-      {/* Botones Archivar y Descargar Excel */}
+      {/* Botón Descargar Excel */}
       <div className="w-[69rem] flex justify-start items-center gap-4 mt-4">
-        {/* Botón Archivar - Redirige a la página de universidades archivadas */}
-        <button
-          onClick={handleArchivarRedirect}  // Llama a la función para redirigir
-          className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
-        >
-          <Archivar />
-          <span className="text-base font-normal font-['Montserrat'] leading-normal">
-            Archivadas
-          </span>
-        </button>
-
-        {/* Botón Descargar Excel */}
-        <button onClick={() => handleExcelExport(universidades)}  className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
+      <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
           <Descargar />
           <span className="text-base font-normal font-['Montserrat'] leading-normal">
             Descargar excel

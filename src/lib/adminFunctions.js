@@ -18,6 +18,7 @@ export async function getStudentsTable(studentType) {
       }
     );
     if (!response.ok) {
+      console.log("Error en la respuesta:", response);
       throw new Error("Error al obtener los datos de la tabla");
     }
 
@@ -215,5 +216,38 @@ export async function createCalendarEvent(event) {
   } catch (error) {
     console.error("Error en getCalendarEvents:", error);
     throw error; // Re-lanzamos el error para manejarlo en el componente
+  }
+}
+export async function exportToExcel(data) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/export`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    return blob;
+
+  } catch (error) {
+    console.error("Error al exportar el Excel:", error);
+    throw error;
   }
 }
