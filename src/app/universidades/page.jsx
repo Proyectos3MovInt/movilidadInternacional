@@ -8,6 +8,7 @@ import Header from "@/components/admin-dashboard/Header";
 import UniversidadesTable from "@/components/universidades/UniversidadesTable";
 import { Descargar, SimboloMas } from "@/components/Icons";
 import PopupNuevaUniversidad from "@/components/universidades/PopupNuevaUniversidad";
+import { exportToExcel } from "@/lib/adminFunctions";
 
 export default function UniversidadesPage() {
   const [universidades, setUniversidades] = useState([]);
@@ -64,6 +65,22 @@ export default function UniversidadesPage() {
     fillTable(); // Recarga la tabla al cerrar el popup
   };
 
+  const handleExcelExport = async (solicitudes) => {
+  
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+  
+      const blob = await exportToExcel(solicitudes);
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Universidades_${formattedDate}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+    }
+
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -115,7 +132,7 @@ export default function UniversidadesPage() {
       {/* Botón de descarga */}
       <div className="w-full max-w-6xl px-6 mt-4">
         <div className="flex justify-start">
-          <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
+          <button onClick={() => handleExcelExport(sortedUniversidades())} className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
             <Descargar />
             Descargar excel
           </button>
