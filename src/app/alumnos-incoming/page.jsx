@@ -7,6 +7,7 @@ import { getStudentsTable } from "@/lib/adminFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import { Descargar } from "@/components/Icons";
+import { exportToExcel } from "@/lib/adminFunctions";
 
 const titulacionMap = {
   ANIM: ["Grado en Animación (Inglés)", "Grado en Animación (Español)"],
@@ -150,7 +151,7 @@ export default function AlumnosIncoming() {
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = downloadUrl;
-    link.download = Alumnos_Incoming${formattedDate}.xlsx;
+    link.download = `Alumnos_Incoming${formattedDate}.xlsx`;
     document.body.appendChild(link);
     link.click();
     link.remove();

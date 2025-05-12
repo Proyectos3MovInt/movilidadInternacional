@@ -81,6 +81,22 @@ export default function UniversidadesPage() {
     router.push("/universidades-archivadas");  // Redirige a la página de universidades archivadas
   };
 
+  const handleExcelExport = async (solicitudes) => {
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+
+    const blob = await exportToExcel(solicitudes);
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = `Universidades${formattedDate}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(downloadUrl);
+  }
+
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -140,7 +156,7 @@ export default function UniversidadesPage() {
         </button>
 
         {/* Botón Descargar Excel */}
-        <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
+        <button onClick={() => handleExcelExport(universidades)}  className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
           <Descargar />
           <span className="text-base font-normal font-['Montserrat'] leading-normal">
             Descargar excel
