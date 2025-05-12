@@ -82,3 +82,40 @@ export async function crearUniversidad(nuevaUniversidad) {
     return null;
   }
 }
+
+export async function subirArchivoUniversidad(formData) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token")?.value;
+
+    if (!jwt_token) throw new Error("Token no encontrado");
+
+
+    const universidadId = "680a83980642eef62e447dde";
+
+    if (!formData.has("file")) {
+      throw new Error("El campo 'file' es obligatorio");
+    }
+
+    formData.append("universidad", universidadId);
+
+    const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/fileUniversity", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error al subir archivo:", errorText);
+      throw new Error(`Error en la respuesta del servidor: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al subir archivo:", error);
+    throw error;
+  }
+}
