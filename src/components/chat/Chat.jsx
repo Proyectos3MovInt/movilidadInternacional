@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import * as Icons from '@/components/Icons';
 import MensajeEnviado from './MensajeEnviado';
@@ -20,7 +20,7 @@ export default function Chat({ admin, id }) {
             const response = await getMessages(id);
             setMsgs(response);
             setLoaded(true);
-        }
+        };
         fetchChat();
     }, [id]);
 
@@ -39,10 +39,27 @@ export default function Chat({ admin, id }) {
         } else {
             await sendMessageStudent(newMsg);
         }
+
         const updatedMessages = await getMessages(id);
         setMsgs(updatedMessages);
         setNewMsg("");
-    }
+    };
+
+    const renderMessage = (msg) => {
+        if (admin) {
+            return msg.receiver === null ? (
+                <MensajeRecibido key={msg._id} msg={msg.content} />
+            ) : (
+                <MensajeEnviado key={msg._id} msg={msg.content} />
+            );
+        } else {
+            return msg.receiver === null ? (
+                <MensajeEnviado key={msg._id} msg={msg.content} />
+            ) : (
+                <MensajeRecibido key={msg._id} msg={msg.content} />
+            );
+        }
+    };
 
     return (
         <div className="w-80 flex flex-col h-full border rounded-lg overflow-hidden">
@@ -53,13 +70,7 @@ export default function Chat({ admin, id }) {
                 className="flex-1 overflow-y-auto px-6 py-4 bg-white flex flex-col gap-4"
                 style={{ maxHeight: '400px' }}
             >
-                {loaded && msgs.map((msg) => (
-                    msg.receiver === null ? (
-                        <MensajeRecibido key={msg._id} msg={msg.content} />
-                    ) : (
-                        <MensajeEnviado key={msg._id} msg={msg.content} />
-                    )
-                ))}
+                {loaded && msgs.map(renderMessage)}
                 <div ref={messagesEndRef} />
             </div>
 

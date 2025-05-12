@@ -35,7 +35,7 @@ export async function getUniversidadDetails(universidadId) {
     
     if (!jwt_token) throw new Error("Token no encontrado");
 
-    const response = await fetch(`https://tu-api-de-universidades.com/universidades/${universidadId}`, {
+    const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.com/university/${universidadId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${jwt_token}`,
