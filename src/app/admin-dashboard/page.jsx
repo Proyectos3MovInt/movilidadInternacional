@@ -1,63 +1,220 @@
 "use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { InputField } from '@/components/formulario/InputFieldES';
-import { Button } from '@/components/ui/button';
-import Sidebar from '@/components/admin-dashboard/Sidebar';
-import SolicitudesTable from '@/components/admin-dashboard/SolicitudesTable';
-import SearchBar from '@/components/admin-dashboard/SearchBar';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import SolicitudesTable from "@/components/admin-dashboard/SolicitudesTable";
+import { getStudentsTable } from "@/lib/adminFunctions";
+import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
+import Header from "@/components/admin-dashboard/Header";
+import { Descargar } from "@/components/Icons";
+
+const titulacionMap = {
+  ANIM: ["Grado en Animación (Inglés)", "Grado en Animación (Español)"],
+  DIPI: [
+    "Grado en Diseño de Productos Interactivos (Inglés)",
+    "Grado en Diseño de Productos Interactivos (Español)",
+  ],
+  DIDI: ["Grado en Diseño Digital"],
+  INSO: [
+    "Grado en Ingeniería del Software (Inglés)",
+    "Grado en Ingeniería del Software (Español)",
+  ],
+  MAS: [
+    "Doble grado en Ingeniería del Software y Matemática Computacional o Física Computacional",
+  ],
+  ENTORNOS: ["Grado en Efectos Visuales"],
+  MULTIPLATAFORMA: [],
+};
 
 export default function AdminDashboard() {
   const { register } = useForm();
-  const [solicitudes, setSolicitudes] = useState([
-    { nombre: 'Juan Pérez', grado: 'Licenciatura', año: 2025, estado: 'Pendiente', universidadDestino: 'UNAM', notaMedia: null },
-    { nombre: 'Ana Gómez', grado: 'Maestría', año: 2024, estado: 'Aprobado', universidadDestino: 'Oxford', notaMedia: null },
-    { nombre: 'Carlos Ruiz', grado: 'Doctorado', año: 2023, estado: 'Rechazado', universidadDestino: 'La Sorbona', notaMedia: null },
-  ]);
-
-  const [filtroAño, setFiltroAño] = useState(null);
+  const [solicitudes, setSolicitudes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState("outgoing");
 
-  // Función para actualizar la nota media
-  const handleNotaChange = (index, value) => {
-    const updatedSolicitudes = [...solicitudes];
-    updatedSolicitudes[index].notaMedia = value ? parseFloat(value) : null;
-    setSolicitudes(updatedSolicitudes);
+  const [filters, setFilters] = useState({
+    orden: { az: false, za: false },
+    titulacion: {
+      DIDI: false,
+      INSO: false,
+      ANIM: false,
+      DIPI: false,
+      MAS: false,
+      ENTORNOS: false,
+      MULTIPLATAFORMA: false,
+    },
+    ano: {
+      "2024-2025": false,
+      "2023-2024": false,
+      "2022-2023": false,
+      "2021-2022": false,
+      "2020-2021": false,
+      Anterior: false,
+    },
+    nota: { mayor: false, menor: false },
+    estado: { Pendiente: false, Rechazada: false, Aprobada: false },
+  });
+
+  const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
+
+  // PAGINACIÓN
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fillTable = async () => {
+      const response_json = await getStudentsTable(activeTab);
+      const studentsArray = Array.isArray(response_json)
+        ? response_json
+        : response_json?.data || [];
+
+      const solicitudesData = studentsArray.map((student) => ({
+        id: student._id,
+        nombre: student.nombreApellidos || "Desconocido",
+        grado: student.titulacion || "No especificado",
+        ano: "2024-2025",
+        estado: student.processStatus || "Pendiente",
+        universidadDestino: student.universidadDestino1 || "No especificada",
+        notaMedia: 7.6,
+      }));
+
+      setSolicitudes(solicitudesData);
+      setCurrentPage(1); // reiniciar página al cambiar pestaña
+    };
+
+    fillTable();
+  }, [activeTab]);
+
+  const sortedSolicitudes = () => {
+    let resultados = [...solicitudes];
+
+    if (searchTerm) {
+      resultados = resultados.filter((s) =>
+        s.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    const { orden, titulacion, ano, nota, estado } = filters;
+    const any = (obj) => Object.values(obj).some((v) => v);
+
+    if (any(titulacion)) {
+      resultados = resultados.filter((s) =>
+        Object.entries(titulacion).some(
+          ([abbr, isActive]) =>
+            isActive && titulacionMap[abbr]?.includes(s.grado)
+        )
+      );
+    }
+
+    if (any(ano)) {
+      resultados = resultados.filter((s) => ano[s.ano]);
+    }
+
+    if (any(estado)) {
+      resultados = resultados.filter((s) => estado[s.estado]);
+    }
+
+    if (nota.mayor) {
+      resultados = resultados.sort((a, b) => b.notaMedia - a.notaMedia);
+    } else if (nota.menor) {
+      resultados = resultados.sort((a, b) => a.notaMedia - b.notaMedia);
+    }
+
+    if (orden.az) {
+      resultados = resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } else if (orden.za) {
+      resultados = resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+    }
+
+    return resultados;
   };
 
-  const handleSort = (key) => {
-    const sorted = [...solicitudes].sort((a, b) => 
-      typeof a[key] === 'string' ? a[key].localeCompare(b[key]) : a[key] - b[key]
-    );
-    setSolicitudes(sorted);
+  const paginatedSolicitudes = () => {
+    const sorted = sortedSolicitudes();
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sorted.slice(startIndex, endIndex);
   };
 
-  const solicitudesFiltradas = solicitudes.filter(s => 
-    (!filtroAño || s.año === filtroAño) &&
-    (searchTerm === "" || s.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const totalPages = Math.ceil(sortedSolicitudes().length / itemsPerPage);
 
   return (
-    <div className="flex h-screen">
-      <Sidebar setFiltroAño={setFiltroAño} />
-      <div className="flex-1 p-6 bg-white">
-        <div className="relative flex items-center bg-gray-200 p-3 rounded mb-4 shadow-inner">
-          <div className="absolute left-4">
-            <svg width="30" height="30" viewBox="0 0 39 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M28.597 25.1655H26.7897L26.1492 24.5478C28.8943 21.3451 30.3127 16.9757 29.5349 12.3318C28.4597 5.97218 23.1524 0.893611 16.747 0.115813C7.07024 -1.07376 -1.07376 7.07024 0.115813 16.747C0.893611 23.1524 5.97218 28.4597 12.3318 29.5349C16.9757 30.3127 21.3451 28.8943 24.5478 26.1492L25.1655 26.7897V28.597L34.888 38.3194C35.8259 39.2574 37.3586 39.2574 38.2966 38.3194C39.2345 37.3815 39.2345 35.8488 38.2966 34.9108L28.597 25.1655ZM14.8711 25.1655C9.17487 25.1655 4.57671 20.5673 4.57671 14.8711C4.57671 9.17487 9.17487 4.57671 14.8711 4.57671C20.5673 4.57671 25.1655 9.17487 25.1655 14.8711C25.1655 20.5673 20.5673 25.1655 14.8711 25.1655Z" fill="black"/>
-            </svg>
+    <div className="flex flex-col items-center w-full bg-white min-h-screen">
+      <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <div>
+        <Header
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          filters={filters}
+          setFilters={setFilters}
+          calendarDate={calendarDate}
+          setCalendarDate={setCalendarDate}
+        />
+      </div>
+
+      <div className="w-[75rem]">
+        <SolicitudesTable solicitudes={paginatedSolicitudes()} />
+      </div>
+
+      {/* Botón Descargar Excel */}
+      <div className="w-[75rem] flex justify-between items-center mt-4">
+        {/* Botón Descargar Excel alineado a la izquierda */}
+        <div className="flex justify-start">
+          <button className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
+            <Descargar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Descargar excel
+            </span>
+          </button>
+        </div>
+
+        {/* Paginación alineada a la derecha */}
+        <div className="flex justify-center items-center space-x-2">
+          {/* Botón anterior */}
+          <div
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+            }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
           </div>
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} register={register} className="pl-12 w-full border-none bg-transparent outline-none text-gray-700" />
+
+          {/* Botones numéricos */}
+          {Array.from({ length: totalPages }, (_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
+                currentPage === i + 1
+                  ? "bg-white text-black"
+                  : "bg-white text-black"
+              } inline-flex flex-col justify-center items-center cursor-pointer`}
+            >
+              <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
+                {i + 1}
+              </div>
+            </div>
+          ))}
+
+          {/* Botón siguiente */}
+          <div
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+            }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+          </div>
         </div>
-        <div className="flex space-x-2 mb-4">
-          <Button onClick={() => handleSort('nombre')} className="p-2 border rounded">Alfabéticamente</Button>
-          <Button onClick={() => handleSort('grado')} className="p-2 border rounded">Por grado</Button>
-          <Button onClick={() => handleSort('año')} className="p-2 border rounded">Por año de salida</Button>
-          <Button onClick={() => handleSort('estado')} className="p-2 border rounded">Por estado</Button>
-          <Button onClick={() => handleSort('notaMedia')} className="p-2 border rounded">Por Nota Media</Button>
-        </div>
-        <SolicitudesTable solicitudes={solicitudesFiltradas} handleNotaChange={handleNotaChange} />
       </div>
     </div>
   );
