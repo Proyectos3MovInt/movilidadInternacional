@@ -49,7 +49,7 @@ const Header = ({ filters, setFilters }) => {
               <Icons.Person className={`w-5 h-5 ${getIconClass("admin-dashboard")}`} />
               <div className={`text-base font-['Montserrat'] ${getTabStyle("admin-dashboard")}`}>Outgoing</div>
             </div>
-            <div onClick={() => router.push("/incoming")} className="flex cursor-pointer items-center gap-2">
+            <div onClick={() => router.push("/alumnos-incoming")} className="flex cursor-pointer items-center gap-2">
               <Icons.People className={`w-5 h-5 ${getIconClass("incoming")}`} />
               <div className={`text-base font-['Montserrat'] ${getTabStyle("incoming")}`}>Incoming</div>
             </div>

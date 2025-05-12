@@ -18,6 +18,7 @@ export async function getStudentsTable(studentType) {
       }
     );
     if (!response.ok) {
+      console.log("Error en la respuesta:", response);
       throw new Error("Error al obtener los datos de la tabla");
     }
 
