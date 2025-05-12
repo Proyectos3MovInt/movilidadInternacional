@@ -12,7 +12,7 @@ const Home = () => {
       <div className="flex justify-center items-center gap-6">
         {/* INCOMING */}
         <div
-          onClick={() => router.push("/admin-dashboard")}
+          onClick={() => router.push("/alumnos-incoming")}
           className="w-[860px] h-[540px] px-20 py-14 bg-gradient-to-l from-blue-600/0 to-blue-600/70 rounded-lg inline-flex justify-end items-start gap-2.5 cursor-pointer transition-transform hover:scale-105"
           style={{
             backgroundImage: "url('/images/incoming.png')",
