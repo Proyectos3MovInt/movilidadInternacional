@@ -53,7 +53,7 @@ export default function Formulario() {
       <Overlay />
 
       <form
-        className="relative bg-white rounded-[2.5rem] mt-80 flex flex-col p-10 w-[70%] max-w-[50rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
+        className="relative bg-white rounded-[2.5rem] mt-10 flex flex-col p-10 w-[70%] max-w-[50rem] shadow-lg font-[Montserrat] items-start overflow-auto text-black"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="w-full text-blue-600 text-2xl font-bold text-center mb-6">
