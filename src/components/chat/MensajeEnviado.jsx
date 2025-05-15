@@ -1,7 +1,8 @@
 import * as Icons from '@/components/Icons';
 
-export default function MensajeEnviado({ msg }) {
-    return (
+export default function MensajeEnviado({ msg, date }) {
+
+    return (<>
         <div className="self-stretch inline-flex justify-end items-start gap-2">
             <div className="px-4 py-2 bg-blue-300 rounded-lg flex justify-center items-center gap-2">
                 <div className="justify-start text-white text-base font-normal font-['Montserrat'] leading-normal">{msg}</div>
@@ -12,5 +13,7 @@ export default function MensajeEnviado({ msg }) {
                 </div>
             </div>
         </div>
+        <span className="text-xs text-gray-500 mt-1 text-right">{date}</span>
+    </>
     );
 }

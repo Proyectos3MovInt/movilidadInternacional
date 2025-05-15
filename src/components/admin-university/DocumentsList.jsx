@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation"
+import { subirArchivoUniversidad } from "@/lib/universidadesFunctions";
 
 export default function DocumentsList({ documentos }) {
   const [file, setFile] = useState(null);
+  const { id } = useParams();
   const [nombre, setNombre] = useState("");
 
   const handleSubmit = async (e) => {
@@ -11,15 +14,14 @@ export default function DocumentsList({ documentos }) {
     if (!file || !nombre) return;
 
     const formData = new FormData();
+    formData.append("universidad", id);
     formData.append("file", file);
     formData.append("nombre", nombre);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    const res_ok = await subirArchivoUniversidad(formData);
 
-    if (!res.ok) {
+    if (!res_ok) {
+      console.log(res);
       alert("Error al subir el documento");
       return;
     }
