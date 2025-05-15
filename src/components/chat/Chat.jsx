@@ -45,18 +45,28 @@ export default function Chat({ admin, id }) {
         setNewMsg("");
     };
 
+    const formatDate = (isoDate) => {
+        const date = new Date(isoDate);
+        return new Intl.DateTimeFormat('es-ES', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        }).format(date);
+    };
+
+
     const renderMessage = (msg) => {
+        const fechaFormateada = formatDate(msg.createdAt);
         if (admin) {
             return msg.receiver === null ? (
-                <MensajeRecibido key={msg._id} msg={msg.content} />
+                <MensajeRecibido key={msg._id} msg={msg.content} date={fechaFormateada} />
             ) : (
-                <MensajeEnviado key={msg._id} msg={msg.content} />
+                <MensajeEnviado key={msg._id} msg={msg.content} date={fechaFormateada} />
             );
         } else {
             return msg.receiver === null ? (
-                <MensajeEnviado key={msg._id} msg={msg.content} />
+                <MensajeEnviado key={msg._id} msg={msg.content} date={fechaFormateada} />
             ) : (
-                <MensajeRecibido key={msg._id} msg={msg.content} />
+                <MensajeRecibido key={msg._id} msg={msg.content} date={fechaFormateada} />
             );
         }
     };
