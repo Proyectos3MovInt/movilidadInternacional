@@ -6,7 +6,7 @@ export async function getUniversidades() {
   try {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token")?.value;
-    
+
     if (!jwt_token) throw new Error("Token no encontrado");
 
     const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/`, {
@@ -32,7 +32,7 @@ export async function getUniversidadDetails(universidadId) {
   try {
     const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token")?.value;
-    
+
     if (!jwt_token) throw new Error("Token no encontrado");
 
     const response = await fetch(`https://amused-danya-hugobarea-b3e72b1a.koyeb.com/university/${universidadId}`, {
@@ -56,7 +56,7 @@ export async function getUniversidadDetails(universidadId) {
 
 export async function crearUniversidad(nuevaUniversidad) {
   try {
-    const cookieStore = await cookies(); // ✅ Await añadido
+    const cookieStore = await cookies();
     const jwt_token = cookieStore.get("token")?.value;
 
     if (!jwt_token) throw new Error("Token no encontrado");
@@ -71,14 +71,42 @@ export async function crearUniversidad(nuevaUniversidad) {
     });
 
     if (!response.ok) {
-      const text = await response.text(); // 👀 Ayuda a debuguear errores
-      console.error("❌ Respuesta del servidor:", text);
+      const text = await response.text();
+      console.error("Respuesta del servidor:", text);
       throw new Error("Error al crear universidad");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("❌ Error al crear universidad:", error);
+    console.error("Error al crear universidad:", error);
+    return null;
+  }
+}
+
+export async function subirArchivoUniversidad(formData) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token")?.value;
+
+    if (!jwt_token) throw new Error("Token no encontrado");
+
+    const response = await fetch("https://amused-danya-hugobarea-b3e72b1a.koyeb.app/fileUniversity/", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${jwt_token}`,
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Respuesta del servidor:", text);
+      throw new Error("Error al crear universidad");
+    }
+
+    return response.ok;
+  } catch (error) {
+    console.error("Error al crear universidad:", error);
     return null;
   }
 }
