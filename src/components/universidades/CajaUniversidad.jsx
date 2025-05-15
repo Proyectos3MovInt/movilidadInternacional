@@ -11,19 +11,22 @@ const TITULACION_COLORS = {
   DEFAULT: "bg-gray-400",
 };
 
-const CajaUniversidad = ({ universidad, index }) => {
+const CajaUniversidad = ({ universidad, index, archived }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/admin-universidad/${universidad.id}`);
+    if (archived) {
+      router.push(`/admin-universidad-archivada/${universidad.id}`);
+    } else {
+      router.push(`/admin-universidad/${universidad.id}`);
+    }
   };
 
   return (
     <div
       onClick={handleClick}
-      className={`w-full px-6 py-4 cursor-pointer ${
-        index % 2 === 0 ? "bg-sky-100" : "bg-white"
-      } hover:bg-blue-200`}
+      className={`w-full px-6 py-4 cursor-pointer ${index % 2 === 0 ? "bg-sky-100" : "bg-white"
+        } hover:bg-blue-200`}
     >
       <div className="flex w-full justify-between items-center text-base font-normal font-['Montserrat'] text-black">
         <div className="w-[300px]">{universidad.nombre}</div>
@@ -34,9 +37,8 @@ const CajaUniversidad = ({ universidad, index }) => {
             universidad.titulacion.map((titulacion, idx) => (
               <span
                 key={idx}
-                className={`text-white text-xs font-semibold px-3 py-1 rounded ${
-                  TITULACION_COLORS[titulacion] || TITULACION_COLORS.DEFAULT
-                }`}
+                className={`text-white text-xs font-semibold px-3 py-1 rounded ${TITULACION_COLORS[titulacion] || TITULACION_COLORS.DEFAULT
+                  }`}
               >
                 {titulacion}
               </span>

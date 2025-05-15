@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-// import { getUniversidadesArchivadas } from "@/lib/universidadesFunctions"; // Esta función debe devolver las universidades archivadas
+import { getUniversidadesArchivadas } from "@/lib/universidadesFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import UniversidadesTable from "@/components/universidades/UniversidadesTable";
@@ -117,7 +117,7 @@ export default function UniversidadesArchivadasPage() {
 
       {/* Tabla de universidades archivadas */}
       <div className="w-full max-w-6xl px-6 py-4 mt-6">
-        <UniversidadesTable universidades={paginatedUniversidades()} />
+        <UniversidadesTable archived={true} universidades={paginatedUniversidades()} />
       </div>
 
       {/* Botón Descargar Excel */}
