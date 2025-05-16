@@ -4,24 +4,35 @@ import { useState } from "react";
 import { useParams } from "next/navigation"
 import { subirArchivoUniversidad } from "@/lib/universidadesFunctions";
 
-export default function DocumentsList({ documentos }) {
+export default function DocumentsList({ documentos, universidadId }) {
   const [file, setFile] = useState(null);
   const { id } = useParams();
   const [nombre, setNombre] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [documentosActualizados, setDocumentosActualizados] = useState(documentos);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file || !nombre) return;
+    if (!file || !nombre) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
 
     const formData = new FormData();
     formData.append("universidad", id);
     formData.append("file", file);
     formData.append("nombre", nombre);
 
-    const res_ok = await subirArchivoUniversidad(formData);
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-    if (!res_ok) {
-      console.log(res);
+    if (!res.ok) {
       alert("Error al subir el documento");
       return;
     }
@@ -71,26 +82,32 @@ export default function DocumentsList({ documentos }) {
         <button
           type="submit"
           className="bg-[#0065EF] text-white text-sm py-1 rounded"
+          disabled={isLoading}
         >
-          Subir
+          {isLoading ? "Subiendo..." : "Subir"}
         </button>
+
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
       </form>
 
-      {/* Lista de documentos */}
       <ul className="space-y-2">
-        {documentos.map((doc) => (
-          <li key={doc._id} className="flex items-center justify-between">
-            <a
-              href={doc.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-500 underline"
-            >
-              {doc.nombre}
-            </a>
-            <span className="text-gray-400 text-xl">↗</span>
-          </li>
-        ))}
+        {documentosActualizados && documentosActualizados.length > 0 ? (
+          documentosActualizados.map((doc) => (
+            <li key={doc._id} className="flex items-center justify-between">
+              <a
+                href={doc.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 underline"
+              >
+                {doc.nombre}
+              </a>
+              <span className="text-gray-400 text-xl">↗</span>
+            </li>
+          ))
+        ) : (
+          <li>No hay documentos disponibles.</li>
+        )}
       </ul>
     </div>
   );

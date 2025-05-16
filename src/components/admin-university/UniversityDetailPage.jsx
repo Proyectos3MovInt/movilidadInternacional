@@ -4,7 +4,7 @@ import DocumentsList from "./DocumentsList";
 import StudentsTable from "./StudentsTable";
 import Anotaciones from "../admin-alumno/Anotaciones";
 
-// Map de titulaciones a siglas
+// Mapeo de titulaciones a siglas
 const gradoSiglas = {
   "Grado en Animación (Inglés)": "ANIG",
   "Grado en Animación (Español)": "ANIV",
@@ -26,8 +26,11 @@ export default function UniversityDetailPage({
   university,
   archivos,
   alumnos, // ahora viene de la API
-  // comentarios: lo puedes también mapear de university.comentarios
 }) {
+  if (!university || !archivos || !alumnos) {
+    return <p>Cargando información de la universidad...</p>;
+  }
+
   return (
     <div className="px-8 pt-6 space-y-6">
       {/* Fila 1: Universidad + Documentos */}
@@ -40,7 +43,7 @@ export default function UniversityDetailPage({
           />
         </div>
         <div className="w-80 bg-white p-6 rounded-2xl shadow">
-          <DocumentsList documentos={archivos} />
+          <DocumentsList documentos={archivos} universidadId={university._id} />
         </div>
       </div>
 
