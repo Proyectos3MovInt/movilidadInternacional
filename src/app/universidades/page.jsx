@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";  // Importamos useRouter
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getUniversidades } from "@/lib/universidadesFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
@@ -13,17 +13,12 @@ import { exportToExcel } from "@/lib/adminFunctions";
 export default function UniversidadesPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({
-    titulacion: "",
-    orden: "",
-  });
-  const [activeTab, setActiveTab] = useState("universidades");
+  const [filters, setFilters] = useState({ titulacion: "", orden: "" });
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const botonRef = useRef(null);
-  const router = useRouter();  // Usamos el hook useRouter para la navegación
+  const router = useRouter();
 
   const fillTable = async () => {
     const data = await getUniversidades();
@@ -73,19 +68,16 @@ export default function UniversidadesPage() {
 
   const handlePopupClose = () => {
     setMostrarPopup(false);
-    fillTable(); // Recarga la tabla al cerrar el popup
+    fillTable();
   };
 
-  // Función para redirigir a la página de universidades archivadas
   const handleArchivarRedirect = () => {
-    router.push("/universidades-archivadas");  // Redirige a la página de universidades archivadas
+    router.push("/universidades-archivadas");
   };
 
   const handleExcelExport = async (solicitudes) => {
-
     const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-
+    const formattedDate = today.toISOString().split("T")[0];
     const blob = await exportToExcel(solicitudes);
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -95,17 +87,16 @@ export default function UniversidadesPage() {
     link.click();
     link.remove();
     URL.revokeObjectURL(downloadUrl);
-  }
+  };
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Botón para añadir universidad */}
-      <div className="w-full max-w-6xl px-6 mt-2 flex justify-start relative">
+      {/* Botón para añadir universidad + popup */}
+      <div className="w-[75rem] px-6 mt-2 flex justify-start relative">
         <div
-          ref={botonRef}
-          onClick={() => setMostrarPopup(!mostrarPopup)}
+          onClick={() => setMostrarPopup((prev) => !prev)}
           className="h-10 px-4 py-1 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-start items-center gap-2 cursor-pointer"
         >
           <SimboloMas className="w-5 h-5 text-blue-600" />
@@ -115,94 +106,87 @@ export default function UniversidadesPage() {
         </div>
 
         {mostrarPopup && (
-          <div
-            className="absolute z-50"
-            style={{
-              top: `${botonRef.current?.offsetTop + 50}px}`,
-              left: `${botonRef.current?.offsetLeft + 300}px}`,
-            }}
-          >
+          <div className="absolute z-50 mt-2" style={{ top: "100%", left: 0 }}>
             <PopupNuevaUniversidad onClose={handlePopupClose} />
           </div>
         )}
       </div>
 
-      {/* Header alineado con tabla */}
-      <div className="w-full max-w-6xl px-6 mt-2 ml-[100px]">
-        <Header
-          filters={filters}
-          setFilters={(newFilters) => {
-            setFilters(newFilters);
-          }}
-        />
+      {/* Header alineado con la tabla */}
+      <div className="w-[80rem] px-6 pt-2 pb-0">
+        <Header filters={filters} setFilters={setFilters} calendarDate={calendarDate} setCalendarDate={setCalendarDate} />
       </div>
 
-      {/* Tabla de universidades */}
-      <div className="w-full max-w-6xl px-6 py-4 mt-6">
+      {/* Tabla de universidades en contacto con la línea azul */}
+      <div className="w-[75rem] px-6 pt-0 mt-[-1px]">
         <UniversidadesTable universidades={paginatedUniversidades()} />
       </div>
 
-      {/* Botones Archivar y Descargar Excel */}
-      <div className="w-[69rem] flex justify-start items-center gap-4 mt-4">
-        {/* Botón Archivar - Redirige a la página de universidades archivadas */}
-        <button
-          onClick={handleArchivarRedirect}  // Llama a la función para redirigir
-          className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
-        >
-          <Archivar />
-          <span className="text-base font-normal font-['Montserrat'] leading-normal">
-            Archivadas
-          </span>
-        </button>
+      {/* Botones Archivar, Descargar Excel y Paginación alineados en una sola línea */}
+      <div className="w-[75rem] px-6 flex justify-between items-center mt-4">
+        {/* Botones a la izquierda */}
+        <div className="flex gap-4">
+          <button
+            onClick={handleArchivarRedirect}
+            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
+          >
+            <Archivar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Archivadas
+            </span>
+          </button>
 
-        {/* Botón Descargar Excel */}
-        <button onClick={() => handleExcelExport(universidades)}  className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
-          <Descargar />
-          <span className="text-base font-normal font-['Montserrat'] leading-normal">
-            Descargar excel
-          </span>
-        </button>
-      </div>
-
-      {/* Paginación alineada a la derecha */}
-      <div className="w-[75rem] flex justify-end items-center mt-4">
-        {/* Botón anterior */}
-        <div
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-            currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-          }`}
-        >
-          <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
+          <button
+            onClick={() => handleExcelExport(universidades)}
+            className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white"
+          >
+            <Descargar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Descargar excel
+            </span>
+          </button>
         </div>
 
-        {/* Botones numéricos */}
-        {Array.from({ length: totalPages }, (_, i) => (
+        {/* Paginación a la derecha */}
+        <div className="flex justify-center items-center space-x-2">
+          {/* Botón anterior */}
           <div
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
-              currentPage === i + 1
-                ? "bg-white text-black"
-                : "bg-white text-black"
-            } inline-flex flex-col justify-center items-center cursor-pointer`}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+              }`}
           >
-            <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
-              {i + 1}
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {"<"}
             </div>
           </div>
-        ))}
 
-        {/* Botón siguiente */}
-        <div
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-            currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-          }`}
-        >
-          <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+          {/* Números de página */}
+          {Array.from({ length: totalPages }, (_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""
+                }`}
+            >
+              <div className="text-center text-xs font-semibold font-['Montserrat']">
+                {i + 1}
+              </div>
+            </div>
+          ))}
+
+          {/* Botón siguiente */}
+          <div
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+              }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {">"}
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }

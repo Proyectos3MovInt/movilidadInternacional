@@ -1,31 +1,24 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUniversidadesArchivadas } from "@/lib/universidadesFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
-import Header from "@/components/admin-dashboard/Header";
+import Header from "@/components/universidades/HeaderArchivadas";
 import UniversidadesTable from "@/components/universidades/UniversidadesTable";
-import { Descargar, SimboloMas } from "@/components/Icons";
-import PopupNuevaUniversidad from "@/components/universidades/PopupNuevaUniversidad";
+import { Descargar, Archivar } from "@/components/Icons";
 
 export default function UniversidadesArchivadasPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({
-    titulacion: "",
-    orden: "",
-  });
-  const [activeTab, setActiveTab] = useState("universidades");
+  const [filters, setFilters] = useState({ titulacion: "", orden: "" });
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
-  const [mostrarPopup, setMostrarPopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const botonRef = useRef(null);
   const router = useRouter();
 
   const fillTable = async () => {
-    const data = await getUniversidadesArchivadas(); // Obtener universidades archivadas
+    const data = await getUniversidadesArchivadas();
     if (!data) return;
 
     const universidadesData = data.map((uni) => ({
@@ -70,103 +63,85 @@ export default function UniversidadesArchivadasPage() {
 
   const totalPages = Math.ceil(sortedUniversidades().length / itemsPerPage);
 
-  const handlePopupClose = () => {
-    setMostrarPopup(false);
-    fillTable(); // Recarga la tabla al cerrar el popup
-  };
-
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Botón para añadir universidad */}
-      <div className="w-full max-w-6xl px-6 mt-2 flex justify-start relative">
-        <div
-          ref={botonRef}
-          onClick={() => setMostrarPopup(!mostrarPopup)}
-          className="h-10 px-4 py-1 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-start items-center gap-2 cursor-pointer"
-        >
-          <SimboloMas className="w-5 h-5 text-blue-600" />
-          <div className="text-blue-600 text-base font-semibold font-['Montserrat'] leading-normal">
-            Añadir universidad
-          </div>
-        </div>
-
-        {mostrarPopup && (
-          <div
-            className="absolute z-50"
-            style={{
-              top: `${botonRef.current?.offsetTop + 50}px}`,
-              left: `${botonRef.current?.offsetLeft + 300}px}`,
-            }}
-          >
-            <PopupNuevaUniversidad onClose={handlePopupClose} />
-          </div>
-        )}
-      </div>
-
-      {/* Header alineado con tabla */}
-      <div className="w-full max-w-6xl px-6 mt-2 ml-[100px]">
+      {/* Header alineado con la tabla */}
+      <div className="w-[80rem] px-6 pt-2 pb-0">
         <Header
           filters={filters}
-          setFilters={(newFilters) => {
-            setFilters(newFilters);
-          }}
+          setFilters={setFilters}
+          calendarDate={calendarDate}
+          setCalendarDate={setCalendarDate}
         />
       </div>
 
-      {/* Tabla de universidades archivadas */}
-      <div className="w-full max-w-6xl px-6 py-4 mt-6">
+      {/* Tabla en contacto con la línea azul */}
+      <div className="w-[75rem] px-6 pt-0 mt-[-1px]">
         <UniversidadesTable archived={true} universidades={paginatedUniversidades()} />
       </div>
 
-      {/* Botón Descargar Excel */}
-      <div className="w-[69rem] flex justify-start items-center gap-4 mt-4">
-      <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
-          <Descargar />
-          <span className="text-base font-normal font-['Montserrat'] leading-normal">
-            Descargar excel
-          </span>
-        </button>
-      </div>
+      {/* Botones Activas, Descargar Excel y Paginación alineados */}
+      <div className="w-[75rem] px-6 flex justify-between items-center mt-4">
+        <div className="flex gap-4">
+          {/* Botón Activas */}
+          <button
+            onClick={() => router.push("/universidades")}
+            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
+          >
+            <Archivar className="w-4 h-4 text-[#0065EF]" />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Activas
+            </span>
+          </button>
 
-      {/* Paginación alineada a la derecha */}
-      <div className="w-[75rem] flex justify-end items-center mt-4">
-        {/* Botón anterior */}
-        <div
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-            currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-          }`}
-        >
-          <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
+          {/* Botón Descargar Excel */}
+          <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
+            <Descargar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Descargar excel
+            </span>
+          </button>
         </div>
 
-        {/* Botones numéricos */}
-        {Array.from({ length: totalPages }, (_, i) => (
+        {/* Paginación */}
+        <div className="flex justify-center items-center space-x-2">
           <div
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
-              currentPage === i + 1
-                ? "bg-white text-black"
-                : "bg-white text-black"
-            } inline-flex flex-col justify-center items-center cursor-pointer`}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
+              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+            }`}
           >
-            <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
-              {i + 1}
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {"<"}
             </div>
           </div>
-        ))}
 
-        {/* Botón siguiente */}
-        <div
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-            currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-          }`}
-        >
-          <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${
+                currentPage === i + 1 ? "font-bold" : ""
+              }`}
+            >
+              <div className="text-center text-xs font-semibold font-['Montserrat']">
+                {i + 1}
+              </div>
+            </div>
+          ))}
+
+          <div
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
+              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+            }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {">"}
+            </div>
+          </div>
         </div>
       </div>
     </div>

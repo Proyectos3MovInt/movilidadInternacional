@@ -4,15 +4,6 @@ import { useState } from "react";
 import { SimboloMas, SimboloMenos } from "../Icons";
 import { crearUniversidad } from "@/lib/universidadesFunctions";
 
-const gradosDisponibles = [
-  { codigo: "DIDI", clase: "bg-rose-500" },
-  { codigo: "INSO", clase: "bg-teal-400" },
-  { codigo: "MAIS", clase: "bg-gray-400" },
-  { codigo: "ENTOR", clase: "bg-lime-300" },
-  { codigo: "ANIV", clase: "bg-yellow-400 text-neutral-500" },
-  { codigo: "VIDEO", clase: "bg-violet-700" },
-  { codigo: "MULT", clase: "bg-sky-400" },
-];
 
 export default function PopupNuevaUniversidad({ onClose }) {
   const [nombre, setNombre] = useState("");
@@ -22,15 +13,7 @@ export default function PopupNuevaUniversidad({ onClose }) {
   const [denominacion, setDenominacion] = useState("");
   const [plazo, setPlazo] = useState("");
   const [activoHasta, setActivoHasta] = useState("");
-  const [gradosSeleccionados, setGradosSeleccionados] = useState([]);
 
-  const toggleGrado = (codigo) => {
-    setGradosSeleccionados((prev) =>
-      prev.includes(codigo)
-        ? prev.filter((g) => g !== codigo)
-        : [...prev, codigo]
-    );
-  };
 
   const handleContactoChange = (index, field, value) => {
     const updated = [...contactos];
@@ -60,11 +43,10 @@ export default function PopupNuevaUniversidad({ onClose }) {
       pais: ubicacion,
       paginaWeb,
       contactos,
-      contactoEmail: emailPrincipal, // 👈 Obligatorio para el backend
+      contactoEmail: emailPrincipal,
       denominacion,
       plazo,
       activoHasta,
-      titulaciones: gradosSeleccionados,
     };
   
     const respuesta = await crearUniversidad(datos);
@@ -196,27 +178,6 @@ export default function PopupNuevaUniversidad({ onClose }) {
         </div>
       </div>
 
-      {/* Grados */}
-      <div className="mb-4">
-        <div className="text-base text-black font-['Montserrat'] mb-2">
-          Grados para los que aplica el convenio
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {gradosDisponibles.map(({ codigo, clase }) => (
-            <button
-              key={codigo}
-              onClick={() => toggleGrado(codigo)}
-              className={`w-16 h-6 px-4 py-1 rounded flex justify-center items-center text-xs font-semibold font-['Montserrat'] ${
-                gradosSeleccionados.includes(codigo)
-                  ? `${clase} text-white`
-                  : "bg-gray-200 text-black"
-              }`}
-            >
-              {codigo}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Convenio activo hasta */}
       <div className="mb-6">
