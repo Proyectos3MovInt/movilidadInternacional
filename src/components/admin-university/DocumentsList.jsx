@@ -4,35 +4,24 @@ import { useState } from "react";
 import { useParams } from "next/navigation"
 import { subirArchivoUniversidad } from "@/lib/universidadesFunctions";
 
-export default function DocumentsList({ documentos, universidadId }) {
+export default function DocumentsList({ documentos }) {
   const [file, setFile] = useState(null);
   const { id } = useParams();
   const [nombre, setNombre] = useState("");
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [documentosActualizados, setDocumentosActualizados] = useState(documentos);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file || !nombre) {
-      setError("Por favor, completa todos los campos.");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+    if (!file || !nombre) return;
 
     const formData = new FormData();
     formData.append("universidad", id);
     formData.append("file", file);
     formData.append("nombre", nombre);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    const res_ok = await subirArchivoUniversidad(formData);
 
-    if (!res.ok) {
+    if (!res_ok) {
+      console.log(res);
       alert("Error al subir el documento");
       return;
     }
@@ -82,32 +71,26 @@ export default function DocumentsList({ documentos, universidadId }) {
         <button
           type="submit"
           className="bg-[#0065EF] text-white text-sm py-1 rounded"
-          disabled={isLoading}
         >
-          {isLoading ? "Subiendo..." : "Subir"}
+          Subir
         </button>
-
-        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
       </form>
 
+      {/* Lista de documentos */}
       <ul className="space-y-2">
-        {documentosActualizados && documentosActualizados.length > 0 ? (
-          documentosActualizados.map((doc) => (
-            <li key={doc._id} className="flex items-center justify-between">
-              <a
-                href={doc.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 underline"
-              >
-                {doc.nombre}
-              </a>
-              <span className="text-gray-400 text-xl">↗</span>
-            </li>
-          ))
-        ) : (
-          <li>No hay documentos disponibles.</li>
-        )}
+        {documentos.map((doc) => (
+          <li key={doc._id} className="flex items-center justify-between">
+            <a
+              href={doc.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 underline"
+            >
+              {doc.nombre}
+            </a>
+            <span className="text-gray-400 text-xl">↗</span>
+          </li>
+        ))}
       </ul>
     </div>
   );
