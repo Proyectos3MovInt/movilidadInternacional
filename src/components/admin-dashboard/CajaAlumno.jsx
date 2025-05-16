@@ -9,6 +9,50 @@ const CajaAlumno = ({ solicitud, index }) => {
     router.push(`/admin-alumno/${solicitud.id}`);
   };
 
+  const renderEstado = () => {
+    const estado = (solicitud.estado || "").toLowerCase(); // normalizamos
+
+    switch (estado) {
+      case "aprobada":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-lime-400 rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-lime-700 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Aceptado por U-TAD
+            </div>
+          </div>
+        );
+      case "denegada":
+        return (
+          <div className="h-7 px-4 py-1 bg-red-500 rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-red-700 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Rechazado por U-TAD
+            </div>
+          </div>
+        );
+      case "movilidad":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-pink-500 rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-pink-600 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Movilidad empezada
+            </div>
+          </div>
+        );
+      case "pendiente":
+      default:
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-orange-400 rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Solicitud realizada
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
     <div
       onClick={handleClick}
@@ -22,32 +66,7 @@ const CajaAlumno = ({ solicitud, index }) => {
         <div className="w-[100px]">{solicitud.ano}</div>
         <div className="w-[150px]">{solicitud.universidadDestino}</div>
         <div className="w-[60px]">{solicitud.notaMedia}</div>
-        <div
-          className={`w-[200px] px-4 py-1 rounded-3xl flex items-center justify-center gap-2 text-xs font-semibold text-white ${
-            solicitud.estado === "Aprobada"
-              ? "bg-lime-400"
-              : solicitud.estado === "Rechazada"
-              ? "bg-red-400"
-              : "bg-orange-300"
-          }`}
-        >
-          <div
-            className={`w-2.5 h-2.5 rounded-full ${
-              solicitud.estado === "Aprobada"
-                ? "bg-lime-700"
-                : solicitud.estado === "Rechazada"
-                ? "bg-red-700"
-                : "bg-orange-500"
-            }`}
-          />
-          <span>
-            {solicitud.estado === "Aprobada"
-              ? "Aceptado por U-TAD"
-              : solicitud.estado === "Rechazada"
-              ? "Rechazado por U-TAD"
-              : "Solicitud realizada"}
-          </span>
-        </div>
+        {renderEstado()}
       </div>
     </div>
   );
