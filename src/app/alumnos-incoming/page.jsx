@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import SolicitudesTable from "@/components/admin-dashboard/SolicitudesTable";
-import { exportToExcel, getStudentsTable } from "@/lib/adminFunctions";
+import { getStudentsTable } from "@/lib/adminFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import { Descargar } from "@/components/Icons";
-import { getUnis } from "@/lib/form";
+import { exportToExcel } from "@/lib/adminFunctions";
 
 const titulacionMap = {
   ANIM: ["Grado en Animación (Inglés)", "Grado en Animación (Español)"],
@@ -28,12 +27,11 @@ const titulacionMap = {
   MULTIPLATAFORMA: [],
 };
 
-export default function AdminDashboard() {
-  const { register } = useForm();
+export default function AlumnosIncoming() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState(null);
-  const [activeTab, setActiveTab] = useState("outgoing");
+  const [activeTab, setActiveTab] = useState("incoming");
 
   const [filters, setFilters] = useState({
     orden: { az: false, za: false },
@@ -62,19 +60,11 @@ export default function AdminDashboard() {
 
   // PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fillTable = async () => {
-      const [response_json, unis] = await Promise.all([
-        getStudentsTable(activeTab),
-        getUnis()
-      ]);
-      const uniMap = unis.reduce((map, uni) => {
-        map[uni._id] = uni.nombre;
-        return map;
-      }, {});
-
+      const response_json = await getStudentsTable(activeTab);
       const studentsArray = Array.isArray(response_json)
         ? response_json
         : response_json?.data || [];
@@ -85,18 +75,16 @@ export default function AdminDashboard() {
         grado: student.titulacion || "No especificado",
         ano: "2024-2025",
         estado: student.processStatus || "Pendiente",
-        universidadDestino: uniMap[student.universidadDestino1] || "No especificada",
+        universidadDestino: student.universidadDestino1 || "No especificada",
         notaMedia: 7.6,
       }));
 
       setSolicitudes(solicitudesData);
-      console.log(solicitudesData);
-      setCurrentPage(1);
+      setCurrentPage(1); // reiniciar página al cambiar pestaña
     };
 
     fillTable();
   }, [activeTab]);
-
 
   const sortedSolicitudes = () => {
     let resultados = [...solicitudes];
@@ -153,7 +141,7 @@ export default function AdminDashboard() {
   };
 
   const totalPages = Math.ceil(sortedSolicitudes().length / itemsPerPage);
-
+  
   const handleExcelExport = async (solicitudes) => {
 
     const today = new Date();
@@ -163,7 +151,7 @@ export default function AdminDashboard() {
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = downloadUrl;
-    link.download = `Alumnos_Outgoing${formattedDate}.xlsx`;
+    link.download = `Alumnos_Incoming${formattedDate}.xlsx`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -193,9 +181,9 @@ export default function AdminDashboard() {
 
       {/* Botón Descargar Excel */}
       <div className="w-[75rem] flex justify-between items-center mt-4">
-        {/* Botón Descargar Excel alineado a la izquierda */}
         <div className="flex justify-start">
-          <button onClick={() => handleExcelExport(solicitudes)} className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
+          <button onClick={() => handleExcelExport(solicitudes)}
+          className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
             <Descargar />
             <span className="text-base font-normal font-['Montserrat'] leading-normal">
               Descargar excel
@@ -208,8 +196,9 @@ export default function AdminDashboard() {
           {/* Botón anterior */}
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-              }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+            }`}
           >
             <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
           </div>
@@ -219,10 +208,11 @@ export default function AdminDashboard() {
             <div
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${currentPage === i + 1
-                ? "bg-white text-black"
-                : "bg-white text-black"
-                } inline-flex flex-col justify-center items-center cursor-pointer`}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
+                currentPage === i + 1
+                  ? "bg-white text-black"
+                  : "bg-white text-black"
+              } inline-flex flex-col justify-center items-center cursor-pointer`}
             >
               <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
                 {i + 1}
@@ -233,8 +223,9 @@ export default function AdminDashboard() {
           {/* Botón siguiente */}
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-              }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+            }`}
           >
             <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
           </div>

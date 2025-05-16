@@ -20,17 +20,27 @@ export default function Page() {
   const { id } = useParams();
 
   useEffect(() => {
+
+    const formatDate = (isoString) => {
+      if (!isoString) return "";
+      const date = new Date(isoString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
     const fetchData = async () => {
       try {
         const data = await getStudentData(id);
         setDatosApi(data);
-
+        console.log(data);
         setDatosPersonales([
           { label: "DNI / NIE", value: data.dniNie || "" },
           { label: "Email de contacto", value: data.email || "" },
           { label: "Género", value: data.genero || "" },
           { label: "Nacionalidad", value: data.nacionalidad || "" },
-          { label: "Fecha de nacimiento", value: data.fechaNacimiento || "" },
+          { label: "Fecha de nacimiento", value: formatDate(data.fechaNacimiento) || "" },
           { label: "Domicilio", value: data.domicilio || "" },
           { label: "Número de teléfono", value: data.numeroTelefono || "" }
         ]);
@@ -74,8 +84,8 @@ export default function Page() {
         <div className="flex gap-[4rem] w-[66.875rem] mb-20">
           <div className="flex flex-col gap-5 w-[41.5625rem]">
             <SeccionDesplegable title="Datos personales" data={datosPersonales} />
-            <SeccionDesplegable title="Información académica" data={infoAcademica} />
-            <SeccionDesplegable title="Archivos adjuntos" data={archivosAdjuntos} />
+            <SeccionDesplegable title="Información académica" data={infoAcademica} uni={true} />
+            <SeccionDesplegable title="Archivos adjuntos" data={archivosAdjuntos} archivo={true} />
           </div>
           <div className="flex flex-col gap-4 w-[21.3125rem]">
             <Calendario />
