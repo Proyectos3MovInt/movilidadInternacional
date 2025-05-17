@@ -3,10 +3,10 @@ import UniversityHeader from "./UniversityHeader";
 import DocumentsList from "./DocumentsList";
 import StudentsTable from "./StudentsTable";
 import Anotaciones from "../admin-alumno/Anotaciones";
-import { archivarUniversidad, activarUniversidad } from "@/lib/universidadesFunctions";
+import { archivarUniversidad } from "@/lib/universidadesFunctions";
 import { useRouter } from "next/navigation";
+import { Archivar, Editar } from "@/components/Icons";
 
-// Map de titulaciones a siglas
 const gradoSiglas = {
   "Grado en Animación (Inglés)": "ANIG",
   "Grado en Animación (Español)": "ANIV",
@@ -27,44 +27,54 @@ export default function UniversityDetailPage({
   university,
   archivos,
   alumnos,
+  archived,
+  onShowModal,
 }) {
   const router = useRouter();
-  const [archivada, setArchivada] = useState(university.archivada || false);
-
-  const handleToggleEstado = async () => {
-    if (archivada) {
-      const res = await activarUniversidad(university._id);
-      if (res) setArchivada(false);
-    } else {
-      const res = await archivarUniversidad(university._id);
-      if (res) setArchivada(true);
-    }
-  };
+  const [isArchived, setIsArchived] = useState(archived);
 
   return (
     <div className="px-8 pt-6 space-y-6">
       {/* Fila 1: Universidad + Documentos */}
       <div className="max-w-5xl mx-auto flex gap-6">
-        <div className="flex-1 bg-white p-6 rounded-2xl shadow">
-          <div className="flex justify-between items-center mb-4">
+        {/* Columna izquierda */}
+        <div className="flex-1">
+          <div className="bg-white p-6 rounded-2xl shadow">
             <UniversityHeader
               nombre={university.nombre}
               contactoEmail={university.contactoEmail}
               pais={university.pais}
             />
+          </div>
+
+          {/* Botones debajo del header */}
+          <div className="mt-4 flex gap-4">
+            {/* Botón Archivar/Desarchivar */}
             <button
-              onClick={handleToggleEstado}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm ${
-                archivada
-                  ? "bg-green-600 text-white"
-                  : "bg-red-600 text-white"
-              }`}
+              onClick={() => {
+                onShowModal(); // Siempre abre el modal
+              }}
+              className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex items-center gap-2 cursor-pointer text-[#0065EF]"
             >
-              {archivada ? "Activar universidad" : "Archivar universidad"}
+              <Archivar className="w-4 h-4 text-[#0065EF]" />
+              <span className="text-sm font-semibold font-['Montserrat']">
+                {isArchived ? "Desarchivar" : "Archivar"}
+              </span>
+            </button>
+
+            {/* Botón Editar (sin funcionalidad) */}
+            <button
+              className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer"
+            >
+              <Editar className="w-4 h-4 text-white" />
+              <span className="text-white text-sm font-semibold font-['Montserrat']">
+                Editar
+              </span>
             </button>
           </div>
         </div>
 
+        {/* Columna derecha */}
         <div className="w-80 bg-white p-6 rounded-2xl shadow">
           <DocumentsList documentos={archivos} />
         </div>

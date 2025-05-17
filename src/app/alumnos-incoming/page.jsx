@@ -175,12 +175,12 @@ export default function AlumnosIncoming() {
         />
       </div>
 
-      <div className="w-[75rem]">
+      <div className="w-[72rem]">
         <SolicitudesTable solicitudes={paginatedSolicitudes()} />
       </div>
 
       {/* Botón Descargar Excel */}
-      <div className="w-[75rem] flex justify-between items-center mt-4">
+      <div className="w-[72rem] flex justify-between items-center mt-4">
         <div className="flex justify-start">
           <button onClick={() => handleExcelExport(solicitudes)}
           className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">

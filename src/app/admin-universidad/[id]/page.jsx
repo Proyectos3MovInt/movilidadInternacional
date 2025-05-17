@@ -1,14 +1,15 @@
-// pages/admin/universities/[id]/page.jsx
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import UniversityDetailPage from "@/components/admin-university/UniversityDetailPage";
+import ModalArchivar from "@/components/admin-university/ModalArchivar";
 import {
   getUniversityById,
   getUniversityFiles,
   getUniversityStudents,
 } from "@/lib/adminFunctions";
+import { archivarUniversidad } from "@/lib/universidadesFunctions"; // Importa la función
 
 export default function Page() {
   const { id } = useParams();
@@ -18,6 +19,8 @@ export default function Page() {
   const [files, setFiles] = useState([]);
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [wasArchived, setWasArchived] = useState(false); // para pasarlo como prop
 
   useEffect(() => {
     async function fetchData() {
@@ -28,6 +31,7 @@ export default function Page() {
         setUni(university);
         setFiles(archivos);
         setStudents(students);
+        setWasArchived(university?.estado === "archivada" || university?.archivada === true);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -37,8 +41,16 @@ export default function Page() {
     if (id) fetchData();
   }, [id]);
 
-  if (loading)
-    return <p className="text-center mt-10">Cargando universidad...</p>;
+  const handleConfirmArchivar = async () => {
+    if (!id) return;
+    const ok = await archivarUniversidad(id);
+    if (ok) {
+      setWasArchived(true);
+      setShowModal(false);
+    }
+  };
+
+  if (loading) return <p className="text-center mt-10">Cargando universidad...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
@@ -48,7 +60,15 @@ export default function Page() {
         university={uni}
         archivos={files}
         alumnos={students}
+        archived={wasArchived}
+        onShowModal={() => setShowModal(true)}
       />
+      <ModalArchivar
+  open={showModal}
+  onClose={() => setShowModal(false)}
+  onConfirm={handleConfirmArchivar}
+/>
+
     </div>
   );
 }

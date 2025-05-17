@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import UniversityDetailPage from "@/components/admin-university/UniversityDetailPage";
+import ModalArchivar from "@/components/admin-university/ModalArchivar";
 import {
   getArchivedUniversityById,
   getUniversityFiles,
@@ -17,19 +18,17 @@ export default function Page() {
   const [files, setFiles] = useState([]);
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const university = await getArchivedUniversityById(id);
-        console.log(university);
-        /*const archivos = await getUniversityFiles(id);
-        const students = await getUniversityStudents(id);
-        setUni(university);
-        setFiles(archivos);
-        setStudents(students);
-        */
         setUni(university[0]);
+        const archivos = await getUniversityFiles(id);
+        const students = await getUniversityStudents(id);
+        setFiles(archivos || []);
+        setStudents(students || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -38,6 +37,11 @@ export default function Page() {
     }
     if (id) fetchData();
   }, [id]);
+
+  const handleConfirmDesarchivar = () => {
+    // Solo cierra el modal, no hace nada
+    setShowModal(false);
+  };
 
   if (loading)
     return <p className="text-center mt-10">Cargando universidad...</p>;
@@ -50,6 +54,14 @@ export default function Page() {
         university={uni}
         archivos={files}
         alumnos={students}
+        archived={true}
+        onShowModal={() => setShowModal(true)}
+      />
+      <ModalArchivar
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleConfirmDesarchivar}
+        mode="desarchivar"
       />
     </div>
   );
