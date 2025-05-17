@@ -7,32 +7,37 @@ export default function Anotaciones({ id }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchComentario = async () => {/*
+    const fetchComentario = async () => {
       try {
-        const response = await axios.get(`/api/comentarios/${id}`);
-        if (response.data?.comentario) {
-          setComentario(response.data.comentario);
-        } else {
-          setComentario(""); // or set a hint here
-        }
+        const res = await fetch(`/admin/anotaciones/${id}`);
+        if (!res.ok) throw new Error("Error cargando el comentarip");
+        const data = await res.json();
+
+        setComentario(data?.comentario || "");
       } catch (err) {
-        console.error("Error loading comentario:", err);
+        console.error("Error cargando el comentario:", err);
       } finally {
         setLoading(false);
       }
-    */};
+    };
 
     if (id) fetchComentario();
   }, [id]);
 
   const handleBlur = async () => {
-    /*try {
-      await axios.post(`/api/comentarios/${id}`, {
-        comentario,
+    try {
+      const res = await fetch(`/admin/anotaciones/${id}`, {
+        method: "POST", // o "PUT"
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ comentario }),
       });
+
+      if (!res.ok) throw new Error("Error al guardar el comentario");
     } catch (err) {
-      console.error("Error saving comentario:", err);
-    }*/
+      console.error("Error al guardar comentario:", err);
+    }
   };
 
   return (
@@ -44,9 +49,12 @@ export default function Anotaciones({ id }) {
         onBlur={handleBlur}
         onChange={(e) => setComentario(e.target.value)}
         value={comentario}
-        className="w-full p-2 rounded h-36 resize-none"
-        placeholder={"Escribe un comentario aquí..."}
+        className="w-full p-2 rounded h-36 resize-none border border-gray-300"
+        placeholder={loading ? "Cargando comentario..." : "Escribe un comentario aquí..."}
       />
+      {loading && (
+        <p className="text-sm text-gray-500 mt-2">Cargando comentario...</p>
+      )}
     </div>
   );
 }
