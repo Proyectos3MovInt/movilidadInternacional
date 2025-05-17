@@ -1,14 +1,52 @@
 "use client";
 
-export default function Anotaciones() {
+import { useState, useEffect } from "react";
+
+export default function Anotaciones({ id }) {
+  const [comentario, setComentario] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchComentario = async () => {/*
+      try {
+        const response = await axios.get(`/api/comentarios/${id}`);
+        if (response.data?.comentario) {
+          setComentario(response.data.comentario);
+        } else {
+          setComentario(""); // or set a hint here
+        }
+      } catch (err) {
+        console.error("Error loading comentario:", err);
+      } finally {
+        setLoading(false);
+      }
+    */};
+
+    if (id) fetchComentario();
+  }, [id]);
+
+  const handleBlur = async () => {
+    /*try {
+      await axios.post(`/api/comentarios/${id}`, {
+        comentario,
+      });
+    } catch (err) {
+      console.error("Error saving comentario:", err);
+    }*/
+  };
+
   return (
     <div className="bg-white rounded-[0.5rem] p-6 w-full">
-      <h3 className="text-[#0065EF] font-semibold mb-2 text-sm">Anotaciones</h3>
-      <p className="text-[#14192C] text-sm leading-[1.25rem]">
-        Lorem ipsum dolor sit amet consectetur. Sit congue tristique amet eu nisi montes. Fames
-        vulputate dapibus aliquam sem tincidunt. Malesuada ipsum amet laoreet nisi tortor donec
-        mollis sed malesuada.
-      </p>
+      <div className="justify-center text-blue-600 text-base font-semibold font-['Montserrat'] leading-normal">
+        Comentarios
+      </div>
+      <textarea
+        onBlur={handleBlur}
+        onChange={(e) => setComentario(e.target.value)}
+        value={comentario}
+        className="w-full p-2 rounded h-36 resize-none"
+        placeholder={"Escribe un comentario aquí..."}
+      />
     </div>
   );
-};
+}

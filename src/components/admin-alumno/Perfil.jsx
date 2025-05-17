@@ -1,68 +1,107 @@
 "use client";
 import { useEffect, useState } from "react";
 import { EditSquare, ArrowForwardIos } from "../Icons";
+import { useParams } from "next/navigation";
+import { cambiarEstado } from "@/lib/adminFunctions";
 
 export default function Perfil({ datos }) {
   const [estado, setEstado] = useState("aprobada");
   const [universidad, setUniversidad] = useState("U-tad");
   const [datosApi, setDatosApi] = useState({});
+  const { id } = useParams();
 
   useEffect(() => {
     setDatosApi(datos);
+    setEstado(ApiToEstado(datos.processStatus));
+    console.log(datos);
   }, [datos]);
 
-  const toggleEstado = () => {
-    setEstado((prev) => {
-      if (prev === "aprobada") return "denegada";
-      if (prev === "denegada") return "pendiente";
-      if (prev === "pendiente") return "movilidad";
-      if (prev === "movilidad") return "aprobada";
-      return "pendiente";
-    });
+  const toggleEstado = async () => {
+    const newEstado = (() => {
+      switch (estado) {
+        case "finalizada": return "denegada";
+        case "denegada": return "pendiente";
+        case "pendiente": return "movilidad";
+        case "movilidad": return "aprobada";
+        case "aprobada": return "finalizada";
+        default: return "pendiente";
+      }
+    })();
+    setEstado(newEstado);
+    await cambiarEstado(id, estadoToApi(newEstado));
   };
 
-  const renderEstado = () => {
-  switch (estado) {
-    case "aprobada":
-      return (
-        <div className="w-48 h-7 px-4 py-1 bg-lime-400 rounded-3xl inline-flex justify-start items-center gap-2">
-          <div className="w-2.5 h-2.5 bg-lime-700 rounded-full" />
-          <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
-            Aceptado por U-TAD
-          </div>
-        </div>
-      );
-    case "denegada":
-      return (
-        <div className="w-48 h-7 px-4 py-1 bg-red-500 rounded-3xl inline-flex justify-start items-center gap-2">
-          <div className="w-2.5 h-2.5 bg-red-700 rounded-full" />
-          <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
-            Rechazado por U-TAD
-          </div>
-        </div>
-      );
-    case "pendiente":
-      return (
-        <div className="w-48 h-7 px-4 py-1 bg-orange-400 rounded-3xl inline-flex justify-start items-center gap-2">
-          <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full" />
-          <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
-            Solicitud realizada
-          </div>
-        </div>
-      );
-    case "movilidad":
-      return (
-        <div className="w-48 h-7 px-4 py-1 bg-pink-500 rounded-3xl inline-flex justify-start items-center gap-2">
-          <div className="w-2.5 h-2.5 bg-pink-600 rounded-full" />
-          <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
-            Movilidad empezada
-          </div>
-        </div>
-      );
-    default:
-      return null;
+  const estadoToApi = (estado) => {
+    switch (estado) {
+      case "aprobada": return "ACEPTADO";
+      case "denegada": return "RECHAZADO";
+      case "pendiente": return "PENDIENTE";
+      case "movilidad": return "EN CURSO";
+      case "finalizada": return "FINALIZADO";
+      default: return "";
+    }
   }
-};
+  const ApiToEstado = (estado) => {
+        switch (estado) {
+      case "ACEPTADO": return "aprobada";
+      case "RECHAZADO": return "denegada";
+      case "PENDIENTE": return "pendiente";
+      case "EN CURSO": return "movilidad";
+      case "FINALIZADO": return "finalizada";
+      default: return "";
+    }
+  }
+
+  const renderEstado = () => {
+    switch (estado) {
+      case "aprobada":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-lime-400 rounded-3xl inline-flex justify-start items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-lime-700 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Aceptado por U-TAD
+            </div>
+          </div>
+        );
+      case "denegada":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-red-500 rounded-3xl inline-flex justify-start items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-red-700 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Rechazado por U-TAD
+            </div>
+          </div>
+        );
+      case "pendiente":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-orange-400 rounded-3xl inline-flex justify-start items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Solicitud realizada
+            </div>
+          </div>
+        );
+      case "movilidad":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-pink-500 rounded-3xl inline-flex justify-start items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-pink-600 rounded-full" />
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+              Movilidad empezada
+            </div>
+          </div>
+        );
+
+      case "finalizada":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-zinc-400 rounded-3xl inline-flex justify-start items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-neutral-500 rounded-full"></div>
+            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">Movilidad finalizada</div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
 
   return (

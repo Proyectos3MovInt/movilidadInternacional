@@ -246,6 +246,7 @@ export async function createCalendarEvent(event) {
     throw error; // Re-lanzamos el error para manejarlo en el componente
   }
 }
+
 export async function exportToExcel(data) {
   try {
     const cookieStore = await cookies();
@@ -276,6 +277,38 @@ export async function exportToExcel(data) {
 
   } catch (error) {
     console.error("Error al exportar el Excel:", error);
+    throw error;
+  }
+}
+
+
+export async function cambiarEstado(id, estado) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/cambiar-estado`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id: id, processStatus: estado }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error("Error al cambiar estado:", error);
     throw error;
   }
 }
