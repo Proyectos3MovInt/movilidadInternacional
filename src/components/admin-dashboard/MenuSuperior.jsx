@@ -5,37 +5,31 @@ import { useRouter } from "next/navigation";
 
 const MenuSuperior = ({ searchTerm, setSearchTerm }) => {
   const router = useRouter();
+
   return (
-    <header className="w-full bg-white h-16 flex items-center shadow-sm">
-      <div className="w-[66.875rem] mx-auto flex items-center justify-between">
+    <div className="w-full flex justify-center bg-white h-16">
+      <div className="w-[75rem] flex justify-between items-center px-6 py-4">
         {/* Logo */}
         <button
-          className="flex items-center h-8 cursor-pointer"
+          className="w-48 h-8 cursor-pointer"
           onClick={() => router.push("/home")}
         >
           <Icons.LogoUtad />
         </button>
 
-        {/* Acciones de la derecha */}
-        <div className="flex items-center gap-6">
-          {/* Buscador */}
-          <button
-            className="w-10 h-10 flex items-center justify-center rounded-full border border-black"
-            onClick={() => {
-              /* si quieres abrir un modal de búsqueda */
-            }}
-          >
-            <Icons.Lupa />
-          </button>
-
-          {/* Botón Calendario */}
-          <button
+        {/* Calendario */}
+        <div className="flex items-center gap-5">
+          <div
             onClick={() => router.push("/admin-calendar")}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-1 rounded-lg"
+            className="px-4 py-1 bg-blue-600 rounded-lg flex items-center gap-2 cursor-pointer"
           >
-            <Icons.CalendarHeader className="w-5 h-5" />
-            <span className="text-base font-normal">Calendario</span>
-          </button>
+            <button className="w-6 h-6">
+              <Icons.CalendarHeader />
+            </button>
+            <div className="text-white text-base font-normal font-['Montserrat'] leading-normal">
+              Calendario
+            </div>
+          </div>
         </div>
       </div>
     </header>

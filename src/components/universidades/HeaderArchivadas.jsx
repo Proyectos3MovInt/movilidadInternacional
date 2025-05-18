@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import * as Icons from "@/components/Icons";
 
@@ -19,19 +18,8 @@ const titulacionesDisponibles = [
 ];
 
 const Header = ({ filters, setFilters }) => {
-  const pathname = usePathname();
-  const router = useRouter();
-
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
-
-  const getTabStyle = (tabPath) =>
-    pathname.includes(tabPath)
-      ? "text-blue-600 font-semibold"
-      : "text-neutral-500 font-semibold";
-
-  const getIconClass = (tabPath) =>
-    pathname.includes(tabPath) ? "text-blue-600" : "text-neutral-500";
 
   const handleRadioChange = (category, value) => {
     setFilters((prev) => ({
@@ -43,57 +31,21 @@ const Header = ({ filters, setFilters }) => {
   return (
     <div className="w-full flex justify-center bg-white">
       <div className="w-[75rem] px-6 pt-2 pb-2 flex justify-between items-center relative z-10">
-        {/* Tabs alineados a la izquierda */}
-        <div className="flex items-center gap-32">
-          <div
-            onClick={() => router.push("/admin-dashboard")}
-            className="relative flex cursor-pointer items-center gap-2"
-          >
-            <Icons.Person className={`w-5 h-5 ${getIconClass("admin-dashboard")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("admin-dashboard")}`}>
-              Outgoing
-            </div>
-            {pathname.includes("admin-dashboard") && (
-              <div className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-blue-600 -mb-2.5" />
-            )}
-          </div>
-
-          <div
-            onClick={() => router.push("/alumnos-incoming")}
-            className="relative flex cursor-pointer items-center gap-2"
-          >
-            <Icons.People className={`w-5 h-5 ${getIconClass("incoming")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("incoming")}`}>
-              Incoming
-            </div>
-            {pathname.includes("incoming") && (
-              <div className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-blue-600 -mb-2.5" />
-            )}
-          </div>
-
-          <div
-            onClick={() => router.push("/universidades")}
-            className="relative flex cursor-pointer items-center gap-2"
-          >
-            <Icons.Universidad className={`w-5 h-5 ${getIconClass("universidades")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("universidades")}`}>
-              Universidades
-            </div>
-            {pathname.includes("universidades") && (
-              <div className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-blue-600 -mb-2.5" />
-            )}
-          </div>
-        </div>
+        {/* Título "Universidades archivadas" alineado a la izquierda */}
+        <h2 className="text-blue-600 text-3xl font-semibold font-['Montserrat']">
+          Universidades archivadas
+        </h2>
 
         {/* Filtros y Ordenar alineados a la derecha */}
         <div className="flex items-center gap-8">
+          {/* Filtros */}
           <div className="relative">
             <button
               onClick={() => {
                 setIsFilterOpen((prev) => !prev);
                 setIsOrderOpen(false);
               }}
-              className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2 bg-white"
+              className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex items-center gap-2 bg-white"
             >
               <Icons.Filtros />
               <span className="text-slate-900 text-xs font-normal font-['Montserrat']">Filtros</span>
@@ -122,13 +74,14 @@ const Header = ({ filters, setFilters }) => {
             )}
           </div>
 
+          {/* Ordenar */}
           <div className="relative">
             <button
               onClick={() => {
                 setIsOrderOpen((prev) => !prev);
                 setIsFilterOpen(false);
               }}
-              className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2 bg-white"
+              className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex items-center gap-2 bg-white"
             >
               <Icons.Filtros />
               <span className="text-slate-900 text-xs font-normal font-['Montserrat']">Ordenar</span>

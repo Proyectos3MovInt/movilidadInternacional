@@ -12,6 +12,7 @@ export default function Register() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [studentType, setStudentType] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
@@ -23,8 +24,31 @@ export default function Register() {
 
   if (!isClient) return null;
 
+  const validatePassword = (pwd) => {
+    if (pwd.length < 8) {
+      return "La contraseña debe tener al menos 8 caracteres";
+    }
+    if (!/[A-Z]/.test(pwd)) {
+      return "La contraseña debe contener al menos una letra mayúscula";
+    }
+    if (!/[a-z]/.test(pwd)) {
+      return "La contraseña debe contener al menos una letra minúscula";
+    }
+    if (!/[0-9]/.test(pwd)) {
+      return "La contraseña debe contener al menos un número";
+    }
+    if (!/[*!@#\$%\^&\(\)\-_=\+\[\]{};:'",.<>\/?\\|]/.test(pwd)) {
+      return "La contraseña debe contener al menos un carácter especial";
+    }
+    return "";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const error = validatePassword(password);
+    setPasswordError(error);
+
+    if (error) return;
 
     const response_status = await register(
       email,
@@ -94,11 +118,20 @@ export default function Register() {
 
             <div className="relative w-full h-[48px]">
               <input
-                className="w-full h-full px-4 pr-12 border border-black rounded-lg text-black text-md focus:outline-none focus:ring-2 focus:ring-[#0065EF]"
+                className={`w-full h-full px-4 pr-12 border rounded-lg text-black text-md focus:outline-none focus:ring-2 ${
+                  passwordError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-black focus:ring-[#0065EF]"
+                }`}
                 type={showPassword ? "text" : "password"}
                 placeholder="Contraseña"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+                  const error = validatePassword(value);
+                  setPasswordError(error);
+                }}
               />
               <button
                 type="button"
@@ -108,6 +141,10 @@ export default function Register() {
                 {showPassword ? <Icons.EyeIcon /> : <Icons.EyeClosedIcon />}
               </button>
             </div>
+
+            {passwordError && (
+              <p className="text-red-600 text-sm -mt-3">{passwordError}</p>
+            )}
 
             <select
               className="w-full h-[48px] px-4 border border-black rounded-lg text-black bg-white text-md focus:outline-none focus:ring-2 focus:ring-[#0065EF]"
