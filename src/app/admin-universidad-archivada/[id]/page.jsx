@@ -9,6 +9,8 @@ import {
   getUniversityFiles,
   getUniversityStudents,
 } from "@/lib/adminFunctions";
+import { desarchivarUniversidad } from "@/lib/universidadesFunctions";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { id } = useParams();
@@ -19,7 +21,7 @@ export default function Page() {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     async function fetchData() {
       try {
@@ -38,9 +40,10 @@ export default function Page() {
     if (id) fetchData();
   }, [id]);
 
-  const handleConfirmDesarchivar = () => {
-    // Solo cierra el modal, no hace nada
+  const handleConfirmDesarchivar = async () => {
+    await desarchivarUniversidad(id);
     setShowModal(false);
+    router.push("/universidades");
   };
 
   if (loading)

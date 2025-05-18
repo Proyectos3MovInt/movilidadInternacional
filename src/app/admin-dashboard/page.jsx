@@ -8,9 +8,7 @@ import { exportToExcel, getStudentsTable } from "@/lib/adminFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import { Descargar } from "@/components/Icons";
-
-import TableFilter from "@/components/admin-dashboard/TableFilter";
-import * as Icons from '@/components/Icons';
+import { getUnis } from "@/lib/form";
 
 const titulacionMap = {
   ANIM: ["Grado en Animación (Inglés)", "Grado en Animación (Español)"],
@@ -37,33 +35,9 @@ export default function AdminDashboard() {
   const [sortOrder, setSortOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("outgoing");
 
-  // NECESARIAS PARA EL FILTRO
-  const [tableFilled, setTableFilled] = useState(false);
-  const [filtroAno, setFiltroAno] = useState(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedFields, setSelectedFields] = useState({});
-
   const [filters, setFilters] = useState({
-    orden: { az: false, za: false },
-    titulacion: {
-      DIDI: false,
-      INSO: false,
-      ANIM: false,
-      DIPI: false,
-      MAS: false,
-      ENTORNOS: false,
-      MULTIPLATAFORMA: false,
-    },
-    ano: {
-      "2024-2025": false,
-      "2023-2024": false,
-      "2022-2023": false,
-      "2021-2022": false,
-      "2020-2021": false,
-      Anterior: false,
-    },
-    nota: { mayor: false, menor: false },
-    estado: { Pendiente: false, Rechazada: false, Aprobada: false },
+    columnas: ["nombreApellidos", "titulacion", "universidadDestino1", "processStatus"],
+    orden: "az",
   });
 
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
@@ -74,52 +48,59 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fillTable = async () => {
+      const [response_json, unis] = await Promise.all([
+        getStudentsTable(activeTab),
+        getUnis()
+      ]);
+      const uniMap = unis.reduce((map, uni) => {
+        map[uni._id] = uni.nombre;
+        return map;
+      }, {});
 
-      const response_json = await getStudentsTable("outgoing");
-      const solicitudesData = response_json.data.map((student) => ({
+      const studentsArray = Array.isArray(response_json)
+        ? response_json
+        : response_json?.data || [];
+
+      const solicitudesData = studentsArray.map((student) => ({
         id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
+        dniNie: student.dniNie || "N/A",
         grado: student.titulacion || "No especificado",
-        ano: "2024-2025",
+        semestre: student.semestreIntercambio || "N/A",
         estado: student.processStatus || "Pendiente",
         universidadDestino: uniMap[student.universidadDestino1] || "No especificada",
         notaMedia: 7.6,
       }));
+
       setSolicitudes(solicitudesData);
-
-      setTableFilled(true); // Marca como cargada la tabla
+      console.log(solicitudesData);
+      setCurrentPage(1);
     };
-    if (!tableFilled) {
-      fillTable();
-    }
-  }, [tableFilled]);
+
+    fillTable();
+  }, [activeTab]);
 
 
-  // Función para ordenar y filtrar las solicitudes
   const sortedSolicitudes = () => {
     let resultados = [...solicitudes];
 
-    // Filtrar por búsqueda
     if (searchTerm) {
-      resultados = resultados.filter((solicitud) =>
-          solicitud.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          solicitud.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          solicitud.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+      const term = searchTerm.toLowerCase();
+      resultados = resultados.filter((s) =>
+        s.nombre.toLowerCase().includes(term) ||
+        s.grado.toLowerCase().includes(term) ||
+        s.estado.toLowerCase().includes(term) ||
+        s.universidadDestino.toLowerCase().includes(term)
       );
     }
 
-    // Ordenar si hay sortOrder
-    if (sortOrder) {
-      resultados.sort((a, b) => {
-        if (a[sortOrder] < b[sortOrder]) return -1;
-        if (a[sortOrder] > b[sortOrder]) return 1;
-        return 0;
-      });
-    }
-
+    if (filters.orden === "az") {
+      resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } else if (filters.orden === "za") {
+      resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+  }
     return resultados;
-  };
+  }
 
   const paginatedSolicitudes = () => {
     const sorted = sortedSolicitudes();
@@ -146,81 +127,89 @@ export default function AdminDashboard() {
     URL.revokeObjectURL(downloadUrl);
   }
 
+  const columnasDisponibles = ["nombreApellidos", "dniNie", "titulacion", "semestreIntercambio", "universidadDestino1", "notaMedia", "processStatus"]
+  const columnasLabels = {
+    nombreApellidos: "Nombre y Apellidos",
+    dniNie: "DNI/NIE",
+    titulacion: "Titulación",
+    semestreIntercambio: "Semestre de Intercambio",
+    universidadDestino1: "Universidad Preferida de Destino",
+    notaMedia: "Nota Media",
+    processStatus: "Estado del Proceso"
+  };
+
   return (
+    <div className="flex flex-col items-center w-full bg-white min-h-screen">
+      <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <div className="flex flex-col items-center w-full bg-white min-h-screen">
-        {/* Menú superior con buscador */}
-        <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
-
-        {/* Fila de título y botones */}
-        <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
-          <div
-
-              style={{
-                color: 'var(--Azul-base-u-tad, #0065EF)',
-                fontFamily: 'Montserrat',
-                fontSize: '1rem',
-                fontWeight: 600,
-                lineHeight: '1.5rem',
-              }}
-          >
-            Solicitudes de alumnos
-          </div>
-
-
-          {/* Contenedor de filtros y calendario */}
-          <div className="flex items-center gap-4">
-            <TableFilter solicitudesData={solicitudes} selectedFields={selectedFields} setSelectedFields={setSelectedFields}/>
-
-
-            <select
-                className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
-                onChange={(e) => {
-                  const selectedFilter = e.target.value;
-                  setIsFilterOpen(false);
-                  if (selectedFilter === "nombre") setSortOrder("nombre");
-                  if (selectedFilter === "grado") setSortOrder("grado");
-                  if (selectedFilter === "ano") setSortOrder("ano");
-                  if (selectedFilter === "estado") setSortOrder("estado");
-                }}
-                defaultValue=""
-                style={{
-                  marginRight: '1.44rem',
-                  height: '40px',
-                  width: 'auto',
-                }}
-            >
-              <option value="" disabled>Filtros</option>
-              <option value="nombre">Ordenar por Nombre</option>
-              <option value="grado">Ordenar por Grado</option>
-              <option value="ano">Ordenar por Año</option>
-              <option value="estado">Ordenar por Estado</option>
-            </select>
-
-            <Button
-                className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
-                disabled
-                style={{
-                  height: '40px',
-                }}
-            >
-              <Icons.Calendar/>
-              <span>Febrero 2025</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* Tabla de solicitudes */}
-        <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
-          <SolicitudesTable solicitudes={sortedSolicitudes()} selectedFields={selectedFields}/>
-        </div>
-
-        {/* Paginación */}
-        <div className="flex space-x-2 mt-4 justify-center">
-          <Button className="px-4 py-2 bg-gray-200 rounded">1</Button>
-        </div>
-
-
+      <div>
+        <Header
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          filters={filters}
+          setFilters={setFilters}
+          calendarDate={calendarDate}
+          setCalendarDate={setCalendarDate}
+          columnasDisponibles={columnasDisponibles}
+          columnasLabels={columnasLabels}
+        />
       </div>
+
+      <div className="w-[72rem]">
+        <SolicitudesTable solicitudes={paginatedSolicitudes()} columnasDisponibles={filters.columnas} />
+      </div>
+
+      {/* Botón Descargar Excel */}
+      <div className="w-[72rem] flex justify-between items-center mt-4">
+        {/* Botón Descargar Excel alineado a la izquierda */}
+        <div className="flex justify-start">
+          <button onClick={() => handleExcelExport(solicitudes)} className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
+            <Descargar />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+              Descargar excel
+            </span>
+          </button>
+        </div>
+
+        {/* Paginación alineada a la derecha */}
+        <div className="flex justify-center items-center space-x-2">
+          {/* Botón anterior */}
+          <div
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+              }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
+          </div>
+
+          {/* Botones numéricos */}
+          {Array.from({ length: totalPages }, (_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${currentPage === i + 1
+                ? "bg-white text-black"
+                : "bg-white text-black"
+                } inline-flex flex-col justify-center items-center cursor-pointer`}
+            >
+              <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
+                {i + 1}
+              </div>
+            </div>
+          ))}
+
+          {/* Botón siguiente */}
+          <div
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+              }`}
+          >
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const CajaUniversidad = ({ universidad, index, archived }) => {
+const CajaUniversidad = ({ universidad, index, archived, columnasVisibles }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -18,9 +18,9 @@ const CajaUniversidad = ({ universidad, index, archived }) => {
       } hover:bg-blue-200`}
     >
       <div className="flex w-full justify-between items-center text-base font-normal font-['Montserrat'] text-black">
-        <div className="w-[300px]">{universidad.nombre}</div>      {/* Nombre universidad */}
-        <div className="w-[150px]">{universidad.pais}</div>       {/* País */}
-        <div className="w-[250px]">{universidad.contacto}</div>   {/* Contacto */}
+        { columnasVisibles.includes("nombre") && <div className="w-[300px]">{universidad.nombre}</div> }
+        { columnasVisibles.includes("pais") && <div className="w-[150px]">{universidad.pais}</div> }
+        { columnasVisibles.includes("contactoEmail") && <div className="w-[250px]">{universidad.contactoEmail}</div> }
       </div>
     </div>
   );

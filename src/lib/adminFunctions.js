@@ -102,7 +102,6 @@ export async function getUniversityById(id) {
   }
 }
 
-
 export async function getArchivedUniversityById(id) {
   try {
     const cookieStore = await cookies();

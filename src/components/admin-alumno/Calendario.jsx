@@ -1,10 +1,9 @@
 "use client";
 
-import MyCalendar from "@/utils/calendario/MyCalendar";
-
+import MiniCalendar from "@/utils/calendario/MiniCalendar";
 export default function Calendario() {
   return (
-      <MyCalendar />
+      <MiniCalendar showIncoming={true} showOutgoing={true} />
   );
 };
 

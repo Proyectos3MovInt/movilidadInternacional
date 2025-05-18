@@ -1,3 +1,4 @@
+// app/universidades/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,8 +14,10 @@ import { exportToExcel } from "@/lib/adminFunctions";
 export default function UniversidadesPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({ titulacion: "", orden: "" });
-  const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
+  const [filters, setFilters] = useState({
+    columnas: ["nombre", "pais", "contactoEmail"],
+    orden: "az",
+  });
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -27,9 +30,8 @@ export default function UniversidadesPage() {
     const universidadesData = data.map((uni) => ({
       id: uni._id,
       nombre: uni.nombre || "Desconocida",
-      pais: uni.pais || "No especificada",
-      contacto: uni.contactoEmail || "No especificado",
-      titulacion: uni.titulaciones || [],
+      pais: uni.pais || "No especificado",
+      contactoEmail: uni.contactoEmail || "No especificado",
     }));
 
     setUniversidades(universidadesData);
@@ -46,12 +48,6 @@ export default function UniversidadesPage() {
       sorted.sort((a, b) => a.nombre.localeCompare(b.nombre));
     } else if (filters.orden === "za") {
       sorted.sort((a, b) => b.nombre.localeCompare(a.nombre));
-    }
-
-    if (filters.titulacion) {
-      sorted = sorted.filter((uni) =>
-        uni.titulacion.includes(filters.titulacion)
-      );
     }
 
     return sorted;
@@ -75,10 +71,10 @@ export default function UniversidadesPage() {
     router.push("/universidades-archivadas");
   };
 
-  const handleExcelExport = async (solicitudes) => {
+  const handleExcelExport = async (data) => {
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0];
-    const blob = await exportToExcel(solicitudes);
+    const blob = await exportToExcel(data);
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = downloadUrl;
@@ -89,11 +85,17 @@ export default function UniversidadesPage() {
     URL.revokeObjectURL(downloadUrl);
   };
 
+  const columnasUniversidad = ["nombre", "contactoEmail", "pais"];
+  const columnasLabels = {
+    nombre: "Nombre",
+    contactoEmail: "Email de Contacto",
+    pais: "País"
+  };
+
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {/* Botón para añadir universidad + popup */}
       <div className="w-[75rem] px-6 mt-2 flex justify-start relative">
         <div
           onClick={() => setMostrarPopup((prev) => !prev)}
@@ -112,19 +114,15 @@ export default function UniversidadesPage() {
         )}
       </div>
 
-      {/* Header alineado con la tabla */}
       <div className="w-[80rem] px-6 pt-2 pb-0">
-        <Header filters={filters} setFilters={setFilters} calendarDate={calendarDate} setCalendarDate={setCalendarDate} />
+        <Header filters={filters} setFilters={setFilters} columnasDisponibles={columnasUniversidad} columnasLabels={columnasLabels} />
       </div>
 
-      {/* Tabla de universidades en contacto con la línea azul */}
       <div className="w-[75rem] px-6 pt-0 mt-[-1px]">
-        <UniversidadesTable universidades={paginatedUniversidades()} />
+        <UniversidadesTable universidades={paginatedUniversidades()} columnasVisibles={filters.columnas} />
       </div>
 
-      {/* Botones Archivar, Descargar Excel y Paginación alineados en una sola línea */}
       <div className="w-[75rem] px-6 flex justify-between items-center mt-4">
-        {/* Botones a la izquierda */}
         <div className="flex gap-4">
           <button
             onClick={handleArchivarRedirect}
@@ -147,46 +145,32 @@ export default function UniversidadesPage() {
           </button>
         </div>
 
-        {/* Paginación a la derecha */}
         <div className="flex justify-center items-center space-x-2">
-          {/* Botón anterior */}
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-              }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""}`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
-              {"<"}
-            </div>
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">{"<"}</div>
           </div>
 
-          {/* Números de página */}
           {Array.from({ length: totalPages }, (_, i) => (
             <div
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""
-                }`}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""}`}
             >
-              <div className="text-center text-xs font-semibold font-['Montserrat']">
-                {i + 1}
-              </div>
+              <div className="text-center text-xs font-semibold font-['Montserrat']">{i + 1}</div>
             </div>
           ))}
 
-          {/* Botón siguiente */}
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-              }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""}`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
-              {">"}
-            </div>
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">{">"}</div>
           </div>
         </div>
       </div>
-
     </div>
   );
 }
