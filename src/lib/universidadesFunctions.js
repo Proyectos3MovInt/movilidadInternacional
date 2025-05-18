@@ -185,3 +185,36 @@ export async function activarUniversidad(id) {
 
   return true;
 }
+
+
+export async function editarUniversidad(id, data) {
+  try {
+    const cookieStore = cookies();
+    const jwt_token = cookieStore.get("token")?.value;
+
+    if (!jwt_token) throw new Error("Token no encontrado");
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error al editar universidad:", errorText);
+      throw new Error("Error al editar universidad");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en editarUniversidad:", error);
+    return null;
+  }
+}
