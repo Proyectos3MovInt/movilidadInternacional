@@ -32,7 +32,7 @@ const MenuSuperior = ({ searchTerm, setSearchTerm }) => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

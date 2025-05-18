@@ -50,7 +50,9 @@ export default function Anotaciones({ id }) {
         onChange={(e) => setComentario(e.target.value)}
         value={comentario}
         className="w-full p-2 rounded h-36 resize-none border border-gray-300"
-        placeholder={loading ? "Cargando comentario..." : "Escribe un comentario aquí..."}
+        placeholder={
+          loading ? "Cargando comentario..." : "Escribe un comentario aquí..."
+        }
       />
       {loading && (
         <p className="text-sm text-gray-500 mt-2">Cargando comentario...</p>

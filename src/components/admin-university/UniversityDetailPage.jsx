@@ -3,7 +3,7 @@ import UniversityHeader from "./UniversityHeader";
 import DocumentsList from "./DocumentsList";
 import StudentsTable from "./StudentsTable";
 import Anotaciones from "../admin-alumno/Anotaciones";
-import { archivarUniversidad } from "@/lib/universidadesFunctions";
+import { archivarUniversidad, editarUniversidad } from "@/lib/universidadesFunctions";
 import { useRouter } from "next/navigation";
 import { Archivar, Editar } from "@/components/Icons";
 
@@ -32,6 +32,28 @@ export default function UniversityDetailPage({
 }) {
   const router = useRouter();
   const [isArchived, setIsArchived] = useState(archived);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    nombre: university.nombre,
+    pais: university.pais,
+    contactoEmail: university.contactoEmail,
+    web: university.web || "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      await editarUniversidad(university._id, formData);
+      setIsEditing(false);
+      router.refresh();
+    } catch (error) {
+      console.error("Error al guardar:", error);
+    }
+  };
 
   return (
     <div className="px-8 pt-6 space-y-6">
@@ -41,9 +63,12 @@ export default function UniversityDetailPage({
         <div className="flex-1">
           <div className="bg-white p-6 rounded-2xl shadow">
             <UniversityHeader
-              nombre={university.nombre}
-              contactoEmail={university.contactoEmail}
-              pais={university.pais}
+              nombre={formData.nombre}
+              contactoEmail={formData.contactoEmail}
+              pais={formData.pais}
+              web={formData.web}
+              isEditing={isEditing}
+              onChange={handleChange}
             />
           </div>
 
@@ -52,7 +77,7 @@ export default function UniversityDetailPage({
             {/* Botón Archivar/Desarchivar */}
             <button
               onClick={() => {
-                onShowModal(); // Siempre abre el modal
+                onShowModal();
               }}
               className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex items-center gap-2 cursor-pointer text-[#0065EF]"
             >
@@ -62,15 +87,27 @@ export default function UniversityDetailPage({
               </span>
             </button>
 
-            {/* Botón Editar (sin funcionalidad) */}
-            <button
-              className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer"
-            >
-              <Editar className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-semibold font-['Montserrat']">
-                Editar
-              </span>
-            </button>
+            {/* Botón Editar/Guardar */}
+            {isEditing ? (
+              <button
+                onClick={handleSave}
+                className="h-10 px-4 py-2 bg-green-600 rounded-lg inline-flex items-center gap-2 cursor-pointer"
+              >
+                <span className="text-white text-sm font-semibold font-['Montserrat']">
+                  Guardar
+                </span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer"
+              >
+                <Editar className="w-4 h-4 text-white" />
+                <span className="text-white text-sm font-semibold font-['Montserrat']">
+                  Editar
+                </span>
+              </button>
+            )}
           </div>
         </div>
 

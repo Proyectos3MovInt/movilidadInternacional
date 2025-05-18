@@ -50,9 +50,18 @@ export default function Register() {
 
     if (error) return;
 
-    const response_status = await register(email, password, firstName, lastName);
+    const response_status = await register(
+      email,
+      password,
+      firstName,
+      lastName
+    );
     if (response_status === 201) {
-      router.push("/form-outgoing");
+      if (studentType === "utad") {
+        router.push("/form-outgoing");
+      } else {
+        router.push("/form-incoming");
+      }
     } else {
       console.log("Error en registro. Código de estado:", response_status);
       setError(true);
