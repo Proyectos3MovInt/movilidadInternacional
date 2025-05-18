@@ -4,26 +4,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import * as Icons from "@/components/Icons";
 
-const titulacionesDisponibles = [
-  "DIDI",
-  "INSO",
-  "ANIV",
-  "VIDEOJUEGOS",
-  "MAIS",
-  "FÍSICA",
-  "VFX",
-  "MULTIPLATAFORMA",
-  "ARTE VIDEOJUEGOS",
-  "INGEN VIDEOJUEGOS",
-  "ILUSTRACIÓN",
-];
-
-const Header = ({ filters, setFilters }) => {
+const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) => {
   const pathname = usePathname();
   const router = useRouter();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
+
+  const columnas = columnasDisponibles || [];
 
   const getTabStyle = (tabPath) =>
     pathname.includes(tabPath)
@@ -38,6 +26,18 @@ const Header = ({ filters, setFilters }) => {
       ...prev,
       [category]: value,
     }));
+  };
+
+  const handleCheckboxChange = (columna) => {
+    setFilters((prev) => {
+      const current = Array.isArray(prev.columnas) ? prev.columnas : [];
+      return {
+        ...prev,
+        columnas: current.includes(columna)
+          ? current.filter((c) => c !== columna)
+          : [...current, columna],
+      };
+    });
   };
 
   return (
@@ -87,6 +87,7 @@ const Header = ({ filters, setFilters }) => {
 
         {/* Filtros y Ordenar alineados a la derecha */}
         <div className="flex items-center gap-8">
+          {/* Selector de columnas */}
           <div className="relative">
             <button
               onClick={() => {
@@ -96,23 +97,23 @@ const Header = ({ filters, setFilters }) => {
               className="px-4 py-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-slate-900 inline-flex items-center gap-2 bg-white"
             >
               <Icons.Filtros />
-              <span className="text-slate-900 text-xs font-normal font-['Montserrat']">Filtros</span>
+              <span className="text-slate-900 text-xs font-normal font-['Montserrat']">Columnas</span>
               <Icons.FlechaAbajo />
             </button>
 
             {isFilterOpen && (
               <div className="absolute top-full mt-2 right-0 p-4 w-64 bg-white rounded-lg shadow-lg outline outline-1 outline-black flex flex-col gap-4 z-50">
-                <span className="text-black text-sm font-semibold font-['Montserrat']">Titulación</span>
-                <div className="flex flex-col gap-2">
-                  {titulacionesDisponibles.map((titulacion) => (
-                    <label key={titulacion} className="flex justify-between items-center text-sm font-['Montserrat'] text-black">
-                      <span>{titulacion}</span>
+                <span className="text-black text-sm font-semibold font-['Montserrat']">Mostrar columnas:</span>
+                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+                  {columnas.map((columna) => (
+                    <label key={columna} className="flex justify-between items-center text-sm font-['Montserrat'] text-black">
+                      <span>{columnasLabels?.[columna] || columna}</span>
                       <input
-                        type="radio"
-                        name="titulacion"
-                        value={titulacion}
-                        checked={filters.titulacion === titulacion}
-                        onChange={() => handleRadioChange("titulacion", titulacion)}
+                        type="checkbox"
+                        name="columnas"
+                        value={columna}
+                        checked={Boolean(filters.columnas?.includes(columna))}
+                        onChange={() => handleCheckboxChange(columna)}
                         className="w-4 h-4 accent-blue-600"
                       />
                     </label>
@@ -122,6 +123,7 @@ const Header = ({ filters, setFilters }) => {
             )}
           </div>
 
+          {/* Ordenar */}
           <div className="relative">
             <button
               onClick={() => {

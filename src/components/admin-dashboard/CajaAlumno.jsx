@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 
-const CajaAlumno = ({ solicitud, index }) => {
+const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -80,12 +80,25 @@ const CajaAlumno = ({ solicitud, index }) => {
       } hover:bg-blue-200`}
     >
       <div className="flex w-full justify-between items-center text-base font-normal font-['Montserrat'] text-black">
-        <div className="w-[200px]">{solicitud.nombre}</div>
-        <div className="w-[120px]">{solicitud.grado}</div>
-        <div className="w-[100px]">{solicitud.ano}</div>
-        <div className="w-[150px]">{solicitud.universidadDestino}</div>
-        <div className="w-[60px]">{solicitud.notaMedia}</div>
-        {renderEstado()}
+        {columnasDisponibles.includes("nombreApellidos") && (
+          <div className="w-[200px]">{solicitud.nombre}</div>
+        )}
+        {columnasDisponibles.includes("dniNie") && (
+          <div className="w-[120px]">{solicitud.dniNie}</div>
+        )}
+        {columnasDisponibles.includes("email") && (
+          <div className="w-[200px]">{solicitud.email}</div>
+        )}
+        {columnasDisponibles.includes("titulacion") && (
+          <div className="w-[120px]">{solicitud.grado}</div>
+        )}
+        {columnasDisponibles.includes("semestreIntercambio") && (
+          <div className="w-[100px]">{solicitud.semestre}</div>
+        )}
+        {columnasDisponibles.includes("universidadDestino1") && (
+          <div className="w-[150px]">{solicitud.universidadDestino}</div>
+        )}
+        {columnasDisponibles.includes("processStatus") && renderEstado()}
       </div>
     </div>
   );
