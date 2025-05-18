@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { updateForm } from "@/lib/form";
 import Perfil from "@/components/admin-alumno/PerfilEditable";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
-import Calendario from "@/components/admin-alumno/Calendario";
+import MiniCalendar from "@/utils/calendario/MiniCalendar";
 import { getStudentData, getUtadFiles } from "@/lib/studentFuctions";
 import { EditSquare } from "@/components/Icons";
 import Chat from "@/components/chat/Chat";
@@ -18,6 +18,7 @@ export default function Page() {
   const [datosApi, setDatosApi] = useState(null);
   const [userId, setUserId] = useState(null);
   const [universidades, setUniversidades] = useState([]);
+  const [isOutgoing, setIsOutgoing] = useState(true);
 
   const { register, setValue, getValues } = useForm();
   const [editando, setEditando] = useState({});
@@ -110,6 +111,10 @@ export default function Page() {
         const data = studentResponse[0];
         if (data.fechaNacimiento) {
           data.fechaNacimiento = formatDate(data.fechaNacimiento);
+        }
+
+        if(data.studentType != "outgoing") {
+          setIsOutgoing(false);
         }
 
         setUniversidades(unisResponse);
@@ -248,7 +253,7 @@ export default function Page() {
           </div>
           <div className="flex flex-col gap-4 w-[21.3125rem] items-stretch">
             <div className="w-full">
-              <Calendario />
+              <MiniCalendar showIncoming={!isOutgoing} showOutgoing={isOutgoing} />
             </div>
             <div className="w-full flex-1">
               <Chat admin={false} id={userId} />

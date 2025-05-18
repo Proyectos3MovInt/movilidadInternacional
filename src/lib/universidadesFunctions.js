@@ -145,10 +145,32 @@ export async function archivarUniversidad(id) {
   const response = await fetch(
     `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/archive/${id}`,
     {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Error al archivar universidad:", errorText);
+    throw new Error("Error al archivar universidad");
+  }
+
+  return true;
+}
+
+export async function desarchivarUniversidad(id) {
+  const cookieStore = cookies();
+  const jwt_token = cookieStore.get("token")?.value;
+
+  const response = await fetch(
+    `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/university/restore/${id}`,
+    {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt_token}`,
-        "Content-Type": "application/json",
       },
     }
   );

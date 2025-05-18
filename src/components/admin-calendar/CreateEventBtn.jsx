@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "./CreateEventBtn.css";
 import { CreateEventPopup } from "@/components/admin-calendar/createEventPopup";
+import { SimboloMas } from "../Icons";
 
 export const CreateEventBtn = () => {
   const [showPopup, setShowPopup] = useState(false); // Estado para mostrar el popup
@@ -14,25 +15,15 @@ export const CreateEventBtn = () => {
   // Función para cerrar el popup
   const handleClosePopup = () => {
     setShowPopup(false);
+    location.reload();
   };
 
   return (
     <div>
-      <button className="botn-blanco" onClick={handleClick}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M18 13H13V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V13H6C5.45 13 5 12.55 5 12C5 11.45 5.45 11 6 11H11V6C11 5.45 11.45 5 12 5C12.55 5 13 5.45 13 6V11H18C18.55 11 19 11.45 19 12C19 12.55 18.55 13 18 13Z"
-            fill="#0065EF"
-          />
-        </svg>
-        <div className="text-wrapper">Crear nuevo evento</div>
-      </button>
+      <div className="h-10 px-4 py-1 bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer" onClick={handleClick}>
+          <SimboloMas />
+        <div className="justify-start text-blue-600 text-base font-semibold font-['Montserrat'] leading-normal">Crear nuevo evento</div>
+      </div>
 
       {/* Mostrar el popup cuando showPopup es true */}
       {showPopup && <CreateEventPopup onClose={handleClosePopup} />}

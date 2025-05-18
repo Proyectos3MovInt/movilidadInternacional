@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.fc-toolbar-title {
+  @apply uppercase font-[Montserrat] text-blue-600 text-5xl font-semibold;
+}
