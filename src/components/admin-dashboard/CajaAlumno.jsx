@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 
 const CajaAlumno = ({ solicitud, index }) => {
@@ -9,15 +8,26 @@ const CajaAlumno = ({ solicitud, index }) => {
     router.push(`/admin-alumno/${solicitud.id}`);
   };
 
-  const renderEstado = () => {
-    const estado = (solicitud.estado || "").toLowerCase(); // normalizamos
+  const ApiToEstado = (estado) => {
+    switch (estado?.toUpperCase()) {
+      case "ACEPTADO": return "aprobada";
+      case "RECHAZADO": return "denegada";
+      case "PENDIENTE": return "pendiente";
+      case "EN CURSO": return "movilidad";
+      case "FINALIZADO": return "finalizada";
+      default: return "pendiente";
+    }
+  };
 
-    switch (estado) {
+  const estadoNormalizado = ApiToEstado(solicitud.estado);
+
+  const renderEstado = () => {
+    switch (estadoNormalizado) {
       case "aprobada":
         return (
           <div className="w-48 h-7 px-4 py-1 bg-lime-400 rounded-3xl inline-flex justify-center items-center gap-2">
             <div className="w-2.5 h-2.5 bg-lime-700 rounded-full" />
-            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+            <div className="text-white text-xs font-semibold font-['Montserrat']">
               Aceptado por U-TAD
             </div>
           </div>
@@ -26,7 +36,7 @@ const CajaAlumno = ({ solicitud, index }) => {
         return (
           <div className="h-7 px-4 py-1 bg-red-500 rounded-3xl inline-flex justify-center items-center gap-2">
             <div className="w-2.5 h-2.5 bg-red-700 rounded-full" />
-            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+            <div className="text-white text-xs font-semibold font-['Montserrat']">
               Rechazado por U-TAD
             </div>
           </div>
@@ -35,8 +45,17 @@ const CajaAlumno = ({ solicitud, index }) => {
         return (
           <div className="w-48 h-7 px-4 py-1 bg-pink-500 rounded-3xl inline-flex justify-center items-center gap-2">
             <div className="w-2.5 h-2.5 bg-pink-600 rounded-full" />
-            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+            <div className="text-white text-xs font-semibold font-['Montserrat']">
               Movilidad empezada
+            </div>
+          </div>
+        );
+      case "finalizada":
+        return (
+          <div className="w-48 h-7 px-4 py-1 bg-zinc-400 rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-neutral-500 rounded-full" />
+            <div className="text-white text-xs font-semibold font-['Montserrat']">
+              Movilidad finalizada
             </div>
           </div>
         );
@@ -45,7 +64,7 @@ const CajaAlumno = ({ solicitud, index }) => {
         return (
           <div className="w-48 h-7 px-4 py-1 bg-orange-400 rounded-3xl inline-flex justify-center items-center gap-2">
             <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full" />
-            <div className="justify-start text-white text-xs font-semibold font-['Montserrat'] leading-none">
+            <div className="text-white text-xs font-semibold font-['Montserrat']">
               Solicitud realizada
             </div>
           </div>
