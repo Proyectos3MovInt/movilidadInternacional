@@ -35,10 +35,10 @@ export async function sendMessageStudent(content) {
                 "Authorization": `Bearer ${jwt_token}`,
                 "Content-Type": "application/json"
             },
-            body: {
+            body: JSON.stringify({
                 "content" : content,
                 "receiverId": null /* irrelevante ya que llega a todos los admins */
-            }
+            })
         });
 
         console.log(response);

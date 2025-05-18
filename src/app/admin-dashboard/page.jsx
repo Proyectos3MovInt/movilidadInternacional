@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import SolicitudesTable from "@/components/admin-dashboard/SolicitudesTable";
-import { getStudentsTable } from "@/lib/adminFunctions";
+import { exportToExcel, getStudentsTable } from "@/lib/adminFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import { Descargar } from "@/components/Icons";
+
 import TableFilter from "@/components/admin-dashboard/TableFilter";
 import * as Icons from '@/components/Icons';
 
@@ -69,10 +70,11 @@ export default function AdminDashboard() {
 
   // PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const fillTable = async () => {
+
       const response_json = await getStudentsTable("outgoing");
       const solicitudesData = response_json.data.map((student) => ({
         id: student._id,
@@ -80,16 +82,18 @@ export default function AdminDashboard() {
         grado: student.titulacion || "No especificado",
         ano: "2024-2025",
         estado: student.processStatus || "Pendiente",
-        universidadDestino: student.universidadDestino1 || "No especificada",
+        universidadDestino: uniMap[student.universidadDestino1] || "No especificada",
         notaMedia: 7.6,
       }));
       setSolicitudes(solicitudesData);
+
       setTableFilled(true); // Marca como cargada la tabla
     };
     if (!tableFilled) {
       fillTable();
     }
   }, [tableFilled]);
+
 
   // Función para ordenar y filtrar las solicitudes
   const sortedSolicitudes = () => {
@@ -126,7 +130,24 @@ export default function AdminDashboard() {
 
   const totalPages = Math.ceil(sortedSolicitudes().length / itemsPerPage);
 
+  const handleExcelExport = async (solicitudes) => {
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+
+    const blob = await exportToExcel(solicitudes);
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = `Alumnos_Outgoing${formattedDate}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(downloadUrl);
+  }
+
   return (
+
       <div className="flex flex-col items-center w-full bg-white min-h-screen">
         {/* Menú superior con buscador */}
         <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
@@ -134,6 +155,7 @@ export default function AdminDashboard() {
         {/* Fila de título y botones */}
         <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
           <div
+
               style={{
                 color: 'var(--Azul-base-u-tad, #0065EF)',
                 fontFamily: 'Montserrat',
@@ -144,6 +166,7 @@ export default function AdminDashboard() {
           >
             Solicitudes de alumnos
           </div>
+
 
           {/* Contenedor de filtros y calendario */}
           <div className="flex items-center gap-4">

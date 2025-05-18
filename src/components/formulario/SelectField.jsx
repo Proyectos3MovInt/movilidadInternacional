@@ -18,10 +18,14 @@ export function SelectField({ label, name, register, options }) {
           {...register(name)}
           className="w-full p-3 border-none outline-none"
           onChange={handleChange}
+          defaultValue=""
         >
+          <option value="" disabled className="text-slate-500">
+            Selecciona una opción
+          </option>
           {options.map((option) => (
-            <option key={option} value={option} className="text-black">
-              {option}
+            <option key={option._id} value={option._id} className="text-black">
+              {option.nombre}
             </option>
           ))}
         </select>
