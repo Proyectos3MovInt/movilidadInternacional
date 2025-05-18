@@ -26,9 +26,18 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response_status = await register(email, password, firstName, lastName);
+    const response_status = await register(
+      email,
+      password,
+      firstName,
+      lastName
+    );
     if (response_status === 201) {
-      router.push("/form-outgoing");
+      if (studentType === "utad") {
+        router.push("/form-outgoing");
+      } else {
+        router.push("/form-incoming");
+      }
     } else {
       console.log("Error en registro. Código de estado:", response_status);
       setError(true);
@@ -104,12 +113,11 @@ export default function Register() {
               className="w-full h-[48px] px-4 border border-black rounded-lg text-black bg-white text-md focus:outline-none focus:ring-2 focus:ring-[#0065EF]"
               value={studentType}
               onChange={(e) => setStudentType(e.target.value)}
-            > 
+            >
               <option value="">Elige la opción</option>
               <option value="utad">Soy estudiante de U-tad</option>
               <option value="otro">No soy estudiante</option>
             </select>
-
           </div>
 
           <div className="w-full flex justify-center mt-4">
