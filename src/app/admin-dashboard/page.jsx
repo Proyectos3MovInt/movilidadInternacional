@@ -8,6 +8,8 @@ import { getStudentsTable } from "@/lib/adminFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Header from "@/components/admin-dashboard/Header";
 import { Descargar } from "@/components/Icons";
+import TableFilter from "@/components/admin-dashboard/TableFilter";
+import * as Icons from '@/components/Icons';
 
 const titulacionMap = {
   ANIM: ["Grado en Animación (Inglés)", "Grado en Animación (Español)"],
@@ -33,6 +35,12 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("outgoing");
+
+  // NECESARIAS PARA EL FILTRO
+  const [tableFilled, setTableFilled] = useState(false);
+  const [filtroAno, setFiltroAno] = useState(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({});
 
   const [filters, setFilters] = useState({
     orden: { az: false, za: false },
@@ -65,12 +73,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fillTable = async () => {
-      const response_json = await getStudentsTable(activeTab);
-      const studentsArray = Array.isArray(response_json)
-        ? response_json
-        : response_json?.data || [];
-
-      const solicitudesData = studentsArray.map((student) => ({
+      const response_json = await getStudentsTable("outgoing");
+      const solicitudesData = response_json.data.map((student) => ({
         id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
         grado: student.titulacion || "No especificado",
@@ -79,56 +83,35 @@ export default function AdminDashboard() {
         universidadDestino: student.universidadDestino1 || "No especificada",
         notaMedia: 7.6,
       }));
-
       setSolicitudes(solicitudesData);
-      setCurrentPage(1); // reiniciar página al cambiar pestaña
+      setTableFilled(true); // Marca como cargada la tabla
     };
+    if (!tableFilled) {
+      fillTable();
+    }
+  }, [tableFilled]);
 
-    fillTable();
-  }, [activeTab]);
-
+  // Función para ordenar y filtrar las solicitudes
   const sortedSolicitudes = () => {
     let resultados = [...solicitudes];
 
+    // Filtrar por búsqueda
     if (searchTerm) {
-      resultados = resultados.filter((s) =>
-        s.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+      resultados = resultados.filter((solicitud) =>
+          solicitud.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          solicitud.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          solicitud.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    const { orden, titulacion, ano, nota, estado } = filters;
-    const any = (obj) => Object.values(obj).some((v) => v);
-
-    if (any(titulacion)) {
-      resultados = resultados.filter((s) =>
-        Object.entries(titulacion).some(
-          ([abbr, isActive]) =>
-            isActive && titulacionMap[abbr]?.includes(s.grado)
-        )
-      );
-    }
-
-    if (any(ano)) {
-      resultados = resultados.filter((s) => ano[s.ano]);
-    }
-
-    if (any(estado)) {
-      resultados = resultados.filter((s) => estado[s.estado]);
-    }
-
-    if (nota.mayor) {
-      resultados = resultados.sort((a, b) => b.notaMedia - a.notaMedia);
-    } else if (nota.menor) {
-      resultados = resultados.sort((a, b) => a.notaMedia - b.notaMedia);
-    }
-
-    if (orden.az) {
-      resultados = resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    } else if (orden.za) {
-      resultados = resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+    // Ordenar si hay sortOrder
+    if (sortOrder) {
+      resultados.sort((a, b) => {
+        if (a[sortOrder] < b[sortOrder]) return -1;
+        if (a[sortOrder] > b[sortOrder]) return 1;
+        return 0;
+      });
     }
 
     return resultados;
@@ -144,78 +127,77 @@ export default function AdminDashboard() {
   const totalPages = Math.ceil(sortedSolicitudes().length / itemsPerPage);
 
   return (
-    <div className="flex flex-col items-center w-full bg-white min-h-screen">
-      <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <div className="flex flex-col items-center w-full bg-white min-h-screen">
+        {/* Menú superior con buscador */}
+        <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
 
-      <div>
-        <Header
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          filters={filters}
-          setFilters={setFilters}
-          calendarDate={calendarDate}
-          setCalendarDate={setCalendarDate}
-        />
-      </div>
-
-      <div className="w-[75rem]">
-        <SolicitudesTable solicitudes={paginatedSolicitudes()} />
-      </div>
-
-      {/* Botón Descargar Excel */}
-      <div className="w-[75rem] flex justify-between items-center mt-4">
-        {/* Botón Descargar Excel alineado a la izquierda */}
-        <div className="flex justify-start">
-          <button className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
-            <Descargar />
-            <span className="text-base font-normal font-['Montserrat'] leading-normal">
-              Descargar excel
-            </span>
-          </button>
-        </div>
-
-        {/* Paginación alineada a la derecha */}
-        <div className="flex justify-center items-center space-x-2">
-          {/* Botón anterior */}
+        {/* Fila de título y botones */}
+        <div className="w-full max-w-6xl px-6 py-4 mt-6 flex justify-between items-center">
           <div
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-            }`}
+              style={{
+                color: 'var(--Azul-base-u-tad, #0065EF)',
+                fontFamily: 'Montserrat',
+                fontSize: '1rem',
+                fontWeight: 600,
+                lineHeight: '1.5rem',
+              }}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
+            Solicitudes de alumnos
           </div>
 
-          {/* Botones numéricos */}
-          {Array.from({ length: totalPages }, (_, i) => (
-            <div
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
-                currentPage === i + 1
-                  ? "bg-white text-black"
-                  : "bg-white text-black"
-              } inline-flex flex-col justify-center items-center cursor-pointer`}
+          {/* Contenedor de filtros y calendario */}
+          <div className="flex items-center gap-4">
+            <TableFilter solicitudesData={solicitudes} selectedFields={selectedFields} setSelectedFields={setSelectedFields}/>
+
+
+            <select
+                className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg bg-transparent hover:bg-transparent"
+                onChange={(e) => {
+                  const selectedFilter = e.target.value;
+                  setIsFilterOpen(false);
+                  if (selectedFilter === "nombre") setSortOrder("nombre");
+                  if (selectedFilter === "grado") setSortOrder("grado");
+                  if (selectedFilter === "ano") setSortOrder("ano");
+                  if (selectedFilter === "estado") setSortOrder("estado");
+                }}
+                defaultValue=""
+                style={{
+                  marginRight: '1.44rem',
+                  height: '40px',
+                  width: 'auto',
+                }}
             >
-              <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
-                {i + 1}
-              </div>
-            </div>
-          ))}
+              <option value="" disabled>Filtros</option>
+              <option value="nombre">Ordenar por Nombre</option>
+              <option value="grado">Ordenar por Grado</option>
+              <option value="ano">Ordenar por Año</option>
+              <option value="estado">Ordenar por Estado</option>
+            </select>
 
-          {/* Botón siguiente */}
-          <div
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
-              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-            }`}
-          >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+            <Button
+                className="px-4 py-2 border border-slate-900 text-slate-900 rounded-lg flex items-center gap-2 bg-transparent hover:bg-transparent"
+                disabled
+                style={{
+                  height: '40px',
+                }}
+            >
+              <Icons.Calendar/>
+              <span>Febrero 2025</span>
+            </Button>
           </div>
         </div>
+
+        {/* Tabla de solicitudes */}
+        <div className="mt-6 bg-sky-100 p-6 rounded-lg shadow-md w-[75rem]">
+          <SolicitudesTable solicitudes={sortedSolicitudes()} selectedFields={selectedFields}/>
+        </div>
+
+        {/* Paginación */}
+        <div className="flex space-x-2 mt-4 justify-center">
+          <Button className="px-4 py-2 bg-gray-200 rounded">1</Button>
+        </div>
+
+
       </div>
-    </div>
   );
 }
