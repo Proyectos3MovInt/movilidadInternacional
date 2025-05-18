@@ -131,7 +131,7 @@ export default function Page() {
             <div className="w-full">
               <Anotaciones />
             </div>
-            <div className="w-full">
+            <div className="w-full min-h-[25rem]">
               <Chat admin={true} id={id} />
             </div>
           </div>
