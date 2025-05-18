@@ -5,10 +5,11 @@ import { updateForm } from "@/lib/form";
 import Perfil from "@/components/admin-alumno/PerfilEditable";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import Calendario from "@/components/admin-alumno/Calendario";
-import { getStudentData } from "@/lib/studentFuctions";
+import { getStudentData, getUtadFiles } from "@/lib/studentFuctions";
 import { EditSquare } from "@/components/Icons";
 import Chat from "@/components/chat/Chat";
 import { getUnis } from "@/lib/form";
+import DocumentsList from "@/components/alumno-alumno/DocumentsList";
 
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,6 +21,8 @@ export default function Page() {
 
   const { register, setValue, getValues } = useForm();
   const [editando, setEditando] = useState({});
+
+  const [files, setFiles] = useState([]);
 
   const formatDate = (isoString) => {
     if (!isoString) return "";
@@ -101,10 +104,8 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [studentResponse, unisResponse] = await Promise.all([
-          getStudentData(),
-          getUnis(),
-        ]);
+        const [studentResponse, filesResponse, unisResponse] =
+          await Promise.all([getStudentData(), getUtadFiles(), getUnis()]);
 
         const data = studentResponse[0];
         if (data.fechaNacimiento) {
@@ -112,7 +113,7 @@ export default function Page() {
         }
 
         setUniversidades(unisResponse);
-
+        setFiles(filesResponse);
         setDatosApi(data);
         setUserId(data._id);
 
@@ -129,6 +130,8 @@ export default function Page() {
     };
     fetchData();
   }, []);
+
+  console.log(files);
 
   const getNombreUniversidad = (id) => {
     const uni = universidades.find((u) => u._id === id);
@@ -249,6 +252,9 @@ export default function Page() {
             </div>
             <div className="w-full flex-1">
               <Chat admin={false} id={userId} />
+            </div>
+            <div className="w-full flex-1 bg-white p-6 rounded-2xl shadow">
+              <DocumentsList documentos={files} />
             </div>
           </div>
         </div>
