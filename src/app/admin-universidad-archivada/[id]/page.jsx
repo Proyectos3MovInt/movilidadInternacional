@@ -5,11 +5,12 @@ import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import UniversityDetailPage from "@/components/admin-university/UniversityDetailPage";
 import ModalArchivar from "@/components/admin-university/ModalArchivar";
 import {
-  getUniversityById,
+  getArchivedUniversityById,
   getUniversityFiles,
   getUniversityStudents,
 } from "@/lib/adminFunctions";
-import { archivarUniversidad } from "@/lib/universidadesFunctions"; // Importa la función
+import { desarchivarUniversidad } from "@/lib/universidadesFunctions";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { id } = useParams();
@@ -20,18 +21,16 @@ export default function Page() {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [wasArchived, setWasArchived] = useState(false); // para pasarlo como prop
-
+  const router = useRouter();
   useEffect(() => {
     async function fetchData() {
       try {
-        const university = await getUniversityById(id);
+        const university = await getArchivedUniversityById(id);
+        setUni(university[0]);
         const archivos = await getUniversityFiles(id);
         const students = await getUniversityStudents(id);
-        setUni(university);
-        setFiles(archivos);
-        setStudents(students);
-        setWasArchived(university?.estado === "archivada" || university?.archivada === true);
+        setFiles(archivos || []);
+        setStudents(students || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -41,16 +40,14 @@ export default function Page() {
     if (id) fetchData();
   }, [id]);
 
-  const handleConfirmArchivar = async () => {
-    if (!id) return;
-    const ok = await archivarUniversidad(id);
-    if (ok) {
-      setWasArchived(true);
-      setShowModal(false);
-    }
+  const handleConfirmDesarchivar = async () => {
+    await desarchivarUniversidad(id);
+    setShowModal(false);
+    router.push("/universidades");
   };
 
-  if (loading) return <p className="text-center mt-10">Cargando universidad...</p>;
+  if (loading)
+    return <p className="text-center mt-10">Cargando universidad...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
@@ -60,15 +57,15 @@ export default function Page() {
         university={uni}
         archivos={files}
         alumnos={students}
-        archived={wasArchived}
+        archived={true}
         onShowModal={() => setShowModal(true)}
       />
       <ModalArchivar
-  open={showModal}
-  onClose={() => setShowModal(false)}
-  onConfirm={handleConfirmArchivar}
-/>
-
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleConfirmDesarchivar}
+        mode="desarchivar"
+      />
     </div>
   );
 }

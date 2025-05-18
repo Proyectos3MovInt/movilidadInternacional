@@ -2,11 +2,11 @@
 
 import CajaUniversidad from "@/components/universidades/CajaUniversidad";
 
-const UniversidadesTable = ({ universidades }) => {
+const UniversidadesTable = ({ archived, universidades, columnasVisibles }) => {
   return (
     <div className="flex flex-col space-y-2">
       {universidades.map((uni, index) => (
-        <CajaUniversidad key={uni.id} universidad={uni} index={index} />
+        <CajaUniversidad key={uni.id} universidad={uni} index={index} archived={archived} columnasVisibles={columnasVisibles}/>
       ))}
     </div>
   );

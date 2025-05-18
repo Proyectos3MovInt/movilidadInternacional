@@ -1,7 +1,6 @@
 import { updateForm } from "@/lib/form.js";
 
 export function RadioGroup({ label, name, options, register }) {
-  
   const handleChange = async (event) => {
     const value = event.target.value;
     await updateForm(name, value);
@@ -16,18 +15,26 @@ export function RadioGroup({ label, name, options, register }) {
       </div>
 
       <div className="flex flex-col justify-start items-start gap-2">
-        {options.map((option) => (
-          <label key={option} className="inline-flex items-center text-slate-900 text-sm font-normal font-['Montserrat']">
-            <input
-              type="radio"
-              {...register(name, { required: true })}
-              value={option}
-              className="mr-2 accent-[#0065EF]"
-              onChange={handleChange}
-            />
-            {option}
-          </label>
-        ))}
+        {options.map((option, index) => {
+          const value = typeof option === "string" ? option : option.value;
+          const labelText = typeof option === "string" ? option : option.label;
+
+          return (
+            <label
+              key={index}
+              className="inline-flex items-center text-slate-900 text-sm font-normal font-['Montserrat']"
+            >
+              <input
+                type="radio"
+                {...register(name, { required: true })}
+                value={value}
+                className="mr-2 accent-[#0065EF]"
+                onChange={handleChange}
+              />
+              {labelText}
+            </label>
+          );
+        })}
       </div>
     </div>
   );

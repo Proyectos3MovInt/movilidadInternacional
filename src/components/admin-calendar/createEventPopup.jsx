@@ -36,7 +36,6 @@ export const CreateEventPopup = ({ onClose }) => {
       visibleOutgoing,
     };
   
-    // Enviar a la API (aquí solo se imprime)
     await createCalendarEvent(newEvent);
   
     // Cerrar popup

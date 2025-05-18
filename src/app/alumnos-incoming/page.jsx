@@ -34,26 +34,8 @@ export default function AlumnosIncoming() {
   const [activeTab, setActiveTab] = useState("incoming");
 
   const [filters, setFilters] = useState({
-    orden: { az: false, za: false },
-    titulacion: {
-      DIDI: false,
-      INSO: false,
-      ANIM: false,
-      DIPI: false,
-      MAS: false,
-      ENTORNOS: false,
-      MULTIPLATAFORMA: false,
-    },
-    ano: {
-      "2024-2025": false,
-      "2023-2024": false,
-      "2022-2023": false,
-      "2021-2022": false,
-      "2020-2021": false,
-      Anterior: false,
-    },
-    nota: { mayor: false, menor: false },
-    estado: { Pendiente: false, Rechazada: false, Aprobada: false },
+    columnas: ["nombreApellidos", "titulacion", "dniNie", "semestreIntercambio", "titulacion", "processStatus"],
+    orden: "az",
   });
 
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
@@ -61,6 +43,14 @@ export default function AlumnosIncoming() {
   // PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const columnasDisponibles = ["nombreApellidos", "dniNie", "titulacion", "semestreIntercambio", "processStatus"]
+  const columnasLabels = {
+    nombreApellidos: "Nombre y Apellidos",
+    dniNie: "DNI/NIE",
+    titulacion: "Titulación",
+    semestreIntercambio: "Semestre de Intercambio",
+    processStatus: "Estado del Proceso"
+  };
 
   useEffect(() => {
     const fillTable = async () => {
@@ -73,9 +63,11 @@ export default function AlumnosIncoming() {
         id: student._id,
         nombre: student.nombreApellidos || "Desconocido",
         grado: student.titulacion || "No especificado",
+        dniNie: student.dniNie || "N/A",
+        semestre: student.semestreIntercambio || "N/A",
         ano: "2024-2025",
         estado: student.processStatus || "Pendiente",
-        universidadDestino: student.universidadDestino1 || "No especificada",
+        universidadDestino: "",
         notaMedia: 7.6,
       }));
 
@@ -90,48 +82,22 @@ export default function AlumnosIncoming() {
     let resultados = [...solicitudes];
 
     if (searchTerm) {
+      const term = searchTerm.toLowerCase();
       resultados = resultados.filter((s) =>
-        s.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.grado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.universidadDestino.toLowerCase().includes(searchTerm.toLowerCase())
+        s.nombre.toLowerCase().includes(term) ||
+        s.grado.toLowerCase().includes(term) ||
+        s.estado.toLowerCase().includes(term) ||
+        s.universidadDestino.toLowerCase().includes(term)
       );
     }
 
-    const { orden, titulacion, ano, nota, estado } = filters;
-    const any = (obj) => Object.values(obj).some((v) => v);
-
-    if (any(titulacion)) {
-      resultados = resultados.filter((s) =>
-        Object.entries(titulacion).some(
-          ([abbr, isActive]) =>
-            isActive && titulacionMap[abbr]?.includes(s.grado)
-        )
-      );
-    }
-
-    if (any(ano)) {
-      resultados = resultados.filter((s) => ano[s.ano]);
-    }
-
-    if (any(estado)) {
-      resultados = resultados.filter((s) => estado[s.estado]);
-    }
-
-    if (nota.mayor) {
-      resultados = resultados.sort((a, b) => b.notaMedia - a.notaMedia);
-    } else if (nota.menor) {
-      resultados = resultados.sort((a, b) => a.notaMedia - b.notaMedia);
-    }
-
-    if (orden.az) {
-      resultados = resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    } else if (orden.za) {
-      resultados = resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
-    }
-
+    if (filters.orden === "az") {
+      resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } else if (filters.orden === "za") {
+      resultados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+  }
     return resultados;
-  };
+  }
 
   const paginatedSolicitudes = () => {
     const sorted = sortedSolicitudes();
@@ -157,6 +123,7 @@ export default function AlumnosIncoming() {
     link.remove();
     URL.revokeObjectURL(downloadUrl);
   }
+  
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen">
@@ -172,15 +139,17 @@ export default function AlumnosIncoming() {
           setFilters={setFilters}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
+          columnasDisponibles={columnasDisponibles}
+          columnasLabels={columnasLabels}
         />
       </div>
 
-      <div className="w-[75rem]">
-        <SolicitudesTable solicitudes={paginatedSolicitudes()} />
+      <div className="w-[72rem]">
+        <SolicitudesTable solicitudes={paginatedSolicitudes()} columnasDisponibles={filters.columnas}/>
       </div>
 
       {/* Botón Descargar Excel */}
-      <div className="w-[75rem] flex justify-between items-center mt-4">
+      <div className="w-[72rem] flex justify-between items-center mt-4">
         <div className="flex justify-start">
           <button onClick={() => handleExcelExport(solicitudes)}
           className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">

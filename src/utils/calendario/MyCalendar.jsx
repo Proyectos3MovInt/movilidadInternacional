@@ -94,12 +94,6 @@ function MyCalendar() {
       ) : (
         <>
           <div className="mb-4 flex justify-end">
-            <button
-              onClick={refreshEvents}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded text-sm"
-            >
-              Actualizar Eventos
-            </button>
             <CreateEventBtn></CreateEventBtn>
           </div>
 
@@ -124,7 +118,7 @@ function MyCalendar() {
               week: "Semana",
               day: "Día",
             }}
-            dayHeaderClassNames="bg-gray-100 text-gray-800 font-medium"
+            dayHeaderClassNames="bg-blue-600 font-medium text-white uppercase font-['Montserrat']"
             dayCellClassNames="hover:bg-gray-50"
             eventClassNames="cursor-pointer rounded-lg shadow-sm px-2 py-1"
           />
