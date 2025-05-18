@@ -230,7 +230,9 @@ export default function Page() {
 
   return (
     <div className="bg-[#EAF2FF] min-h-screen">
-      <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <div>
+        <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      </div>
       <div className="flex justify-center py-12">
         <Perfil datos={datosApi} />
       </div>
