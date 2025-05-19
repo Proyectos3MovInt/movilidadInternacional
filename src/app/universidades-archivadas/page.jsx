@@ -4,14 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUniversidadesArchivadas } from "@/lib/universidadesFunctions";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
-import Header from "@/components/universidades/HeaderArchivadas";
+import Header from "@/components/admin-dashboard/Header";
 import UniversidadesTable from "@/components/universidades/UniversidadesTable";
 import { Descargar, Archivar } from "@/components/Icons";
 
 export default function UniversidadesArchivadasPage() {
   const [universidades, setUniversidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({ titulacion: "", orden: "" });
+  const [filters, setFilters] = useState({
+    columnas: ["nombre", "pais", "contactoEmail"],
+    orden: "az",
+  });
   const [calendarDate, setCalendarDate] = useState({ mes: "FEB", ano: "2025" });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -61,6 +64,12 @@ export default function UniversidadesArchivadasPage() {
     return sorted.slice(startIndex, endIndex);
   };
 
+  const columnasDisponibles = ["nombre", "contactoEmail", "pais"];
+  const columnasLabels = {
+    nombre: "Nombre",
+    contactoEmail: "Email de Contacto",
+    pais: "País"
+  };
   const totalPages = Math.ceil(sortedUniversidades().length / itemsPerPage);
 
   return (
@@ -74,12 +83,14 @@ export default function UniversidadesArchivadasPage() {
           setFilters={setFilters}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
+          columnasDisponibles={columnasDisponibles}
+          columnasLabels={columnasLabels}
         />
       </div>
 
       {/* Tabla en contacto con la línea azul */}
       <div className="w-[75rem] px-6 pt-0 mt-[-1px]">
-        <UniversidadesTable archived={true} universidades={paginatedUniversidades()} />
+        <UniversidadesTable archived={true} universidades={paginatedUniversidades()} columnasVisibles={filters.columnas}/>
       </div>
 
       {/* Botones Activas, Descargar Excel y Paginación alineados */}
@@ -109,9 +120,8 @@ export default function UniversidadesArchivadasPage() {
         <div className="flex justify-center items-center space-x-2">
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
-              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
-            }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+              }`}
           >
             <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
               {"<"}
@@ -122,9 +132,8 @@ export default function UniversidadesArchivadasPage() {
             <div
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${
-                currentPage === i + 1 ? "font-bold" : ""
-              }`}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""
+                }`}
             >
               <div className="text-center text-xs font-semibold font-['Montserrat']">
                 {i + 1}
@@ -134,9 +143,8 @@ export default function UniversidadesArchivadasPage() {
 
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
-              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
-            }`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+              }`}
           >
             <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
               {">"}
