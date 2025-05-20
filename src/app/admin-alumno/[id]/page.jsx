@@ -129,7 +129,7 @@ export default function Page() {
               <Calendario />
             </div>
             <div className="w-full">
-              <Anotaciones />
+              <Anotaciones id={id} />
             </div>
             <div className="w-full min-h-[25rem]">
               <Chat admin={true} id={id} />

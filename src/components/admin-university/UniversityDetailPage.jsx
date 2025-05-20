@@ -29,6 +29,7 @@ export default function UniversityDetailPage({
   alumnos,
   archived,
   onShowModal,
+  id
 }) {
   const router = useRouter();
   const [isArchived, setIsArchived] = useState(archived);
@@ -132,7 +133,7 @@ export default function UniversityDetailPage({
         </div>
 
         <div className="w-80 bg-white p-6 rounded-2xl shadow">
-          <Anotaciones />
+          <Anotaciones id={id} isStudent={false} />
         </div>
       </div>
     </div>

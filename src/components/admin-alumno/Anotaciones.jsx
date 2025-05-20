@@ -1,19 +1,26 @@
 "use client";
 
+import { addStudentAnotaciones, getStudentAnotaciones } from "@/lib/adminFunctions";
+import { addUniversityAnotaciones, getUniversityAnotaciones } from "@/lib/universidadesFunctions";
 import { useState, useEffect } from "react";
 
-export default function Anotaciones({ id }) {
+export default function Anotaciones({ id, isStudent = true }) {
   const [comentario, setComentario] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchComentario = async () => {
       try {
-        const res = await fetch(`/admin/anotaciones/${id}`);
-        if (!res.ok) throw new Error("Error cargando el comentarip");
-        const data = await res.json();
+        let res_json = "";
+        if (isStudent) {
+          res_json = await getStudentAnotaciones(id);
+        } else {
+          res_json = await getUniversityAnotaciones(id);
+        }
 
-        setComentario(data?.comentario || "");
+        console.log(res_json);
+
+        setComentario(res_json.anotacionesAdmin || "");
       } catch (err) {
         console.error("Error cargando el comentario:", err);
       } finally {
@@ -26,15 +33,12 @@ export default function Anotaciones({ id }) {
 
   const handleBlur = async () => {
     try {
-      const res = await fetch(`/admin/anotaciones/${id}`, {
-        method: "POST", // o "PUT"
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ comentario }),
-      });
+      if (isStudent) {
+        const res = await addStudentAnotaciones(id, comentario);
+      } else {
+        const res = await addUniversityAnotaciones(id, comentario);
+      }
 
-      if (!res.ok) throw new Error("Error al guardar el comentario");
     } catch (err) {
       console.error("Error al guardar comentario:", err);
     }
