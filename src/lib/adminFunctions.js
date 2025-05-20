@@ -311,3 +311,70 @@ export async function cambiarEstado(id, estado) {
     throw error;
   }
 }
+
+export async function getStudentAnotaciones(id) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/student/anotaciones/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return "";
+    }
+    console.log(response);
+
+    return await response.json();
+
+  } catch (error) {
+    console.error("Error al cambiar estado:", error);
+    throw error;
+  }
+}
+
+export async function addStudentAnotaciones(id, anotacion) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+
+    if (!jwt_token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/admin/student/anotaciones/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ anotacionesAdmin: anotacion })
+      }
+    );
+    console.log(response);
+    if (!response.ok) {
+      return "";
+    }
+
+
+    return await response.json();
+
+  } catch (error) {
+    console.error("Error al cambiar estado:", error);
+    throw error;
+  }
+}

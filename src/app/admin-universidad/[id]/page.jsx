@@ -8,6 +8,7 @@ import {
   getUniversityById,
   getUniversityFiles,
   getUniversityStudents,
+  get
 } from "@/lib/adminFunctions";
 import { archivarUniversidad } from "@/lib/universidadesFunctions"; // Importa la función
 
@@ -62,6 +63,7 @@ export default function Page() {
         alumnos={students}
         archived={wasArchived}
         onShowModal={() => setShowModal(true)}
+        id={id}
       />
       <ModalArchivar
   open={showModal}

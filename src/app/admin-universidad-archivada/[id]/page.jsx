@@ -59,6 +59,7 @@ export default function Page() {
         alumnos={students}
         archived={true}
         onShowModal={() => setShowModal(true)}
+        id={id}
       />
       <ModalArchivar
         open={showModal}
