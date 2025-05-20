@@ -1,64 +1,78 @@
 # Proyecto de Movilidad Internacional
 
-Este es un proyecto basado en *Next.js* que tiene como objetivo facilitar la gestión y organización de programas de movilidad internacional. La aplicación permite a los usuarios registrarse, iniciar sesión y acceder a funcionalidades diseñadas para optimizar la experiencia de movilidad.
+Este proyecto basado en **Next.js** facilita la gestión y organización de programas de movilidad internacional para estudiantes y administradores. Incluye autenticación por roles, formularios y un panel de administración.
 
 ## Empezando
 
-Primero, ejecuta el servidor de desarrollo:
+Primero, instala las dependencias y ejecuta el servidor de desarrollo:
 
-bash
+```bash
+npm install
 npm run dev
 # o
+yarn
 yarn dev
 # o
+pnpm install
 pnpm dev
 # o
+bun install
 bun dev
+```
 
-
-Abre [http://localhost:3000](http://localhost:3000) con tu navegador para ver el resultado. Puedes comenzar a editar la página modificando app/page.tsx. La página se actualiza automáticamente a medida que editas el archivo.
+Abre <http://localhost:3000> en tu navegador para ver la aplicación en funcionamiento.
 
 ## Requisitos Previos
 
-Antes de comenzar, asegúrate de tener instalado:
+- [Node.js](https://nodejs.org/) 18 o superior
+- Un gestor de paquetes (npm, yarn, pnpm o bun)
 
-- [Node.js](https://nodejs.org/) (versión recomendada: 18 o superior)
-- Un gestor de paquetes como npm, yarn o pnpm
+### Autenticación por roles
 
-## Aprende más sobre Next.js
+- Inicio de sesión y registro con token JWT.
+- Protección de rutas según el rol del usuario:
+  - **Alumnos:** acceso solo a los formularios y vistas de alumno.
+  - **Administradores:** acceso a los paneles de administración y gestión de universidades.
 
-- [Documentación de Next.js](https://nextjs.org/docs) - Aprende sobre las características y API de Next.js.
-- [Aprende Next.js](https://nextjs.org/learn) - Un tutorial interactivo de Next.js.
+### Middleware de protección de rutas
 
-Puedes consultar [el repositorio de GitHub de Next.js](https://github.com/vercel/next.js) - ¡Tus comentarios y contribuciones son bienvenidos!
+Se ha configurado el middleware para interceptar todas las peticiones y permitir la navegación únicamente a las rutas correspondientes al rol del usuario.
 
-## Despliegue en Vercel
+### Estructura de rutas
 
-La forma más fácil de desplegar tu aplicación Next.js es usar la [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) de los creadores de Next.js.
+**Alumnos**
 
-Consulta nuestra [documentación de despliegue de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+- `/form-incoming`
+- `/form-outgoing`
+- `/alumno-alumno`
+- `/alumnos-incoming`
 
-## Características Implementadas
+**Administradores**
 
-### Listado de rutas
-
-- Login: 
-- Registro: 
-- Formulario:
-- Portal:
-
-### Autenticación
-
-- Implementación de autenticación de usuarios, permitiendo a los usuarios registrarse e iniciar sesión de manera segura.
-
-### Base de datos
-
-- Configuración para usar una base de datos, incluyendo la conexión y la configuración de modelos de datos.
+- `/home`
+- `/admin-alumno`
+- `/admin-calendar`
+- `/admin-dashboard`
+- `/admin-universidad`
+- `/admin-universidad-archivada`
+- `/universidades`
+- `/universidades-archivadas`
+- `/alumnos-incoming`
 
 ### Estilos
 
-- Estilos personalizados con Tailwind CSS, facilitando la creación de una interfaz de usuario moderna y responsiva.
+- Diseño con **Tailwind CSS** para una interfaz clara y adaptable.
 
 ### Componentes
 
-- Creación de componentes reutilizables en la carpeta components, mejorando la usabilidad y la mantenibilidad del código.
+- Componentes reutilizables en la carpeta `components` para mejorar la mantenibilidad del código.
+
+## Despliegue
+
+La aplicación se puede desplegar fácilmente en [Vercel](https://vercel.com/). Consulta la [guía de despliegue de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+
+## Aprende más sobre Next.js
+
+- [Documentación oficial](https://nextjs.org/docs)
+- [Tutorial interactivo](https://nextjs.org/learn)
+- [Repositorio de Next.js en GitHub](https://github.com/vercel/next.js)
