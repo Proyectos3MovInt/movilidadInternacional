@@ -91,3 +91,58 @@ export async function getUnis() {
     return null;
   }
 }
+
+export async function getLockedFields(id) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form/locked/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.log(response);
+      throw new Error("Error al obtener los campos bloqueados");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getLockedFields:", error);
+    return null;
+  }
+}
+
+export async function setLockedFields(id, locks) {
+  try {
+    const cookieStore = await cookies();
+    const jwt_token = cookieStore.get("token").value;
+    const response = await fetch(
+      `https://amused-danya-hugobarea-b3e72b1a.koyeb.app/form/locked/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(locks)
+      }
+    );
+    
+    if (!response.ok) {
+      console.log(response);
+      throw new Error("Error al actualizar los locks");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en setLockedFields:", error);
+    return null;
+  }
+}
