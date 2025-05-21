@@ -5,36 +5,65 @@ export function middleware(req) {
 
   if (token) {
     try {
-      // Sacamos la parte del payload del token
       const base64Payload = token.split('.')[1];
       const payload = JSON.parse(atob(base64Payload));
-      
-      // Si el rol es admin y no está ya en la ruta admin-dashboard, le redirige a /home.
-      if (payload.role === "admin" && req.nextUrl.pathname !== "/home") {
-        return NextResponse.redirect(new URL("/home", req.nextUrl.origin));
+      const role = payload.role;
+      const pathname = req.nextUrl.pathname;
+
+      // Rutas permitidas para cada rol
+      const alumnoRoutes = [
+        "/form-incoming",
+        "/form-outgoing",
+        "/alumno-alumno",
+        "/alumnos-incoming"
+      ];
+
+      const adminRoutes = [
+        "/home",
+        "/admin-alumno",
+        "/admin-calendar",
+        "/admin-dashboard",
+        "/admin-universidad",
+        "/admin-universidad-archivada",
+        "/universidades",
+        "/universidades-archivadas",
+        "/alumnos-incoming" 
+      ];
+
+      if (role === "admin") {
+        if (!adminRoutes.some(route => pathname.startsWith(route))) {
+          return NextResponse.redirect(new URL("/home", req.nextUrl.origin));
+        }
+      } else {
+        if (!alumnoRoutes.some(route => pathname.startsWith(route))) {
+          return NextResponse.redirect(new URL("/form-incoming", req.nextUrl.origin));
+        }
       }
     } catch (error) {
       console.error("Error al decodificar el token:", error);
-    }
-  }
-
-  // Rutas protegidas para usuarios no administradores
-  const protectedRoutes = ["/dashboard", "/profile", "/form-outgoing", "/<RUTA QUE QUERAIS PONER>"];
-  if (protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))) {
-    if (!token) {
       return NextResponse.redirect(new URL("/", req.nextUrl.origin));
     }
+  } else {
+    // Sin token → redirigir al login
+    return NextResponse.redirect(new URL("/", req.nextUrl.origin));
   }
 
   return NextResponse.next();
 }
 
-// Configuración para aplicar el middleware solo en ciertas rutas
 export const config = {
   matcher: [
-    "/dashboard/:path*",
+    "/form-incoming/:path*",
     "/form-outgoing/:path*",
-    "/profile/:path*",
-    "/<RUTA QUE QUERAIS PONER>/:path*"
-  ],
+    "/alumno-alumno/:path*",
+    "/alumnos-incoming/:path*",
+    "/home/:path*",
+    "/admin-alumno/:path*",
+    "/admin-calendar/:path*",
+    "/admin-dashboard/:path*",
+    "/admin-universidad/:path*",
+    "/admin-universidad-archivada/:path*",
+    "/universidades/:path*",
+    "/universidades-archivadas/:path*"
+  ]
 };
