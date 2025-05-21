@@ -70,7 +70,8 @@ export default function DocumentsList({ documentos }) {
 
         <button
           type="submit"
-          className="bg-[#0065EF] text-white text-sm py-1 rounded"
+          className="bg-[#0065EF] text-white text-sm py-1 rounded cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200"
         >
           Subir
         </button>

@@ -99,7 +99,8 @@ export default function UniversidadesArchivadasPage() {
           {/* Botón Activas */}
           <button
             onClick={() => router.push("/universidades")}
-            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
+            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer
+              text-[#0065EF] hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-colors duration-200"
           >
             <Archivar className="w-4 h-4 text-[#0065EF]" />
             <span className="text-base font-normal font-['Montserrat'] leading-normal">
@@ -108,7 +109,8 @@ export default function UniversidadesArchivadasPage() {
           </button>
 
           {/* Botón Descargar Excel */}
-          <button className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white">
+          <button className="h-10 px-12 py-2.5 bg-blue-600 rounded-lg flex items-center gap-2 cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200">
             <Descargar />
             <span className="text-base font-normal font-['Montserrat'] leading-normal">
               Descargar excel
@@ -120,10 +122,10 @@ export default function UniversidadesArchivadasPage() {
         <div className="flex justify-center items-center space-x-2">
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200 ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""
               }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+            <div className="text-center text-xs font-semibold font-['Montserrat']">
               {"<"}
             </div>
           </div>
@@ -132,7 +134,7 @@ export default function UniversidadesArchivadasPage() {
             <div
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200 ${currentPage === i + 1 ? "font-bold" : ""
                 }`}
             >
               <div className="text-center text-xs font-semibold font-['Montserrat']">
@@ -143,10 +145,10 @@ export default function UniversidadesArchivadasPage() {
 
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200 ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
               }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+            <div className="text-center text-xs font-semibold font-['Montserrat']">
               {">"}
             </div>
           </div>
