@@ -25,8 +25,8 @@ const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
     switch (estadoNormalizado) {
       case "aprobada":
         return (
-          <div className="w-48 h-7 px-4 py-1 bg-lime-400 rounded-3xl inline-flex justify-center items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-lime-700 rounded-full" />
+          <div className="w-48 h-7 px-4 py-1 bg-[#84CC59] rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-[#4B8726] rounded-full" />
             <div className="text-white text-xs font-semibold font-['Montserrat']">
               Aceptado por U-TAD
             </div>
@@ -34,8 +34,8 @@ const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
         );
       case "denegada":
         return (
-          <div className="h-7 px-4 py-1 bg-red-500 rounded-3xl inline-flex justify-center items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-red-700 rounded-full" />
+          <div className="h-7 px-4 py-1 bg-[#F05A50] rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-[#BD3229] rounded-full" />
             <div className="text-white text-xs font-semibold font-['Montserrat']">
               Rechazado por U-TAD
             </div>
@@ -43,8 +43,8 @@ const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
         );
       case "movilidad":
         return (
-          <div className="w-48 h-7 px-4 py-1 bg-pink-500 rounded-3xl inline-flex justify-center items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-pink-600 rounded-full" />
+          <div className="w-48 h-7 px-4 py-1 bg-[#FF58A2] rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-[#D72071] rounded-full" />
             <div className="text-white text-xs font-semibold font-['Montserrat']">
               Movilidad empezada
             </div>
@@ -52,8 +52,8 @@ const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
         );
       case "finalizada":
         return (
-          <div className="w-48 h-7 px-4 py-1 bg-zinc-400 rounded-3xl inline-flex justify-center items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-neutral-500 rounded-full" />
+          <div className="w-48 h-7 px-4 py-1 bg-[#9DA3A7] rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-[#686A6C] rounded-full" />
             <div className="text-white text-xs font-semibold font-['Montserrat']">
               Movilidad finalizada
             </div>
@@ -62,8 +62,8 @@ const CajaAlumno = ({ solicitud, index, columnasDisponibles = [] }) => {
       case "pendiente":
       default:
         return (
-          <div className="w-48 h-7 px-4 py-1 bg-orange-400 rounded-3xl inline-flex justify-center items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full" />
+          <div className="w-48 h-7 px-4 py-1 bg-[#EEA63B] rounded-3xl inline-flex justify-center items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-[#BC8127] rounded-full" />
             <div className="text-white text-xs font-semibold font-['Montserrat']">
               Solicitud realizada
             </div>

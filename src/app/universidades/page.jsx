@@ -1,4 +1,3 @@
-// app/universidades/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -89,20 +88,24 @@ export default function UniversidadesPage() {
   const columnasLabels = {
     nombre: "Nombre",
     contactoEmail: "Email de Contacto",
-    pais: "País"
+    pais: "País",
   };
 
   return (
     <div className="flex flex-col items-center w-full bg-white min-h-screen relative">
       <MenuSuperior searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <div className="w-[75rem] px-6 mt-2 flex justify-start relative">
+      <div className="w-[75rem] px-6 mt-2 flex justify-start relative gap-4">
+        {/* Añadir universidad - normal blanco con borde azul y texto azul */}
+        {/* Hover azul fondo con texto blanco */}
         <div
           onClick={() => setMostrarPopup((prev) => !prev)}
-          className="h-10 px-4 py-1 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-start items-center gap-2 cursor-pointer"
+          className="h-10 px-4 py-1 text-blue-600 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-600 inline-flex justify-start items-center gap-2 cursor-pointer
+            hover:bg-blue-600 hover:outline-blue-600
+            hover:text-white transition-colors duration-200"
         >
-          <SimboloMas className="w-5 h-5 text-blue-600" />
-          <div className="text-blue-600 text-base font-semibold font-['Montserrat'] leading-normal">
+          <SimboloMas className="w-5 h-5 text-blue-600 hover:text-white transition-colors duration-200" />
+          <div className="text-base font-semibold font-['Montserrat'] leading-normal select-none">
             Añadir universidad
           </div>
         </div>
@@ -115,31 +118,43 @@ export default function UniversidadesPage() {
       </div>
 
       <div className="w-[80rem] px-6 pt-2 pb-0">
-        <Header filters={filters} setFilters={setFilters} columnasDisponibles={columnasUniversidad} columnasLabels={columnasLabels} />
+        <Header
+          filters={filters}
+          setFilters={setFilters}
+          columnasDisponibles={columnasUniversidad}
+          columnasLabels={columnasLabels}
+        />
       </div>
 
       <div className="w-[75rem] px-6 pt-0 mt-[-1px]">
-        <UniversidadesTable universidades={paginatedUniversidades()} columnasVisibles={filters.columnas} />
+        <UniversidadesTable
+          universidades={paginatedUniversidades()}
+          columnasVisibles={filters.columnas}
+        />
       </div>
 
       <div className="w-[75rem] px-6 flex justify-between items-center mt-4">
         <div className="flex gap-4">
+          {/* Botón Archivadas */}
           <button
             onClick={handleArchivarRedirect}
-            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-[#0065EF]"
+            className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer
+              text-[#0065EF] hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-colors duration-200"
           >
-            <Archivar />
-            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+            <Archivar className="hover:text-white transition-colors duration-200" />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal select-none">
               Archivadas
             </span>
           </button>
 
+          {/* Botón Descargar Excel */}
           <button
             onClick={() => handleExcelExport(universidades)}
-            className="h-10 px-4 bg-blue-600 rounded-lg flex items-center gap-2 text-white"
+            className="h-10 px-12 py-2.5 bg-blue-600 rounded-lg flex items-center gap-2 cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200"
           >
-            <Descargar />
-            <span className="text-base font-normal font-['Montserrat'] leading-normal">
+            <Descargar className="hover:text-white transition-colors duration-200" />
+            <span className="text-base font-normal font-['Montserrat'] leading-normal select-none">
               Descargar excel
             </span>
           </button>
@@ -148,26 +163,38 @@ export default function UniversidadesPage() {
         <div className="flex justify-center items-center space-x-2">
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : ""}`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
+              currentPage === 1 ? "opacity-40 pointer-events-none" : ""
+            }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">{"<"}</div>
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {"<"}
+            </div>
           </div>
 
           {Array.from({ length: totalPages }, (_, i) => (
             <div
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${currentPage === i + 1 ? "font-bold" : ""}`}
+              className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] bg-white text-black flex justify-center items-center cursor-pointer ${
+                currentPage === i + 1 ? "font-bold" : ""
+              }`}
             >
-              <div className="text-center text-xs font-semibold font-['Montserrat']">{i + 1}</div>
+              <div className="text-center text-xs font-semibold font-['Montserrat']">
+                {i + 1}
+              </div>
             </div>
           ))}
 
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${currentPage === totalPages ? "opacity-40 pointer-events-none" : ""}`}
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black flex justify-center items-center cursor-pointer ${
+              currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
+            }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">{">"}</div>
+            <div className="text-center text-black text-xs font-semibold font-['Montserrat']">
+              {">"}
+            </div>
           </div>
         </div>
       </div>

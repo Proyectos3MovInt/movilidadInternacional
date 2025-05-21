@@ -3,7 +3,10 @@ import UniversityHeader from "./UniversityHeader";
 import DocumentsList from "./DocumentsList";
 import StudentsTable from "./StudentsTable";
 import Anotaciones from "../admin-alumno/Anotaciones";
-import { archivarUniversidad, editarUniversidad } from "@/lib/universidadesFunctions";
+import {
+  archivarUniversidad,
+  editarUniversidad,
+} from "@/lib/universidadesFunctions";
 import { useRouter } from "next/navigation";
 import { Archivar, Editar } from "@/components/Icons";
 
@@ -15,7 +18,8 @@ const gradoSiglas = {
   "Grado en Diseño Digital": "DIDI",
   "Grado en Ingeniería del Software (Inglés)": "INSO",
   "Grado en Ingeniería del Software (Español)": "INSG",
-  "Doble grado en Ingeniería del Software y Matemática Computacional o Física Computacional": "FIIS/MAIS",
+  "Doble grado en Ingeniería del Software y Matemática Computacional o Física Computacional":
+    "FIIS/MAIS",
   "Grado en Efectos Visuales": "EFVI",
 };
 
@@ -29,7 +33,7 @@ export default function UniversityDetailPage({
   alumnos,
   archived,
   onShowModal,
-  id
+  id,
 }) {
   const router = useRouter();
   const [isArchived, setIsArchived] = useState(archived);
@@ -39,6 +43,9 @@ export default function UniversityDetailPage({
     pais: university.pais,
     contactoEmail: university.contactoEmail,
     web: university.web || "",
+    fechaDenominacion: university.fechaDenominacion || "",
+    fechaPlazoAlumno: university.fechaPlazoAlumno || "",
+    fechaFinalizacionConvenio: university.fechaFinalizacionConvenio || "",
   });
 
   const handleChange = (e) => {
@@ -70,6 +77,9 @@ export default function UniversityDetailPage({
               web={formData.web}
               isEditing={isEditing}
               onChange={handleChange}
+              fechaDenominacion={formData.fechaDenominacion}
+              fechaPlazoAlumno={formData.fechaPlazoAlumno}
+              fechaFinalizacionConvenio={formData.fechaFinalizacionConvenio}
             />
           </div>
 
@@ -80,7 +90,8 @@ export default function UniversityDetailPage({
               onClick={() => {
                 onShowModal();
               }}
-              className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex items-center gap-2 cursor-pointer text-[#0065EF]"
+              className="h-10 px-4 py-1 border-2 border-solid border-[#0065EF] bg-white rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer
+              text-[#0065EF] hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-colors duration-200"
             >
               <Archivar className="w-4 h-4 text-[#0065EF]" />
               <span className="text-sm font-semibold font-['Montserrat']">
@@ -92,7 +103,8 @@ export default function UniversityDetailPage({
             {isEditing ? (
               <button
                 onClick={handleSave}
-                className="h-10 px-4 py-2 bg-green-600 rounded-lg inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200"
               >
                 <span className="text-white text-sm font-semibold font-['Montserrat']">
                   Guardar
@@ -101,7 +113,8 @@ export default function UniversityDetailPage({
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-4 py-2 bg-[#0065EF] rounded-lg inline-flex items-center gap-2 cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200"
               >
                 <Editar className="w-4 h-4 text-white" />
                 <span className="text-white text-sm font-semibold font-['Montserrat']">

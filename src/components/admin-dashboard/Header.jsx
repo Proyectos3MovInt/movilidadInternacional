@@ -47,10 +47,10 @@ const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) =>
         <div className="flex items-center gap-32">
           <div
             onClick={() => router.push("/admin-dashboard")}
-            className="relative flex cursor-pointer items-center gap-2"
+            className="relative flex cursor-pointer items-center gap-2 group"
           >
-            <Icons.Person className={`w-5 h-5 ${getIconClass("admin-dashboard")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("admin-dashboard")}`}>
+            <Icons.Person className={`w-5 h-5 ${getIconClass("admin-dashboard")} group-hover:text-blue-600`} />
+            <div className={`text-base font-['Montserrat'] ${getTabStyle("admin-dashboard")} group-hover:text-blue-600`}>
               Outgoing
             </div>
             {pathname.includes("admin-dashboard") && (
@@ -60,10 +60,10 @@ const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) =>
 
           <div
             onClick={() => router.push("/alumnos-incoming")}
-            className="relative flex cursor-pointer items-center gap-2"
+            className="relative flex cursor-pointer items-center gap-2 group"
           >
-            <Icons.People className={`w-5 h-5 ${getIconClass("incoming")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("incoming")}`}>
+            <Icons.People className={`w-5 h-5 ${getIconClass("incoming")} group-hover:text-blue-600`} />
+            <div className={`text-base font-['Montserrat'] ${getTabStyle("incoming")} group-hover:text-blue-600`}>
               Incoming
             </div>
             {pathname.includes("incoming") && (
@@ -73,10 +73,10 @@ const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) =>
 
           <div
             onClick={() => router.push("/universidades")}
-            className="relative flex cursor-pointer items-center gap-2"
+            className="relative flex cursor-pointer items-center gap-2 group"
           >
-            <Icons.Universidad className={`w-5 h-5 ${getIconClass("universidades")}`} />
-            <div className={`text-base font-['Montserrat'] ${getTabStyle("universidades")}`}>
+            <Icons.Universidad className={`w-5 h-5 ${getIconClass("universidades")} group-hover:text-blue-600`} />
+            <div className={`text-base font-['Montserrat'] ${getTabStyle("universidades")} group-hover:text-blue-600`}>
               Universidades
             </div>
             {pathname.includes("universidades") && (
@@ -87,7 +87,6 @@ const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) =>
 
         {/* Filtros y Ordenar alineados a la derecha */}
         <div className="flex items-center gap-8">
-          {/* Selector de columnas */}
           <div className="relative">
             <button
               onClick={() => {
@@ -123,7 +122,6 @@ const Header = ({ filters, setFilters, columnasDisponibles, columnasLabels }) =>
             )}
           </div>
 
-          {/* Ordenar */}
           <div className="relative">
             <button
               onClick={() => {

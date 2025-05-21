@@ -152,7 +152,8 @@ export default function AlumnosIncoming() {
       <div className="w-[72rem] flex justify-between items-center mt-4">
         <div className="flex justify-start">
           <button onClick={() => handleExcelExport(solicitudes)}
-          className="h-10 px-4 py-1 bg-blue-600 rounded-lg inline-flex justify-start items-center gap-2 cursor-pointer text-white">
+          className="h-10 px-12 py-2.5 bg-blue-600 rounded-lg flex items-center gap-2 cursor-pointer
+              text-white hover:bg-[#003366] transition-colors duration-200">
             <Descargar />
             <span className="text-base font-normal font-['Montserrat'] leading-normal">
               Descargar excel
@@ -165,11 +166,11 @@ export default function AlumnosIncoming() {
           {/* Botón anterior */}
           <div
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200 ${
               currentPage === 1 ? "opacity-40 pointer-events-none" : ""
             }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
+            <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">{"<"}</div>
           </div>
 
           {/* Botones numéricos */}
@@ -179,9 +180,9 @@ export default function AlumnosIncoming() {
               onClick={() => setCurrentPage(i + 1)}
               className={`w-9 h-10 p-2 rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] ${
                 currentPage === i + 1
-                  ? "bg-white text-black"
-                  : "bg-white text-black"
-              } inline-flex flex-col justify-center items-center cursor-pointer`}
+                  ? "bg-white"
+                  : "bg-white"
+              } inline-flex flex-col justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200`}
             >
               <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">
                 {i + 1}
@@ -192,11 +193,11 @@ export default function AlumnosIncoming() {
           {/* Botón siguiente */}
           <div
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer ${
+            className={`w-9 h-10 p-2 bg-white rounded-lg outline outline-[1.5px] outline-offset-[-1.5px] outline-black inline-flex flex-col justify-center items-center cursor-pointer hover:bg-blue-600 hover:outline-blue-600 hover:text-white transition-colors duration-200 ${
               currentPage === totalPages ? "opacity-40 pointer-events-none" : ""
             }`}
           >
-            <div className="text-center text-black text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
+            <div className="text-center text-xs font-semibold font-['Montserrat'] leading-none">{">"}</div>
           </div>
         </div>
       </div>
