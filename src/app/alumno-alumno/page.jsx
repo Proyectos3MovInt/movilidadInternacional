@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { updateForm } from "@/lib/form";
+import { updateForm, getLockedFields } from "@/lib/form";
 import Perfil from "@/components/admin-alumno/PerfilEditable";
 import MenuSuperior from "@/components/admin-dashboard/MenuSuperior";
 import MiniCalendar from "@/utils/calendario/MiniCalendar";
@@ -22,6 +22,13 @@ export default function Page() {
 
   const { register, setValue, getValues } = useForm();
   const [editando, setEditando] = useState({});
+
+  const [locks, setLocks] = useState({
+    lockedDatos: false,
+    lockedUnis: false,
+    lockedArchivos: false,
+  });
+
 
   const [files, setFiles] = useState([]);
 
@@ -109,11 +116,13 @@ export default function Page() {
           await Promise.all([getStudentData(), getUtadFiles(), getUnis()]);
 
         const data = studentResponse[0];
+        const locksData = await getLockedFields(data._id);
+        if (locksData) setLocks(locksData);
         if (data.fechaNacimiento) {
           data.fechaNacimiento = formatDate(data.fechaNacimiento);
         }
 
-        if(data.studentType != "outgoing") {
+        if (data.studentType != "outgoing") {
           setIsOutgoing(false);
         }
 
@@ -152,13 +161,22 @@ export default function Page() {
       setEditando((prev) => ({ ...prev, [name]: false }));
     }
   };
-
-  const renderSeccion = (titulo, campos) => (
+  const renderSeccion = (titulo, campos, locked = false) => (
     <div className="w-full">
       <div className="flex justify-between items-center px-[1.5rem] py-[0.5rem] bg-[#0065EF] rounded-t-[0.5rem]">
         <h2 className="text-white font-semibold">{titulo}</h2>
       </div>
-      <div className="bg-white border border-t-0 border-[#9DA3A7] rounded-b-[0.5rem] overflow-hidden divide-y">
+
+      {locked && (
+        <div className="bg-[#0065EF] text-white px-4 py-2 text-sm border-b border-[#93C5FD]">
+          Esta sección ya ha sido validada y no se puede editar.
+        </div>
+      )}
+
+      <div
+        className={`bg-white border border-t-0 border-[#9DA3A7] rounded-b-[0.5rem] overflow-hidden divide-y transition-opacity duration-300 ${locked ? "opacity-50 pointer-events-none select-none" : ""
+          }`}
+      >
         {campos.map(({ label, name, type, options }, idx) => (
           <div
             key={idx}
@@ -233,6 +251,7 @@ export default function Page() {
     </div>
   );
 
+
   if (loading) return <p className="text-center mt-10">Cargando datos...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
@@ -247,9 +266,9 @@ export default function Page() {
       <div className="flex justify-center">
         <div className="flex gap-[4rem] w-[66.875rem] mb-20">
           <div className="flex flex-col gap-5 w-[41.5625rem]">
-            {renderSeccion("Datos personales", campos.personales)}
-            {renderSeccion("Información académica", campos.academica)}
-            {renderSeccion("Archivos adjuntos", campos.archivos)}
+            {renderSeccion("Datos personales", campos.personales, locks.lockedDatos)}
+            {renderSeccion("Información académica", campos.academica, locks.lockedUnis)}
+            {renderSeccion("Archivos adjuntos", campos.archivos, locks.lockedArchivos)}
           </div>
           <div className="flex flex-col gap-4 w-[21.3125rem] items-stretch">
             <div className="w-full">

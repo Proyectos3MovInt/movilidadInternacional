@@ -7,6 +7,7 @@ import Anotaciones from "@/components/admin-alumno/Anotaciones";
 import Calendario from "@/components/admin-alumno/Calendario";
 import Chat from "@/components/chat/Chat";
 import { getStudentData } from "@/lib/adminFunctions";
+import { getLockedFields, setLockedFields } from "@/lib/form";
 import { useParams } from "next/navigation";
 
 export default function Page() {
@@ -17,6 +18,11 @@ export default function Page() {
   const [archivosAdjuntos, setArchivosAdjuntos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [locks, setLocks] = useState({
+    lockedDatos: false,
+    lockedUnis: false,
+    lockedArchivos: false,
+  });
   const { id } = useParams();
 
   useEffect(() => {
@@ -94,7 +100,20 @@ export default function Page() {
         setLoading(false);
       }
     };
-    if (id) fetchData();
+    const fetchLocks = async () => {
+      try {
+        const locksData = await getLockedFields(id);
+        if (locksData) setLocks(locksData);
+        console.log(locksData);
+      } catch (err) {
+        console.error("Error al obtener locks:", err);
+      }
+    };
+
+    if (id) {
+      fetchData();
+      fetchLocks();
+    }
   }, [id]);
 
   if (loading) return <p className="text-center mt-10">Cargando datos...</p>;
@@ -112,16 +131,25 @@ export default function Page() {
             <SeccionDesplegable
               title="Datos personales"
               data={datosPersonales}
+              locks={locks}
+              setLocks={setLocks}
+              lockKey="lockedDatos"
             />
             <SeccionDesplegable
               title="Información académica"
               data={infoAcademica}
               uni={true}
+              locks={locks}
+              setLocks={setLocks}
+              lockKey="lockedUnis"
             />
             <SeccionDesplegable
               title="Archivos adjuntos"
               data={archivosAdjuntos}
               archivo={true}
+              locks={locks}
+              setLocks={setLocks}
+              lockKey="lockedArchivos"
             />
           </div>
           <div className="flex flex-col gap-4 w-[21.3125rem] items-stretch">

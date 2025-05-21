@@ -1,13 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ArrowForwardIos } from "../Icons";
-import { getUnis } from "@/lib/form";
+import { getUnis, setLockedFields } from "@/lib/form";
+import { useParams } from "next/navigation";
 import CandadoToggle from "@/components/admin-alumno/CandadoToggle";
 import BotonDescargar from "./BotonDescargar";
 
-export default function SeccionDesplegable({ title, data = [], archivo, uni }) {
+export default function SeccionDesplegable({ title, data = [], archivo, uni, locks, setLocks, lockKey }) {
   const [abierto, setAbierto] = useState(true);
   const [unis, setUnis] = useState([]);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchUnis = async () => {
@@ -18,13 +20,22 @@ export default function SeccionDesplegable({ title, data = [], archivo, uni }) {
     fetchUnis();
   }, []);
 
+  const updateLock = async () => {
+    const updatedLocks = { ...locks, [lockKey]: !locks[lockKey] };
+    setLocks(updatedLocks);
+    await setLockedFields(id, updatedLocks);
+  }
+
   return (
     <div className="w-full">
       {/* Header azul */}
       <div className="flex justify-between items-center px-[1.5rem] py-[0.5rem] bg-[#0065EF] rounded-t-[0.5rem]">
         <h2 className="text-white font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
-          <CandadoToggle />
+          <CandadoToggle 
+          isLocked={locks[lockKey]}
+          onToggle={updateLock}
+          />
           <button onClick={() => setAbierto(!abierto)}>
             <ArrowForwardIos
               className={`w-5 h-5 text-white transition-transform duration-200 ${abierto ? "rotate-180" : ""
